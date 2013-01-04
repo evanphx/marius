@@ -51,6 +51,8 @@ namespace marius {
     Code& code(int idx) {
       return *codes_.at(idx);
     }
+
+    void print();
   };
 }
 

@@ -3,6 +3,7 @@
 #include "string.hpp"
 #include "code.hpp"
 #include "class.hpp"
+#include "parser.hpp"
 
 #include <vector>
 #include <iostream>
@@ -10,6 +11,23 @@
 using namespace marius;
 
 int main(int argc, char** argv) {
+  VM vm;
+  Environment env;
+
+  env.init_ontology();
+
+  Parser parser("3 + 4", 5);
+  parser.parse();
+
+  parser.code()->print();
+
+  OOP ret = vm.run(env, *parser.code());
+
+  std::cout << "ret = " << ret.int_value() << "\n";
+  return 0;
+}
+
+int man_main(int argc, char** argv) {
   VM vm;
   Environment env;
 
@@ -28,6 +46,8 @@ int main(int argc, char** argv) {
   };
 
   Code code(seq, sizeof(seq), strings, codes);
+
+  code.print();
 
   OOP ret = vm.run(env, code);
 

@@ -1,0 +1,29 @@
+
+%include {
+#include "parser_state.hpp"
+#include "parser_tokens.h"
+#include <iostream>
+}
+
+%name mariusParser
+
+%token_type {int}
+%default_type {int}
+
+%left PLUS MINUS.
+%left DIVIDE TIMES.
+
+%extra_argument { marius::ParserState* S }
+   
+%syntax_error {  
+  std::cout << "Syntax error!" << std::endl;  
+}
+
+program ::= expr(A). { S->ret(A); }
+
+expr(A) ::= expr(B) MINUS  expr(C). { A = S->minus(B, C);  }
+expr(A) ::= expr(B) PLUS   expr(C). { A = S->plus(B, C);   }
+expr(A) ::= expr(B) TIMES  expr(C). { A = S->times(B, C);  }
+expr(A) ::= expr(B) DIVIDE expr(C). { A = S->divide(B, C); }
+expr(A) ::= NUM(B).                 { A = S->number(B);    }
+
