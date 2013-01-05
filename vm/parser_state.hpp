@@ -7,50 +7,63 @@
 
 namespace marius {
   class ParserState {
-    std::vector<Instruction> buffer_;
-    std::vector<String*> strings_;
+    struct Context {
+      std::vector<Instruction> buffer;
+      std::vector<String*> strings;
+      std::vector<Code*> codes;
 
-    int next_reg_;
+      int next_reg;
+
+      Context()
+        : next_reg(0)
+      {}
+    };
+
+    Context* context_;
+    std::vector<Context*> stack_;
 
   public:
 
     ParserState()
-      : next_reg_(0)
+      : context_(new Context)
     {}
 
     Instruction* sequence();
 
     int sequence_size() {
-      return buffer_.size();
+      return context_->buffer.size();
     }
 
     std::vector<String*>* strings() {
-      return new std::vector<String*>(strings_);
+      return new std::vector<String*>(context_->strings);
     }
 
     std::vector<Code*>* codes() {
-      return new std::vector<Code*>();
+      return new std::vector<Code*>(context_->codes);
     }
 
     void recycle(int a, int b) {
       if(a == b - 1) {
-        next_reg_ = a;
+        context_->next_reg = a;
       }
     }
 
     int new_reg() {
-      return next_reg_++;
+      return context_->next_reg++;
     }
 
     void push(Instruction op) {
-      buffer_.push_back(op);
+      context_->buffer.push_back(op);
     }
 
     int string(const char* str) {
-      int idx = strings_.size();
-      strings_.push_back(&String::internalize(str));
+      int idx = context_->strings.size();
+      context_->strings.push_back(&String::internalize(str));
       return idx;
     }
+
+    void start_def(String& s);
+    Code& end_def();
 
     int bin_op(const char* op, int a, int b);
     int minus(int a, int b);
@@ -60,6 +73,17 @@ namespace marius {
     int number(int a);
 
     void ret(int a);
+
+    void start_class();
+    int new_class(String& s);
+
+    void start_def();
+    int end_def(String& s);
+
+    int call(int recv, String& id);
+    int named(String& s);
+
+    Code* to_code();
   };
 }
 

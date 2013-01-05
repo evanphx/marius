@@ -4,9 +4,9 @@
 #include "oop.hpp"
 
 namespace marius {
-  class Environment;
+  class State;
 
-  typedef OOP (*SimpleFunc)(Environment& env, OOP recv, int argc, OOP* fp);
+  typedef OOP (*SimpleFunc)(State& S, OOP recv, int argc, OOP* fp);
 }
 
 #endif

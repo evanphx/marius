@@ -1,6 +1,8 @@
 #ifndef STRING_HPP
 #define STRING_HPP
 
+#include <string>
+
 namespace marius {
   class String {
     const char* data_;
@@ -14,7 +16,7 @@ namespace marius {
       return data_;
     }
 
-    static String& internalize(const char* name);
+    static String& internalize(std::string str);
   };
 }
 

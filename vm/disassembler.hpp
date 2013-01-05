@@ -1,6 +1,8 @@
 #ifndef DISASSEMBLER_HPP
 #define DISASSEMBLER_HPP
 
+#include "code.hpp"
+
 namespace marius {
   class Code;
 
@@ -12,7 +14,9 @@ namespace marius {
       : code_(code)
     {}
 
-    void print();
+    void print(int indent=0);
+
+    int print_one(Instruction* seq);
   };
 }
 

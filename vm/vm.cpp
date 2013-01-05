@@ -3,6 +3,8 @@
 #include "method.hpp"
 #include "class.hpp"
 #include "environment.hpp"
+#include "state.hpp"
+#include "disassembler.hpp"
 
 namespace marius {
 
@@ -10,15 +12,23 @@ namespace marius {
     stack_ = new OOP[cInitialStack];
   }
 
-  OOP VM::run(Environment& env, Code& code) {
-    return run(env, code, stack_);
+  OOP VM::run(State& S, Code& code) {
+    return run(S, code, stack_);
   }
 
-  OOP VM::run(Environment& env, Code& code, OOP* fp) {
+  OOP VM::run(State& S, Code& code, OOP* fp) {
     Instruction* seq = code.code();
     Instruction* end = seq + code.size();
 
+#ifdef TRACE
+    Disassembler dis(code);
+#endif
+
     while(seq < end) {
+#ifdef TRACE
+      dis.print_one(seq);
+#endif
+
       switch(*seq++) {
       case MOVI8:
         fp[seq[0]] = OOP::integer(seq[1]);
@@ -33,14 +43,14 @@ namespace marius {
         seq += 2;
         break;
       case CALL:
-        fp[seq[0]] = run_method(env, 
-                                fp[seq[1]], code.string(seq[2]),
-                                seq[3],     fp + seq[4]);
+        fp[seq[0]] = run_method(S,
+                                fp[seq[2]], code.string(seq[1]),
+                                seq[3],     fp + (seq[2] + 1));
 
-        seq += 5;
+        seq += 4;
         break;
       case LOADN:
-        fp[seq[0]] = load_named(env, code.string(seq[1]));
+        fp[seq[0]] = load_named(S, code.string(seq[1]));
 
         seq += 2;
         break;
@@ -55,6 +65,13 @@ namespace marius {
 
         seq += 2;
         break;
+
+      case SELF:
+        fp[seq[0]] = fp[-1];
+
+        seq += 1;
+        break;
+
       case RET:
         return fp[*seq++];
       }
@@ -63,7 +80,7 @@ namespace marius {
     return OOP::nil();
   }
 
-  OOP VM::run_method(Environment& env,
+  OOP VM::run_method(State& S,
                      OOP recv, String& name, int argc, OOP* fp)
   {
     Class*  cls  = recv.klass();
@@ -74,10 +91,10 @@ namespace marius {
       return OOP::nil();
     }
 
-    return meth->run(env, this, recv, argc, fp);
+    return meth->run(S, recv, argc, fp);
   }
 
-  OOP VM::load_named(Environment& env, String& name) {
-    return env.lookup(name);
+  OOP VM::load_named(State& S, String& name) {
+    return S.env().lookup(name);
   }
 }

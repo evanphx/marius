@@ -9,6 +9,7 @@ namespace marius {
   class Code;
   class String;
   class Environment;
+  class State;
 
   class VM {
     OOP* stack_;
@@ -16,10 +17,10 @@ namespace marius {
   public:
     VM();
 
-    OOP run(Environment& env, Code& code);
-    OOP run(Environment& env, Code& code, OOP* fp);
-    OOP run_method(Environment& env, OOP recv, String& name, int argc, OOP* argv);
-    OOP load_named(Environment& env, String& name);
+    OOP run(State& S, Code& code);
+    OOP run(State& S, Code& code, OOP* fp);
+    OOP run_method(State& S, OOP recv, String& name, int argc, OOP* argv);
+    OOP load_named(State& S, String& name);
   };
 }
 

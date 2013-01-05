@@ -15,7 +15,8 @@ namespace marius {
     RET     = 4,
     LOADN   = 5,
     LOADS   = 6,
-    LOADC   = 7
+    LOADC   = 7,
+    SELF    = 8
   };
 
   typedef uint8_t Instruction;
@@ -50,6 +51,10 @@ namespace marius {
 
     Code& code(int idx) {
       return *codes_.at(idx);
+    }
+
+    int codes_size() {
+      return codes_.size();
     }
 
     void print();

@@ -1,9 +1,13 @@
 SRC=$(sort $(wildcard vm/*.cpp))
 OBJ=$(patsubst %.cpp,%.o,$(SRC))
 
-CXXFLAGS := -ggdb
+CXXFLAGS := -ggdb -Wall
 
 all: marius
+
+dep:
+	: > depend
+	for i in $(SRC); do $(CC) $(CXXFLAGS) -MM -MT $${i%.cpp}.o $$i >> depend; done
 
 tools/lemon:
 	gcc -o tools/lemon tools/lemon.c
@@ -17,3 +21,5 @@ vm/parser.o: vm/parser.c.inc
 
 marius: $(OBJ)
 	c++ -ggdb3 -o marius $(OBJ)
+
+-include depend

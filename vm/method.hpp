@@ -17,7 +17,7 @@ namespace marius {
     Method(SimpleFunc func);
     Method(Code& code);
 
-    OOP run(Environment& env, VM* vm, OOP recv, int argc, OOP* fp);
+    OOP run(State& S, OOP recv, int argc, OOP* fp);
   };
 }
 

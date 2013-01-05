@@ -7,8 +7,8 @@
 
 %name mariusParser
 
-%token_type {int}
-%default_type {int}
+%token_type   {marius::ParserToken}
+%default_type {marius::ParserToken}
 
 %left PLUS MINUS.
 %left DIVIDE TIMES.
@@ -19,11 +19,38 @@
   std::cout << "Syntax error!" << std::endl;  
 }
 
-program ::= expr(A). { S->ret(A); }
+program ::= seq(A). { S->ret(A.i); }
 
-expr(A) ::= expr(B) MINUS  expr(C). { A = S->minus(B, C);  }
-expr(A) ::= expr(B) PLUS   expr(C). { A = S->plus(B, C);   }
-expr(A) ::= expr(B) TIMES  expr(C). { A = S->times(B, C);  }
-expr(A) ::= expr(B) DIVIDE expr(C). { A = S->divide(B, C); }
-expr(A) ::= NUM(B).                 { A = S->number(B);    }
+opt_term ::= .
+opt_term ::= FIN.
+
+seq(A) ::= seq FIN expr(B). { A.i = B.i; }
+seq(A) ::= expr(B). { A.i = B.i; }
+
+class_start ::= CLASS. { S->start_class(); } 
+class_body(A) ::= expr(B) opt_term END. { A.i = B.i; }
+
+expr(A) ::= class_start ID(B) FIN class_body(C). { 
+              S->ret(C.i);
+              A.i = S->new_class(*B.s);
+            }
+
+def_start ::= DEF. { S->start_def(); }
+def_body(A) ::= expr(B) opt_term END. { A.i = B.i; }
+
+expr(A) ::= def_start ID(B) FIN def_body(C). {
+              S->ret(C.i);
+              A.i = S->end_def(*B.s);
+            }
+
+expr(A) ::= expr(B) MINUS  expr(C). { A.i = S->minus(B.i, C.i);  }
+expr(A) ::= expr(B) PLUS   expr(C). { A.i = S->plus(B.i, C.i);   }
+expr(A) ::= expr(B) TIMES  expr(C). { A.i = S->times(B.i, C.i);  }
+expr(A) ::= expr(B) DIVIDE expr(C). { A.i = S->divide(B.i, C.i); }
+expr(A) ::= NUM(B).                 { A.i = S->number(B.i);    }
+
+recv(A) ::= ID(B). { A.i = S->named(*B.s); }
+recv(A) ::= recv(B) DOT ID(C). { A.i = S->call(B.i, *C.s); }
+
+expr(A) ::= recv(B) DOT ID(C). { A.i = S->call(B.i, *C.s); }
 

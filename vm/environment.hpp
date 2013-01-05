@@ -10,7 +10,9 @@ namespace marius {
 
   class Environment {
     Environment* parent_;
-    std::map<String*, OOP> binding_;
+
+    typedef std::map<String*, OOP> Bindings;
+    Bindings binding_;
 
   public:
     Environment()
@@ -21,6 +23,8 @@ namespace marius {
 
     Class* new_class(const char* name);
     void init_ontology();
+
+    void print();
   };
 }
 

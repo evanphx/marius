@@ -2,4 +2,10 @@
 #define MINUS                           2
 #define DIVIDE                          3
 #define TIMES                           4
-#define NUM                             5
+#define FIN                             5
+#define CLASS                           6
+#define END                             7
+#define ID                              8
+#define DEF                             9
+#define NUM                            10
+#define DOT                            11

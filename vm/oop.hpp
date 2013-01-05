@@ -96,6 +96,8 @@ namespace marius {
     }
 
     Class* klass();
+
+    void print();
   };
 }
 

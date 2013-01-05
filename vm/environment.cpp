@@ -2,12 +2,16 @@
 #include "string.hpp"
 #include "class.hpp"
 #include "code.hpp"
+#include "state.hpp"
+#include "vm.hpp"
+
+#include <iostream>
 
 namespace marius {
   OOP Environment::lookup(String& name) {
     Environment* env = this;
 
-    while(true) {
+    while(env) {
       std::map<String*, OOP>::iterator i = binding_.find(&name);
 
       if(i != binding_.end()) return (*i).second;
@@ -29,22 +33,31 @@ namespace marius {
     return cls;
   }
 
-  static OOP int_plus(Environment& env, OOP recv, int argc, OOP* fp) {
+  void Environment::print() {
+    for(Bindings::iterator i = binding_.begin();
+        i != binding_.end();
+        ++i) {
+      std::cout << (*i).first->c_str() << " => ";
+      (*i).second.print();
+    }
+  }
+
+  static OOP int_plus(State& S, OOP recv, int argc, OOP* fp) {
     if(argc == 0) return OOP::nil();
 
     int val = recv.int_value() + fp[0].int_value();
     return OOP::integer(val);
   }
 
-  static OOP class_new(Environment& env, OOP recv, int argc, OOP* fp) {
+  static OOP class_new(State& S, OOP recv, int argc, OOP* fp) {
     assert(argc == 1);
 
     String& name = fp[0].as_string();
 
-    return OOP(env.new_class(name.c_str()));
+    return OOP(S.env().new_class(name.c_str()));
   }
 
-  static OOP add_method(Environment& env, OOP recv, int argc, OOP* fp) {
+  static OOP add_method(State& S, OOP recv, int argc, OOP* fp) {
     assert(argc == 2);
 
     String& name = fp[0].as_string();
@@ -55,10 +68,16 @@ namespace marius {
     return OOP::nil();
   }
 
-  static OOP new_instance(Environment& env, OOP recv, int argc, OOP* fp) {
+  static OOP new_instance(State& S, OOP recv, int argc, OOP* fp) {
     Class* cls = recv.as_class();
 
     return OOP(new MemoryObject(cls));
+  }
+
+  static OOP run_code(State& S, OOP recv, int argc, OOP* fp) {
+    Code& code = recv.as_code();
+
+    return S.vm().run(S, code, fp + 1);
   }
 
   void Environment::init_ontology() {
@@ -84,6 +103,9 @@ namespace marius {
 
     Class* s = new_class("String");
 
-    Class::init_base(i, m, n, s);
+    Class* d = new_class("Code");
+    d->add_method("eval", run_code);
+
+    Class::init_base(i, m, n, s, d);
   }
 }

@@ -18,6 +18,8 @@ namespace marius {
     void add(String& name, Method* m) {
       table_[&name] = m;
     }
+
+    void print();
   };
 }
 

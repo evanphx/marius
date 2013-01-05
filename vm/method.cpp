@@ -1,5 +1,6 @@
 #include "method.hpp"
 #include "vm.hpp"
+#include "state.hpp"
 
 namespace marius {
   Method::Method(SimpleFunc func)
@@ -12,11 +13,11 @@ namespace marius {
     , code_(&code)
   {}
 
-  OOP Method::run(Environment& env, VM* vm, OOP recv, int argc, OOP* fp) {
+  OOP Method::run(State& S, OOP recv, int argc, OOP* fp) {
     if(func_) {
-      return func_(env, recv, argc, fp);
+      return func_(S, recv, argc, fp);
     } else if(code_) {
-      return vm->run(env, *code_, fp);
+      return S.vm().run(S, *code_, fp);
     }
 
     return OOP::nil();

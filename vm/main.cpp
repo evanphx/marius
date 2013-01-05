@@ -4,6 +4,7 @@
 #include "code.hpp"
 #include "class.hpp"
 #include "parser.hpp"
+#include "state.hpp"
 
 #include <vector>
 #include <iostream>
@@ -14,19 +15,23 @@ int main(int argc, char** argv) {
   VM vm;
   Environment env;
 
+  State state(vm, env);
+
   env.init_ontology();
 
-  Parser parser("3 + 4", 5);
+  // Parser parser("3 + 4", 5);
+  Parser parser("class Blah\ndef foo\n3+4\nend\nend\nBlah.new.foo");
   parser.parse();
 
   parser.code()->print();
 
-  OOP ret = vm.run(env, *parser.code());
+  OOP ret = vm.run(state, *parser.code());
 
-  std::cout << "ret = " << ret.int_value() << "\n";
+  ret.print();
   return 0;
 }
 
+/*
 int man_main(int argc, char** argv) {
   VM vm;
   Environment env;
@@ -85,3 +90,4 @@ int man_main(int argc, char** argv) {
 
   return 0;
 }
+*/

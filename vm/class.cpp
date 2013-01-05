@@ -45,12 +45,14 @@ namespace marius {
   static Class* class_class_;
   static Class* nil_class_;
   static Class* str_class_;
+  static Class* code_class_;
 
-  void Class::init_base(Class* i, Class* c, Class* n, Class* s) {
+  void Class::init_base(Class* i, Class* c, Class* n, Class* s, Class* d) {
     integer_class_ = i;
     class_class_ = c;
     nil_class_ = n;
     str_class_ = s;
+    code_class_ = d;
   }
 
   Class* Class::integer_class() {
@@ -67,5 +69,9 @@ namespace marius {
 
   Class* Class::string_class() {
     return str_class_;
+  }
+
+  Class* Class::code_class() {
+    return code_class_;
   }
 }
