@@ -7,8 +7,10 @@
 
 %name mariusParser
 
-%token_type   {marius::ParserToken}
-%default_type {marius::ParserToken}
+%token_type   { marius::ParserToken }
+%default_type { marius::ParserToken }
+
+%token_prefix TK_
 
 %left PLUS MINUS.
 %left DIVIDE TIMES.
@@ -16,22 +18,28 @@
 %extra_argument { marius::ParserState* S }
    
 %syntax_error {  
-  std::cout << "Syntax error!" << std::endl;  
+  std::cout << "Syntax error at line " << S->line()
+            << ", column " << S->column() << std::endl;  
 }
 
-program ::= opt_fin seq(A) fin. { S->ret(A.i); }
+program ::= opt_fin seq(A) last_fin. { S->ret(A.i); }
 
 opt_fin ::= .
 opt_fin ::= opt_fin FIN.
 
+last_fin ::= EOF.
+last_fin ::= fin EOF.
+
 fin ::= fin FIN.
 fin ::= FIN.
 
-seq(A) ::= seq fin expr(B). { A.i = B.i; }
+start_seq ::= seq(B) fin. { S->recycle(B.i); }
+
+seq(A) ::= start_seq expr(C). { A.i = C.i; }
 seq(A) ::= expr(B). { A.i = B.i; }
 
 class_start ::= CLASS. { S->start_class(); } 
-class_body(A) ::= expr(B) opt_fin END. { A.i = B.i; }
+class_body(A) ::= seq(B) fin END. { A.i = B.i; }
 
 expr(A) ::= class_start ID(B) fin class_body(C). {
               S->ret(C.i);
@@ -39,7 +47,7 @@ expr(A) ::= class_start ID(B) fin class_body(C). {
             }
 
 def_start ::= DEF. { S->start_def(); }
-def_body(A) ::= expr(B) opt_fin END. { A.i = B.i; }
+def_body(A) ::= seq(B) fin END. { A.i = B.i; }
 
 expr(A) ::= def_start ID(B) fin def_body(C). {
               S->ret(C.i);
@@ -55,5 +63,20 @@ expr(A) ::= NUM(B).                 { A.i = S->number(B.i);    }
 recv(A) ::= ID(B). { A.i = S->named(*B.s); }
 recv(A) ::= recv(B) DOT ID(C). { A.i = S->call(B.i, *C.s); }
 
-expr(A) ::= recv(B) DOT ID(C). { A.i = S->call(B.i, *C.s); }
+expr(A) ::= cascade(B). { A.i = B.i; }
+
+message_seq(A) ::= message_seq(B) fin ID(C). {
+                     S->recycle(B.i);
+                     A.i = S->cascade(*C.s);
+                   }
+
+message_seq(A) ::= ID(B). { A.i = S->cascade(*B.s); }
+
+cascade_start ::= recv(B) CASCADE. { S->start_cascade(B.i); }
+cascade(A) ::= cascade_start message_seq(C) RB. {
+                 A.i = C.i;
+                 S->end_cascade();
+               }
+
+cascade(A) ::= recv(B). { A.i = B.i; }
 

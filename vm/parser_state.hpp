@@ -4,8 +4,11 @@
 #include <vector>
 
 #include "code.hpp"
+#include "parser.hpp"
 
 namespace marius {
+  class Parser;
+
   class ParserState {
     struct Context {
       std::vector<Instruction> buffer;
@@ -19,13 +22,16 @@ namespace marius {
       {}
     };
 
+    Parser& parser_;
     Context* context_;
     std::vector<Context*> stack_;
+    std::vector<int> cascades_;
 
   public:
 
-    ParserState()
-      : context_(new Context)
+    ParserState(Parser& parse)
+      : parser_(parse)
+      , context_(new Context)
     {}
 
     Instruction* sequence();
@@ -48,6 +54,10 @@ namespace marius {
       }
     }
 
+    void recycle(int a) {
+      context_->next_reg = a;
+    }
+
     int new_reg() {
       return context_->next_reg++;
     }
@@ -60,6 +70,14 @@ namespace marius {
       int idx = context_->strings.size();
       context_->strings.push_back(&String::internalize(str));
       return idx;
+    }
+
+    int line() {
+      return parser_.line();
+    }
+
+    int column() {
+      return parser_.column();
     }
 
     void start_def(String& s);
@@ -82,6 +100,10 @@ namespace marius {
 
     int call(int recv, String& id);
     int named(String& s);
+
+    void start_cascade(int a);
+    int cascade(String& name);
+    void end_cascade();
 
     Code* to_code();
   };

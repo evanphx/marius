@@ -17,18 +17,21 @@ int main(int argc, char** argv) {
   char** opt = argv + 1;
 
   while(*opt) {
-    if(**opt == '-') {
-      switch(*opt[1]) {
+    const char* s = *opt;
+    if(s[0] == '-') {
+      switch(s[1]) {
       case 'd':
-        debug = false;
+        debug = true;
         break;
       default:
-        printf("Unknown option: %s\n", *opt);
+        printf("Unknown option: %s\n", s);
         return 1;
       }
     } else {
       break;
     }
+
+    opt++;
   }
 
   if(!*opt) {

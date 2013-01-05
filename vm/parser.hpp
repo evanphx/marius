@@ -61,8 +61,6 @@ namespace marius {
       value_.i = 0;
     }
 
-    bool parse(bool debug=false);
-
     Code* code() {
       return code_;
     }
@@ -71,6 +69,16 @@ namespace marius {
       pos_ += count;
       column_ += count;
     }
+
+    int line() {
+      return line_;
+    }
+
+    int column() {
+      return column_;
+    }
+
+    bool parse(bool debug=false);
 
   private:
     char next_c();

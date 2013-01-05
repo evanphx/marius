@@ -7,11 +7,6 @@ extern "C" {
 
 #include "parser_tokens.h"
 
-union Token {
-  int i;
-  marius::String* s;
-};
-
 #include "parser.c.inc"
 
 namespace marius {
@@ -63,15 +58,13 @@ namespace marius {
   }
 
   int Parser::next_token() {
-    if(pos_ >= end_) return 0;
-
     value_.i = 0;
 
 again:
 
     char c = next_c();
 
-    if(!c) return 0;
+    if(!c) return TK_EOF;
 
     switch(c) {
       case '0': case '1': case '2': case '3': case '4': case '5':
@@ -83,7 +76,7 @@ again:
 
           advance(end - pos_);
 
-          return NUM;
+          return TK_NUM;
         }
       case ' ':
         while(next_c() == ' ') advance(1);
@@ -92,11 +85,20 @@ again:
 
       case '+':
         advance(1);
-        return PLUS;
+        return TK_PLUS;
 
       case '.':
         advance(1);
-        return DOT;
+        if(next_c() == '{') {
+          advance(1);
+          return TK_CASCADE;
+        }
+
+        return TK_DOT;
+
+      case '}':
+        advance(1);
+        return TK_RB;
 
       case '\n':
         column_ = 0;
@@ -105,7 +107,7 @@ again:
         // fallthrough
       case ';':
         advance(1);
-        return FIN;
+        return TK_FIN;
 
       case '#':
         while(next_c() != '\n') advance(1);
@@ -145,7 +147,7 @@ again:
 
       if(str && strncmp(str, "class", 5) == 0) {
         advance(5);
-        return CLASS;
+        return TK_CLASS;
       }
       break;
 
@@ -154,7 +156,7 @@ again:
 
       if(str && strncmp(str, "def", 3) == 0) {
         advance(3);
-        return DEF;
+        return TK_DEF;
       }
       break;
 
@@ -163,7 +165,7 @@ again:
 
       if(str && strncmp(str, "end", 3) == 0) {
         advance(3);
-        return END;
+        return TK_END;
       }
       break;
     }
@@ -187,14 +189,14 @@ again:
     advance(p - pos_);
 
     value_.s = &String::internalize(strndup(start, p - start));
-    return ID;
+    return TK_ID;
   }
 
   bool Parser::parse(bool debug) {
     next_c(); // prime the buffer
     engine_ = mariusParserAlloc(malloc);
 
-    ParserState S;
+    ParserState S(*this);
 
     FILE* stream = 0;
 
@@ -209,7 +211,10 @@ again:
 
       mariusParser(engine_, token, value_, &S);
 
-      if(token == 0) break;
+      if(token == TK_EOF) {
+        mariusParser(engine_, 0, value_, &S);
+        break;
+      }
     }
 
     mariusParserFree(engine_, free);

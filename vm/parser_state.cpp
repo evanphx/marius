@@ -169,4 +169,24 @@ namespace marius {
     push(a);
   }
 
+  void ParserState::start_cascade(int a) {
+    cascades_.push_back(a);
+  }
+
+  int ParserState::cascade(String& name) {
+    int t = new_reg();
+
+    push(CALL);
+    push(t);
+    push(string(name.c_str()));
+    push(cascades_.back());
+    push(0);
+
+    return t;
+  }
+
+  void ParserState::end_cascade() {
+    cascades_.pop_back();
+  }
+
 }
