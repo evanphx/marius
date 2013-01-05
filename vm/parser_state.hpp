@@ -5,15 +5,20 @@
 
 #include "code.hpp"
 #include "parser.hpp"
+#include "string_map.hpp"
 
 namespace marius {
   class Parser;
 
   class ParserState {
+    typedef StringMap<int>::type ArgMap;
+
     struct Context {
       std::vector<Instruction> buffer;
       std::vector<String*> strings;
       std::vector<Code*> codes;
+
+      ArgMap args; 
 
       int next_reg;
 
@@ -22,10 +27,22 @@ namespace marius {
       {}
     };
 
+    struct ArgInfo {
+      int start;
+      int count;
+
+      int end() {
+        return start + count;
+      }
+    };
+
     Parser& parser_;
     Context* context_;
+    ArgInfo arg_info_;
+
     std::vector<Context*> stack_;
     std::vector<int> cascades_;
+    std::vector<ArgInfo> arg_infos_;
 
   public:
 
@@ -97,6 +114,7 @@ namespace marius {
 
     void start_def();
     int end_def(String& s);
+    void def_arg(String& s);
 
     int call(int recv, String& id);
     int named(String& s);
@@ -104,6 +122,10 @@ namespace marius {
     void start_cascade(int a);
     int cascade(String& name);
     void end_cascade();
+
+    void start_arg_list();
+    void add_arg(int r);
+    int  call_args(int r, String& id);
 
     Code* to_code();
   };

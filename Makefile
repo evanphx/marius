@@ -27,5 +27,7 @@ marius: $(OBJ)
 
 test: marius
 	test `./marius test/simp.mr` = 7
+	test `./marius test/arg.mr` = 7
+	test `./marius test/cascade.mr` = 7
 
 -include depend

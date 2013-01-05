@@ -100,6 +100,14 @@ again:
         advance(1);
         return TK_RB;
 
+      case '(':
+        advance(1);
+        return TK_LP;
+
+      case ')':
+        advance(1);
+        return TK_RP;
+
       case '\n':
         column_ = 0;
         line_++;

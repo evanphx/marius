@@ -8,7 +8,10 @@
 #define TK_END                             8
 #define TK_ID                              9
 #define TK_DEF                            10
-#define TK_NUM                            11
-#define TK_DOT                            12
-#define TK_CASCADE                        13
-#define TK_RB                             14
+#define TK_COMMA                          11
+#define TK_LP                             12
+#define TK_RP                             13
+#define TK_NUM                            14
+#define TK_DOT                            15
+#define TK_CASCADE                        16
+#define TK_RB                             17

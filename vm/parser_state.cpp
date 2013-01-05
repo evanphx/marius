@@ -27,6 +27,8 @@ namespace marius {
   int ParserState::end_def(String& name) {
     Code* code = to_code();
 
+    delete context_;
+
     context_ = stack_.back();
     stack_.pop_back();
 
@@ -54,6 +56,10 @@ namespace marius {
     return s;
   }
 
+  void ParserState::def_arg(String& name) {
+    context_->args[name] = new_reg();
+  }
+
   int ParserState::call(int recv, String& n) {
     int t = new_reg();
 
@@ -69,9 +75,16 @@ namespace marius {
   int ParserState::named(String& s) {
     int t = new_reg();
 
-    push(LOADN);
-    push(t);
-    push(string(s.c_str()));
+    ArgMap::iterator i = context_->args.find(s);
+    if(i != context_->args.end()) {
+      push(MOVR);
+      push(t);
+      push((*i).second);
+    } else {
+      push(LOADN);
+      push(t);
+      push(string(s.c_str()));
+    }
 
     return t;
   }
@@ -187,6 +200,39 @@ namespace marius {
 
   void ParserState::end_cascade() {
     cascades_.pop_back();
+  }
+
+  void ParserState::start_arg_list() {
+    arg_infos_.push_back(arg_info_);
+    arg_info_.start = -1;
+    arg_info_.count = 0;
+  }
+
+  void ParserState::add_arg(int r) {
+    if(arg_info_.start == -1) {
+      arg_info_.start = r;
+      arg_info_.count = 1;
+    } else {
+      assert(r == arg_info_.end());
+      arg_info_.count++;
+    }
+  }
+
+  int ParserState::call_args(int r, String& id) {
+    if(arg_info_.count > 0) {
+      assert(r + 1 == arg_info_.start);
+    }
+
+    push(CALL);
+    push(r);
+    push(string(id.c_str()));
+    push(r);
+    push(arg_info_.count);
+
+    arg_info_ = arg_infos_.back();
+    arg_infos_.pop_back();
+
+    return r;
   }
 
 }
