@@ -19,26 +19,29 @@
   std::cout << "Syntax error!" << std::endl;  
 }
 
-program ::= seq(A). { S->ret(A.i); }
+program ::= opt_fin seq(A). { S->ret(A.i); }
 
-opt_term ::= .
-opt_term ::= FIN.
+opt_fin ::= .
+opt_fin ::= opt_fin FIN.
 
-seq(A) ::= seq FIN expr(B). { A.i = B.i; }
+fin ::= fin FIN.
+fin ::= FIN.
+
+seq(A) ::= seq fin expr(B). { A.i = B.i; }
 seq(A) ::= expr(B). { A.i = B.i; }
 
 class_start ::= CLASS. { S->start_class(); } 
-class_body(A) ::= expr(B) opt_term END. { A.i = B.i; }
+class_body(A) ::= expr(B) opt_fin END. { A.i = B.i; }
 
-expr(A) ::= class_start ID(B) FIN class_body(C). { 
+expr(A) ::= class_start ID(B) fin class_body(C). {
               S->ret(C.i);
               A.i = S->new_class(*B.s);
             }
 
 def_start ::= DEF. { S->start_def(); }
-def_body(A) ::= expr(B) opt_term END. { A.i = B.i; }
+def_body(A) ::= expr(B) opt_fin END. { A.i = B.i; }
 
-expr(A) ::= def_start ID(B) FIN def_body(C). {
+expr(A) ::= def_start ID(B) fin def_body(C). {
               S->ret(C.i);
               A.i = S->end_def(*B.s);
             }

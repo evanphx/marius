@@ -98,10 +98,16 @@ again:
         pos_++;
         return DOT;
 
-      case ';':
       case '\n':
+      case ';':
         pos_++;
         return FIN;
+
+      case '#':
+        while(next_c() != '\n') pos_++;
+        pos_++;
+
+        goto again;
 
       default:
         {

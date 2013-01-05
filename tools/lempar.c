@@ -308,6 +308,7 @@ static void yy_destructor(
 %%
     default:  break;   /* If no destructor action specified: do nothing */
   }
+  ParseARG_STORE; /* Quiet a warning about the arg not being used */
 }
 
 /*
