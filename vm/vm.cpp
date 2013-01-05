@@ -6,9 +6,13 @@
 #include "state.hpp"
 #include "disassembler.hpp"
 
+#define TRACE
+
 namespace marius {
 
-  VM::VM() {
+  VM::VM(bool debug)
+    : debug_(debug)
+  {
     stack_ = new OOP[cInitialStack];
   }
 
@@ -26,7 +30,7 @@ namespace marius {
 
     while(seq < end) {
 #ifdef TRACE
-      dis.print_one(seq);
+      if(debug_) dis.print_one(seq);
 #endif
 
       switch(*seq++) {

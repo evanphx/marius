@@ -25,4 +25,7 @@ vm/parser.o: vm/parser.c.inc
 marius: $(OBJ)
 	c++ -ggdb -o marius $(OBJ)
 
+test: marius
+	test `./marius test/simp.mr` = 7
+
 -include depend

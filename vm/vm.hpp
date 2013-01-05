@@ -13,9 +13,10 @@ namespace marius {
 
   class VM {
     OOP* stack_;
+    bool debug_;
 
   public:
-    VM();
+    VM(bool debug=false);
 
     OOP run(State& S, Code& code);
     OOP run(State& S, Code& code, OOP* fp);

@@ -1,3 +1,8 @@
+
+extern "C" {
+  #include <string.h>
+}
+
 #include "parser.hpp"
 
 #include "parser_tokens.h"
@@ -11,6 +16,52 @@ union Token {
 
 namespace marius {
 
+  char Parser::next_c() {
+    const char* s = next_str(1);
+    if(!s) return 0;
+    return *s;
+  }
+
+  const char* Parser::next_str(int count) {
+    int left = end_ - pos_;
+
+    // If the buffer contains enough data to fulfill the request,
+    // go ahead and give it out directly.
+
+    if(left > count) {
+      return pos_;
+    }
+
+    if(file_) {
+      // Ok, we need more data and there is a file source registered.
+
+      if(!buffer_) {
+        size_ = 1024;
+        buffer_ = new char[size_];
+        end_ = buffer_ + size_;
+      } else {
+        // shift the unused data up to the front of the buffer.
+        memmove((void*)buffer_, pos_, left);
+      }
+
+      pos_ = buffer_;
+
+      // Read more data from the file into the end of the buffer.
+      int r = fread((void*)(pos_ + left), 1, size_ - left, file_);
+      if(r == 0) return 0;
+
+      // Pin the end to where the actual filled data ends
+      end_ = pos_ + left + r;
+
+      // We still couldn't read in enough data, dang.
+      if(end_ - pos_ < count) return 0;
+
+      return pos_;
+    }
+
+    return 0;
+  }
+
   int Parser::next_token() {
     if(pos_ >= end_) return 0;
 
@@ -18,7 +69,9 @@ namespace marius {
 
 again:
 
-    char c = *pos_;
+    char c = next_c();
+
+    if(!c) return 0;
 
     switch(c) {
       case '0': case '1': case '2': case '3': case '4': case '5':
@@ -33,7 +86,7 @@ again:
           return NUM;
         }
       case ' ':
-        while(*pos_ == ' ') pos_++;
+        while(next_c() == ' ') pos_++;
 
         goto again;
 
@@ -69,23 +122,31 @@ again:
   }
 
   int Parser::keyword_match() {
+    const char* str;
+
     switch(pos_[0]) {
     case 'c':
-      if(strncmp(pos_, "class", min(end_ - pos_, 5)) == 0) {
+      str = next_str(5);
+
+      if(str && strncmp(str, "class", 5) == 0) {
         pos_ += 5;
         return CLASS;
       }
       break;
 
     case 'd':
-      if(strncmp(pos_, "def", min(end_ - pos_, 3)) == 0) {
+      str = next_str(3);
+
+      if(str && strncmp(str, "def", 3) == 0) {
         pos_ += 3;
         return DEF;
       }
       break;
 
     case 'e':
-      if(strncmp(pos_, "end", min(end_ - pos_, 3)) == 0) {
+      str = next_str(3);
+
+      if(str && strncmp(str, "end", 3) == 0) {
         pos_ += 3;
         return END;
       }
@@ -114,13 +175,18 @@ again:
     return ID;
   }
 
-  bool Parser::parse() {
+  bool Parser::parse(bool debug) {
+    next_c(); // prime the buffer
     engine_ = mariusParserAlloc(malloc);
 
     ParserState S;
 
-    FILE* debug = fopen("debug.out", "wb");
-    mariusParserTrace(debug, (char*)">");
+    FILE* stream = 0;
+
+    if(debug) {
+      stream = fopen("debug.out", "wb");
+      mariusParserTrace(stream, (char*)">");
+    }
 
     for(;;) {
       int token = next_token();
@@ -133,7 +199,9 @@ again:
 
     mariusParserFree(engine_, free);
 
-    code_ = new Code(S.sequence(), S.sequence_size(), *S.strings(), *S.codes());
+    if(debug) fclose(stream);
+
+    code_ = S.to_code();
 
     return true;
   }

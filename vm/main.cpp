@@ -12,18 +12,48 @@
 using namespace marius;
 
 int main(int argc, char** argv) {
-  VM vm;
+
+  bool debug = false;
+  char** opt = argv + 1;
+
+  while(*opt) {
+    if(**opt == '-') {
+      switch(*opt[1]) {
+      case 'd':
+        debug = false;
+        break;
+      default:
+        printf("Unknown option: %s\n", *opt);
+        return 1;
+      }
+    } else {
+      break;
+    }
+  }
+
+  if(!*opt) {
+    printf("Require a filename\n");
+    return 1;
+  }
+
+  VM vm(debug);
   Environment env;
 
   State state(vm, env);
 
   env.init_ontology();
 
-  // Parser parser("3 + 4", 5);
-  Parser parser("class Blah\ndef foo\n3+4\nend\nend\nBlah.new.foo");
+  FILE* file = fopen(*opt, "r");
+  if(!file) {
+    printf("Unable to open: %s\n", *opt);
+    return 1;
+  }
+
+  Parser parser(file);
+
   parser.parse();
 
-  parser.code()->print();
+  if(debug) parser.code()->print();
 
   OOP ret = vm.run(state, *parser.code());
 

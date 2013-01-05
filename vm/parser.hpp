@@ -16,7 +16,11 @@ namespace marius {
     int size_;
     const char* end_;
 
+    int left_;
+
     const char* pos_;
+
+    FILE* file_;
 
     ParserToken value_;
 
@@ -29,20 +33,38 @@ namespace marius {
       : buffer_(buf)
       , size_(sz == -1 ? strlen(buf) : sz)
       , end_(buf + size_)
+      , left_(sz)
       , pos_(buf)
+      , file_(0)
       , engine_(0)
       , code_(0)
     {
       value_.i = 0;
     }
 
-    bool parse();
+    Parser(FILE* file)
+      : buffer_(0)
+      , size_(0)
+      , end_(0)
+      , left_(0)
+      , pos_(0)
+      , file_(file)
+      , engine_(0)
+      , code_(0)
+    {
+      value_.i = 0;
+    }
+
+    bool parse(bool debug=false);
 
     Code* code() {
       return code_;
     }
 
   private:
+    char next_c();
+    const char* next_str(int count);
+
     int next_token();
     int id_match();
     int bigid_match();
