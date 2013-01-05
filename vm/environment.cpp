@@ -12,7 +12,7 @@ namespace marius {
     Environment* env = this;
 
     while(env) {
-      std::map<String*, OOP>::iterator i = binding_.find(&name);
+      Bindings::iterator i = binding_.find(name);
 
       if(i != binding_.end()) return (*i).second;
       env = env->parent_;
@@ -24,11 +24,11 @@ namespace marius {
   Class* Environment::new_class(const char* name) {
     String& s = String::internalize(name);
 
-    Class* obj = binding_[&String::internalize("Class")].as_class();
+    Class* obj = binding_[String::internalize("Class")].as_class();
 
     Class* cls = new Class(obj, s);
 
-    binding_[&s] = OOP(cls);
+    binding_[s] = OOP(cls);
 
     return cls;
   }
@@ -37,7 +37,7 @@ namespace marius {
     for(Bindings::iterator i = binding_.begin();
         i != binding_.end();
         ++i) {
-      std::cout << (*i).first->c_str() << " => ";
+      std::cout << (*i).first.val().c_str() << " => ";
       (*i).second.print();
     }
   }
@@ -85,11 +85,11 @@ namespace marius {
     String& cn = String::internalize("Class");
 
     Class* m = new Class(0, mn);
-    binding_[&mn] = m;
+    binding_[mn] = m;
 
     Class* c = new Class(m, cn);
     m->klass_ = c;
-    binding_[&cn] = c;
+    binding_[cn] = c;
 
     m->add_method("new", class_new);
 

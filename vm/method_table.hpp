@@ -3,20 +3,23 @@
 
 #include <map>
 
+#include "string_map.hpp"
+
 namespace marius {
   class String;
   class Method;
 
   class MethodTable {
-    std::map<String*, Method*> table_;
+    typedef StringMap<Method*>::type Table;
+    Table table_;
 
   public:
     Method* lookup(String& str) {
-      return table_[&str];
+      return table_[str];
     }
 
     void add(String& name, Method* m) {
-      table_[&name] = m;
+      table_[name] = m;
     }
 
     void print();

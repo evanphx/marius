@@ -2,7 +2,9 @@
 #define ENVIRONMENT_HPP
 
 #include <map>
+
 #include "oop.hpp"
+#include "string_map.hpp"
 
 namespace marius {
   class String;
@@ -11,7 +13,7 @@ namespace marius {
   class Environment {
     Environment* parent_;
 
-    typedef std::map<String*, OOP> Bindings;
+    typedef StringMap<OOP>::type Bindings;
     Bindings binding_;
 
   public:

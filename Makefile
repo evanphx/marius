@@ -9,6 +9,9 @@ dep:
 	: > depend
 	for i in $(SRC); do $(CC) $(CXXFLAGS) -MM -MT $${i%.cpp}.o $$i >> depend; done
 
+clean:
+	rm $(OBJ)
+
 tools/lemon:
 	gcc -o tools/lemon tools/lemon.c
 
@@ -20,6 +23,6 @@ vm/parser.cpp: vm/parser.c.inc
 vm/parser.o: vm/parser.c.inc
 
 marius: $(OBJ)
-	c++ -ggdb3 -o marius $(OBJ)
+	c++ -ggdb -o marius $(OBJ)
 
 -include depend
