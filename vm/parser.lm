@@ -19,7 +19,7 @@
   std::cout << "Syntax error!" << std::endl;  
 }
 
-program ::= opt_fin seq(A). { S->ret(A.i); }
+program ::= opt_fin seq(A) fin. { S->ret(A.i); }
 
 opt_fin ::= .
 opt_fin ::= opt_fin FIN.

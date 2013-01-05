@@ -81,31 +81,39 @@ again:
           value_.i = strtol(pos_, &end, 0);
           if(end == pos_) return -1;
 
-          pos_ = end;
+          advance(end - pos_);
 
           return NUM;
         }
       case ' ':
-        while(next_c() == ' ') pos_++;
+        while(next_c() == ' ') advance(1);
 
         goto again;
 
       case '+':
-        pos_++;
+        advance(1);
         return PLUS;
 
       case '.':
-        pos_++;
+        advance(1);
         return DOT;
 
       case '\n':
+        column_ = 0;
+        line_++;
+
+        // fallthrough
       case ';':
-        pos_++;
+        advance(1);
         return FIN;
 
       case '#':
-        while(next_c() != '\n') pos_++;
-        pos_++;
+        while(next_c() != '\n') advance(1);
+
+        column_ = 0;
+        line_++;
+
+        advance(1);
 
         goto again;
 
@@ -115,7 +123,8 @@ again:
           if(t != -1) return t;
 
           if(isalpha(c)) return id_match();
-          printf("Unknown token: '%c'\n", c);
+          printf("Unknown token at line %d, column %d: '%c'\n",
+                 line_, column_, c);
         }
     }
 
@@ -135,7 +144,7 @@ again:
       str = next_str(5);
 
       if(str && strncmp(str, "class", 5) == 0) {
-        pos_ += 5;
+        advance(5);
         return CLASS;
       }
       break;
@@ -144,7 +153,7 @@ again:
       str = next_str(3);
 
       if(str && strncmp(str, "def", 3) == 0) {
-        pos_ += 3;
+        advance(3);
         return DEF;
       }
       break;
@@ -153,7 +162,7 @@ again:
       str = next_str(3);
 
       if(str && strncmp(str, "end", 3) == 0) {
-        pos_ += 3;
+        advance(3);
         return END;
       }
       break;
@@ -175,7 +184,7 @@ again:
       p++;
     }
 
-    pos_ = p;
+    advance(p - pos_);
 
     value_.s = &String::internalize(strndup(start, p - start));
     return ID;

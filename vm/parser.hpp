@@ -25,6 +25,8 @@ namespace marius {
     ParserToken value_;
 
     void* engine_;
+    int column_;
+    int line_;
 
     Code* code_;
 
@@ -37,6 +39,8 @@ namespace marius {
       , pos_(buf)
       , file_(0)
       , engine_(0)
+      , column_(1)
+      , line_(1)
       , code_(0)
     {
       value_.i = 0;
@@ -50,6 +54,8 @@ namespace marius {
       , pos_(0)
       , file_(file)
       , engine_(0)
+      , column_(1)
+      , line_(1)
       , code_(0)
     {
       value_.i = 0;
@@ -59,6 +65,11 @@ namespace marius {
 
     Code* code() {
       return code_;
+    }
+
+    void advance(int count) {
+      pos_ += count;
+      column_ += count;
     }
 
   private:
