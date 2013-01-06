@@ -6,20 +6,17 @@
 
 namespace marius {
 
-  int Disassembler::print_one(Instruction* seq) {
-    static const char* names[] = {
-      "MOVI8",
-      "MOVI32",
-      "MOVR",
-      "CALL",
-      "RET",
-      "LOADN",
-      "LOADS",
-      "LOADC",
-      "SELF"
-    };
+  void Disassembler::print_keywords(ArgMap& kw, int r) {
+    for(ArgMap::iterator i = kw.begin();
+        i != kw.end();
+        ++i) {
+      printf("%s=R(%d) ", (*i).first.ptr()->c_str(), r++);
+    }
+  }
 
-    printf("%6s | ", names[seq[0]]);
+
+  int Disassembler::print_one(Instruction* seq) {
+    printf("%8s | ", InstructionNames[seq[0]]);
 
     switch(seq[0]) {
     case MOVR:
@@ -60,6 +57,15 @@ namespace marius {
                 seq[3] + 1, seq[3] + seq[4]);
       }
       return 5;
+
+    case CALL_KW:
+      printf("R(%d) := R(%d).%s ",
+              seq[1], seq[3],
+              code_.string(seq[2]).c_str());
+
+      print_keywords(code_.keywords(seq[5]), seq[3]+1);
+      printf("\n");
+      return 6;
 
     case LOADS:
       printf("R(%d) := \"%s\"\n",

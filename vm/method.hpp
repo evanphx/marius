@@ -17,6 +17,10 @@ namespace marius {
     Method(SimpleFunc func);
     Method(Code& code);
 
+    Code* code() {
+      return code_;
+    }
+
     OOP run(State& S, OOP recv, int argc, OOP* fp);
   };
 }

@@ -96,6 +96,10 @@ again:
 
         return TK_DOT;
 
+      case ',':
+        advance(1);
+        return TK_COMMA;
+
       case '}':
         advance(1);
         return TK_RB;
@@ -107,6 +111,10 @@ again:
       case ')':
         advance(1);
         return TK_RP;
+
+      case '=':
+        advance(1);
+        return TK_EQUAL;
 
       case '\n':
         column_ = 0;

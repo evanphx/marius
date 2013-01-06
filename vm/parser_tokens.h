@@ -13,5 +13,6 @@
 #define TK_RP                             13
 #define TK_NUM                            14
 #define TK_DOT                            15
-#define TK_CASCADE                        16
-#define TK_RB                             17
+#define TK_EQUAL                          16
+#define TK_CASCADE                        17
+#define TK_RB                             18

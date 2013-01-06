@@ -78,6 +78,17 @@ arg_list ::= arg_list_start arg_list_elems.
 
 send(A) ::= send(B) DOT ID(C) arg_list RP. { A.i = S->call_args(B.i, *C.s); }
 
+kw_arg ::= ID(A) EQUAL send(B). { S->add_kw_arg(*A.s, B.i); }
+
+kw_arg_list_elems ::= kw_arg_list_elems COMMA kw_arg.
+kw_arg_list_elems ::= kw_arg.
+
+kw_arg_list ::= arg_list_start kw_arg_list_elems.
+
+send(A) ::= send(B) DOT ID(C) kw_arg_list RP. {
+              A.i = S->call_kw_args(B.i, *C.s);
+            }
+
 message_seq(A) ::= message_seq(B) fin ID(C). {
                      S->recycle(B.i);
                      A.i = S->cascade(*C.s);

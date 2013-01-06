@@ -15,7 +15,8 @@ namespace marius {
   }
 
   Code* ParserState::to_code() {
-    return new Code(sequence(), sequence_size(), *strings(), *codes());
+    return new Code(sequence(), sequence_size(), *strings(), *codes(),
+                    context_->args, context_->keywords);
   }
 
   void ParserState::start_def() {
@@ -218,6 +219,18 @@ namespace marius {
     }
   }
 
+  void ParserState::add_kw_arg(String& name, int r) {
+    if(arg_info_.start == -1) {
+      arg_info_.start = r;
+      arg_info_.count = 1;
+      arg_info_.keywords[name] = 0;
+    } else {
+      assert(r == arg_info_.end());
+      arg_info_.keywords[name] = arg_info_.count;
+      arg_info_.count++;
+    }
+  }
+
   int ParserState::call_args(int r, String& id) {
     if(arg_info_.count > 0) {
       assert(r + 1 == arg_info_.start);
@@ -231,6 +244,22 @@ namespace marius {
 
     arg_info_ = arg_infos_.back();
     arg_infos_.pop_back();
+
+    return r;
+  }
+
+  int ParserState::call_kw_args(int r, String& id) {
+    assert(arg_info_.count > 0);
+
+    int i = context_->keywords.size();
+    context_->keywords.push_back(arg_info_.keywords);
+
+    push(CALL_KW);
+    push(r);
+    push(string(id.c_str()));
+    push(r);
+    push(arg_info_.count);
+    push(i);
 
     return r;
   }

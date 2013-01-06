@@ -53,6 +53,15 @@ namespace marius {
 
         seq += 4;
         break;
+      case CALL_KW:
+        fp[seq[0]] = run_kw_method(S,
+                                   fp[seq[2]], code.string(seq[1]),
+                                   seq[3],     fp + (seq[2] + 1),
+                                   code.keywords(seq[4]));
+
+        seq += 5;
+        break;
+
       case LOADN:
         fp[seq[0]] = load_named(S, code.string(seq[1]));
 
@@ -94,6 +103,47 @@ namespace marius {
       printf("NO METHOD :%s\n", name.c_str());
       return OOP::nil();
     }
+
+    return meth->run(S, recv, argc, fp);
+  }
+
+  void VM::reorg_args(OOP* fp, Method* meth, ArgMap& keywords) {
+    Code* code = meth->code();
+    assert(code);
+
+    ArgMap& args = code->args();
+
+    OOP temp[10];
+
+    for(ArgMap::iterator i = args.begin();
+        i != args.end();
+        ++i) {
+      int req = (*i).second;
+      int is   = keywords[(*i).first];
+
+      printf("arg %s is: %d, req: %d\n", (*i).first.val().c_str(), is, req);
+
+      temp[req] = fp[is];
+    }
+
+    for(int i = 0; i < args.size(); i++) {
+      fp[i] = temp[i];
+    }
+  }
+
+  OOP VM::run_kw_method(State& S,
+                        OOP recv, String& name, int argc, OOP* fp,
+                        ArgMap& keywords)
+  {
+    Class*  cls  = recv.klass();
+    Method* meth = cls->lookup(name);
+
+    if(!meth) {
+      printf("NO METHOD :%s\n", name.c_str());
+      return OOP::nil();
+    }
+
+    reorg_args(fp, meth, keywords);
 
     return meth->run(S, recv, argc, fp);
   }
