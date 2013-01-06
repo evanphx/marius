@@ -121,8 +121,6 @@ namespace marius {
       int req = (*i).second;
       int is   = keywords[(*i).first];
 
-      printf("arg %s is: %d, req: %d\n", (*i).first.val().c_str(), is, req);
-
       temp[req] = fp[is];
     }
 
