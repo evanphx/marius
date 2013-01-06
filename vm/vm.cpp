@@ -113,7 +113,7 @@ namespace marius {
 
     ArgMap& args = code->args();
 
-    OOP temp[10];
+    OOP* temp = fp + args.size();
 
     for(ArgMap::iterator i = args.begin();
         i != args.end();
