@@ -87,6 +87,28 @@ namespace marius {
 
       case RET:
         return fp[*seq++];
+
+      case GOTO:
+        seq += (seq[0] + 1);
+        break;
+
+      case GOTO_BACK:
+        seq -= (seq[0] + 1);
+        break;
+
+      case GOTO_IF_TRUE:
+        if(fp[seq[0]].true_condition_p()) {
+          seq += (seq[0] + 1);
+        } else {
+          seq += 1;
+        }
+
+      case GOTO_IF_FALSE:
+        if(!fp[seq[0]].true_condition_p()) {
+          seq += (seq[0] + 1);
+        } else {
+          seq += 1;
+        }
       }
     }
 

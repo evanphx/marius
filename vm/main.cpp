@@ -5,6 +5,7 @@
 #include "class.hpp"
 #include "parser.hpp"
 #include "state.hpp"
+#include "compiler.hpp"
 
 #include <vector>
 #include <iostream>
@@ -52,13 +53,11 @@ int main(int argc, char** argv) {
     return 1;
   }
 
-  Parser parser(file);
+  Compiler compiler(debug);
 
-  if(!parser.parse()) return 1;
+  if(!compiler.compile(file)) return 1;
 
-  if(debug) parser.code()->print();
-
-  OOP ret = vm.run(state, *parser.code());
+  OOP ret = vm.run(state, *compiler.code());
 
   ret.print();
   return 0;

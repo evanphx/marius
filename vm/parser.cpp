@@ -241,7 +241,7 @@ again:
 
     if(S.syntax_error_p()) return false;
 
-    code_ = S.to_code();
+    top_ = S.top();
 
     return true;
   }

@@ -8,6 +8,8 @@
 #include "string_map.hpp"
 #include "string_vector.hpp"
 
+#include "ast.hpp"
+
 namespace marius {
   class Parser;
 
@@ -28,19 +30,8 @@ namespace marius {
     };
 
     struct ArgInfo {
-      int start;
-      int count;
-
+      ast::Nodes nodes;
       ArgMap keywords;
-
-      ArgInfo()
-        : start(-1)
-        , count(0)
-      {}
-
-      int end() {
-        return start + count;
-      }
     };
 
     Parser& parser_;
@@ -48,10 +39,12 @@ namespace marius {
     ArgInfo arg_info_;
 
     std::vector<Context*> stack_;
-    std::vector<int> cascades_;
+    std::vector<ast::Cascade*> cascades_;
     std::vector<ArgInfo> arg_infos_;
 
     bool syntax_error_;
+
+    ast::Node* top_;
 
   public:
 
@@ -59,6 +52,7 @@ namespace marius {
       : parser_(parse)
       , context_(new Context)
       , syntax_error_(false)
+      , top_(0)
     {}
 
     bool syntax_error_p() {
@@ -67,6 +61,14 @@ namespace marius {
 
     void set_syntax_error() {
       syntax_error_ = true;
+    }
+
+    ast::Node* top() {
+      return top_;
+    }
+
+    void set_top(ast::Node* n) {
+      top_ = n;
     }
 
     Instruction* sequence();
@@ -116,39 +118,42 @@ namespace marius {
     }
 
     void start_def(String& s);
-    Code& end_def();
 
     int bin_op(const char* op, int a, int b);
     int minus(int a, int b);
     int plus(int a, int b);
     int times(int a, int b);
     int divide(int a, int b);
-    int number(int a);
 
-    void ret(int a);
+    ast::Node* ret(ast::Node* n);
+
+    ast::Node* seq(ast::Node* parent, ast::Node* child);
+    ast::Node* ast_class(String& name, ast::Node* body);
 
     void start_class();
     int new_class(String& s);
 
     void start_def();
-    int end_def(String& s);
     void def_arg(String& s);
+    ast::Node* ast_def(String& name, ast::Node* b);
 
-    int call(int recv, String& id);
+    ast::Node* call(ast::Node* recv, String& id);
 
-    int named(String& s);
-
-    void start_cascade(int a);
-    int cascade(String& name);
-    void end_cascade();
+    void start_cascade(ast::Node* n);
+    void cascade(String& name);
+    ast::Node* end_cascade();
 
     void start_arg_list();
-    void add_arg(int r);
-    void add_kw_arg(String& id, int r);
-    int  call_args(int r, String& id);
-    int  call_kw_args(int r, String& id);
+    void add_arg(ast::Node* n);
+    void add_kw_arg(String& id, ast::Node* n);
+    ast::Node* call_args(ast::Node* n, String& id);
+    ast::Node* call_kw_args(ast::Node* n, String& id);
 
-    Code* to_code();
+    // AST
+    ast::Node* named(String& s);
+    ast::Node* number(int a);
+    ast::Call* ast_call(String& name, ast::Node* r, ast::Nodes args);
+    ast::Call* ast_binop(const char* s, ast::Node* a, ast::Node* b);
   };
 }
 

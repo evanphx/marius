@@ -16,7 +16,8 @@ namespace marius {
 
   class OOP {
     enum Type {
-      eNil, eClass, eInteger, eString, eCode, eUser
+      eNil, eClass, eInteger, eString, eCode, eUser,
+      eTrue
     };
 
     Type type_;
@@ -93,6 +94,10 @@ namespace marius {
     MemoryObject* as_obj() {
       assert(type_ == eUser);
       return obj_;
+    }
+
+    bool true_condition_p() {
+      return type_ == eTrue;
     }
 
     Class* klass();

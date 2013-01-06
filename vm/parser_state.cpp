@@ -14,9 +14,12 @@ namespace marius {
     return seq;
   }
 
-  Code* ParserState::to_code() {
-    return new Code(sequence(), sequence_size(), *strings(), *codes(),
-                    context_->args, context_->keywords);
+  ast::Node* ParserState::seq(ast::Node* l, ast::Node* r) {
+    return new ast::Seq(l, r);
+  }
+
+  ast::Node* ParserState::ast_class(String& name, ast::Node* body) {
+    return new ast::Class(name, body);
   }
 
   void ParserState::start_def() {
@@ -25,69 +28,26 @@ namespace marius {
     context_ = new Context();
   }
 
-  int ParserState::end_def(String& name) {
-    Code* code = to_code();
-
+  ast::Node* ParserState::ast_def(String& name, ast::Node* b) {
+    ast::Node* n = new ast::Def(name, b, context_->args);
     delete context_;
 
     context_ = stack_.back();
     stack_.pop_back();
 
-    int s = new_reg();
-    push(SELF);
-    push(s);
-
-    push(LOADS);
-    push(s+1);
-    push(string(name.c_str()));
-
-    int c = context_->codes.size();
-    context_->codes.push_back(code);
-
-    push(LOADC);
-    push(s+2);
-    push(c);
-
-    push(CALL);
-    push(s);
-    push(string("add_method"));
-    push(s);
-    push(2);
-
-    return s;
+    return n;
   }
 
   void ParserState::def_arg(String& name) {
-    context_->args[name] = new_reg();
+    context_->args[name] = context_->args.size();
   }
 
-  int ParserState::call(int recv, String& n) {
-    int t = new_reg();
-
-    push(CALL);
-    push(t);
-    push(string(n.c_str()));
-    push(recv);
-    push(0);
-
-    return t;
+  ast::Node* ParserState::call(ast::Node* recv, String& n) {
+    return new ast::Call(n, recv, ast::Nodes());
   }
 
-  int ParserState::named(String& s) {
-    int t = new_reg();
-
-    ArgMap::iterator i = context_->args.find(s);
-    if(i != context_->args.end()) {
-      push(MOVR);
-      push(t);
-      push((*i).second);
-    } else {
-      push(LOADN);
-      push(t);
-      push(string(s.c_str()));
-    }
-
-    return t;
+  ast::Node* ParserState::named(String& s) {
+    return new ast::Named(s);
   }
 
   void ParserState::start_class() {
@@ -96,111 +56,38 @@ namespace marius {
     context_ = new Context();
   }
 
-  int ParserState::new_class(String& s) {
-    Code* code = to_code();
-
-    context_ = stack_.back();
-    stack_.pop_back();
-
-    int c = new_reg();
-    push(LOADN);
-    push(c);
-    push(string("Class"));
-
-    push(LOADS);
-    push(c+1);
-    push(string(s.c_str()));
-
-    push(CALL);
-    push(c);
-    push(string("new"));
-    push(c);
-    push(1);
-
-    int ci = context_->codes.size();
-    context_->codes.push_back(code);
-
-    push(MOVR);
-    push(c+1);
-    push(c);
-
-    push(LOADC);
-    push(c);
-    push(ci);
-
-    push(CALL);
-    push(c);
-    push(string("eval"));
-    push(c);
-    push(1);
-
-    return c;
-  }
-  int ParserState::bin_op(const char* op, int a, int b) {
-    assert(a + 1 == b);
-
-    recycle(a, b);
-
-    int target = new_reg();
-
-    push(CALL);
-    push(target);
-    push(string(op));
-    push(a);
-    push(1);
-
-    return target;
+  ast::Call* ParserState::ast_call(String& name, ast::Node* r, ast::Nodes args) {
+    return new ast::Call(name, r, args);
   }
 
-  int ParserState::minus(int a, int b) {
-    return bin_op("-", a, b);
+  ast::Call* ParserState::ast_binop(const char* s, ast::Node* a, ast::Node* b) {
+    ast::Nodes nodes;
+    nodes.push_back(b);
+
+    return new ast::Call(String::internalize(s), a, nodes);
   }
 
-  int ParserState::plus(int a, int b) {
-    return bin_op("+", a, b);
+  ast::Node* ParserState::number(int a) {
+    return new ast::Number(a);
   }
 
-  int ParserState::times(int a, int b) {
-    return bin_op("*", a, b);
+  ast::Node* ParserState::ret(ast::Node* n) {
+    return new ast::Return(n);
   }
 
-  int ParserState::divide(int a, int b) {
-    return bin_op("/", a, b);
+  void ParserState::start_cascade(ast::Node* recv) {
+    cascades_.push_back(new ast::Cascade(recv));
   }
 
-  int ParserState::number(int a) {
-    int target = new_reg();
-
-    push(MOVI8);
-    push(target);
-    push(a);
-
-    return target;
+  void ParserState::cascade(String& name) {
+    cascades_.back()->push_message(new ast::CascadeCall(name));
   }
 
-  void ParserState::ret(int a) {
-    push(RET);
-    push(a);
-  }
-
-  void ParserState::start_cascade(int a) {
-    cascades_.push_back(a);
-  }
-
-  int ParserState::cascade(String& name) {
-    int t = new_reg();
-
-    push(CALL);
-    push(t);
-    push(string(name.c_str()));
-    push(cascades_.back());
-    push(0);
-
-    return t;
-  }
-
-  void ParserState::end_cascade() {
+  ast::Node* ParserState::end_cascade() {
+    ast::Node* n = cascades_.back();
     cascades_.pop_back();
+
+    return n;
   }
 
   void ParserState::start_arg_list() {
@@ -209,75 +96,57 @@ namespace marius {
     arg_info_ = ArgInfo();
   }
 
-  void ParserState::add_arg(int r) {
-    if(arg_info_.start == -1) {
-      arg_info_.start = r;
-      arg_info_.count = 1;
-    } else {
-      assert(r == arg_info_.end());
-      arg_info_.count++;
-    }
+  void ParserState::add_arg(ast::Node* a) {
+    arg_info_.nodes.push_back(a);
   }
 
-  void ParserState::add_kw_arg(String& name, int r) {
-    if(arg_info_.start == -1) {
-      arg_info_.start = r;
-      arg_info_.count = 1;
-      arg_info_.keywords[name] = 0;
-    } else {
-      assert(r == arg_info_.end());
-      arg_info_.keywords[name] = arg_info_.count;
-      arg_info_.count++;
-    }
+  void ParserState::add_kw_arg(String& name, ast::Node* a) {
+    arg_info_.keywords[name] = arg_info_.nodes.size();
+    arg_info_.nodes.push_back(a);
   }
 
-  int ParserState::call_args(int r, String& id) {
-    if(arg_info_.count > 0) {
-      assert(r + 1 == arg_info_.start);
-    }
+  ast::Node* ParserState::call_args(ast::Node* recv, String& id) {
+    ast::Node* n = 0;
 
     if(arg_info_.keywords.size() == 0) {
-      push(CALL);
-      push(r);
-      push(string(id.c_str()));
-      push(r);
-      push(arg_info_.count);
+      n = new ast::Call(id, recv, arg_info_.nodes);
     } else {
-      push(CALL_KW);
-      push(r);
-      push(string(id.c_str()));
-      push(r);
-      push(arg_info_.count);
-
-      int i = context_->keywords.size();
-      context_->keywords.push_back(arg_info_.keywords);
-
-      push(i);
+      n = new ast::CallWithKeywords(id, recv, arg_info_.nodes,
+                                    arg_info_.keywords);
     }
 
     arg_info_ = arg_infos_.back();
     arg_infos_.pop_back();
 
-    return r;
+    assert(n);
+
+    return n;
   }
 
-  int ParserState::call_kw_args(int r, String& id) {
-    assert(arg_info_.count > 0);
-
-    int i = context_->keywords.size();
-    context_->keywords.push_back(arg_info_.keywords);
-
-    push(CALL_KW);
-    push(r);
-    push(string(id.c_str()));
-    push(r);
-    push(arg_info_.count);
-    push(i);
+  ast::Node* ParserState::call_kw_args(ast::Node* r, String& id) {
+    ast::Node* n = new ast::CallWithKeywords(id, r, arg_info_.nodes,
+                                arg_info_.keywords);
 
     arg_info_ = arg_infos_.back();
     arg_infos_.pop_back();
 
-    return r;
+    return n;
   }
+
+  /*
+  int ParserState::start_cond(int c) {
+    push(GOTO_IF_FALSE);
+    push(c);
+
+    int l = buffer_.size();
+    push(0);
+
+    return l;
+  }
+
+  int ParserState::end_cond(int b, int l) {
+
+  }
+  */
 
 }

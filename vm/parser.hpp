@@ -6,9 +6,14 @@
 namespace marius {
   class String;
 
+  namespace ast {
+    class Node;
+  }
+
   union ParserToken {
-    int i;
+    long i;
     String* s;
+    ast::Node* a;
   };
 
   class Parser {
@@ -27,6 +32,8 @@ namespace marius {
     void* engine_;
     int column_;
     int line_;
+
+    ast::Node* top_;
 
     Code* code_;
 
@@ -63,6 +70,10 @@ namespace marius {
 
     Code* code() {
       return code_;
+    }
+
+    ast::Node* top() {
+      return top_;
     }
 
     void advance(int count) {

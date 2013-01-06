@@ -10,7 +10,7 @@ namespace marius {
     for(ArgMap::iterator i = kw.begin();
         i != kw.end();
         ++i) {
-      printf("%s=R(%d) ", (*i).first.ptr()->c_str(), r++);
+      printf("%s=R(%d) ", (*i).first.ptr()->c_str(), r + i->second);
     }
   }
 

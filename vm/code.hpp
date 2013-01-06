@@ -21,10 +21,14 @@ namespace marius {
     LOADS,
     LOADC,
     SELF,
+    GOTO,
+    GOTO_BACK,
+    GOTO_IF_TRUE,
+    GOTO_IF_FALSE,
     TotalInstructions
   };
 
-  extern const char* InstructionNames[10];
+  extern const char* InstructionNames[TotalInstructions];
 
   typedef uint8_t Instruction;
 

@@ -24,7 +24,7 @@
             << ", column " << S->column() << std::endl;  
 }
 
-program ::= opt_fin seq(A) last_fin. { S->ret(A.i); }
+program ::= opt_fin seq(A) last_fin. { S->set_top(S->ret(A.a)); }
 
 opt_fin ::= .
 opt_fin ::= opt_fin FIN.
@@ -35,21 +35,18 @@ last_fin ::= fin EOF.
 fin ::= fin FIN.
 fin ::= FIN.
 
-start_seq ::= seq(B) fin. { S->recycle(B.i); }
-
-seq(A) ::= start_seq expr(C). { A.i = C.i; }
-seq(A) ::= expr(B). { A.i = B.i; }
+seq(A) ::= seq(B) fin expr(C). { A.a = S->seq(B.a, C.a); }
+seq(A) ::= expr(B). { A.a = B.a; }
 
 class_start ::= CLASS. { S->start_class(); } 
-class_body(A) ::= seq(B) fin END. { A.i = B.i; }
+class_body(A) ::= seq(B) fin END. { A.a = B.a; }
 
 expr(A) ::= class_start ID(B) fin class_body(C). {
-              S->ret(C.i);
-              A.i = S->new_class(*B.s);
+              A.a = S->ast_class(*B.s, C.a);
             }
 
 def_start ::= DEF. { S->start_def(); }
-def_body(A) ::= seq(B) fin END. { A.i = B.i; }
+def_body(A) ::= seq(B) fin END. { A.a = B.a; }
 
 id_list ::= id_list COMMA ID(A). { S->def_arg(*A.s); }
 id_list ::= ID(A). { S->def_arg(*A.s); }
@@ -58,36 +55,35 @@ def_args ::= .
 def_args ::= LP id_list RP.
 
 expr(A) ::= def_start ID(B) def_args fin def_body(C). {
-              S->ret(C.i);
-              A.i = S->end_def(*B.s);
+              A.a = S->ast_def(*B.s, C.a);
             }
 
-sexpr(A) ::= sexpr(B) MINUS  sexpr(C). { A.i = S->minus(B.i, C.i);  }
-sexpr(A) ::= sexpr(B) PLUS   sexpr(C). { A.i = S->plus(B.i, C.i);   }
-sexpr(A) ::= sexpr(B) TIMES  sexpr(C). { A.i = S->times(B.i, C.i);  }
-sexpr(A) ::= sexpr(B) DIVIDE sexpr(C). { A.i = S->divide(B.i, C.i); }
-sexpr(A) ::= NUM(B).                   { A.i = S->number(B.i);      }
-sexpr(A) ::= ID(B).                    { A.i = S->named(*B.s);      }
+sexpr(A) ::= sexpr(B) MINUS  sexpr(C). { A.a = S->ast_binop("-", B.a, C.a); }
+sexpr(A) ::= sexpr(B) PLUS   sexpr(C). { A.a = S->ast_binop("+", B.a, C.a); }
+sexpr(A) ::= sexpr(B) TIMES  sexpr(C). { A.a = S->ast_binop("*", B.a, C.a); }
+sexpr(A) ::= sexpr(B) DIVIDE sexpr(C). { A.a = S->ast_binop("/", B.a, C.a); }
+sexpr(A) ::= NUM(B).                   { A.a = S->number(B.i); }
+sexpr(A) ::= ID(B).                    { A.a = S->named(*B.s); }
 
-send(A) ::= sexpr(B). { A.i = B.i; }
-send(A) ::= send(B) DOT ID(C). { A.i = S->call(B.i, *C.s); }
+send(A) ::= sexpr(B). { A.a = B.a; }
+send(A) ::= send(B) DOT ID(C). { A.a = S->call(B.a, *C.s); }
 
 /* Positional args */
 
 arg_list_start ::= LP. { S->start_arg_list(); }
-arg_list_elems ::= arg_list_elems COMMA send(A). { S->add_arg(A.i); }
-arg_list_elems ::= send(A). { S->add_arg(A.i); }
+arg_list_elems ::= arg_list_elems COMMA send(A). { S->add_arg(A.a); }
+arg_list_elems ::= send(A). { S->add_arg(A.a); }
 
 opt_kw_arg_list ::= .
 opt_kw_arg_list ::= COMMA kw_arg_list_elems.
 
 arg_list ::= arg_list_start arg_list_elems opt_kw_arg_list.
 
-send(A) ::= send(B) DOT ID(C) arg_list RP. { A.i = S->call_args(B.i, *C.s); }
+send(A) ::= send(B) DOT ID(C) arg_list RP. { A.a = S->call_args(B.a, *C.s); }
 
 /* Keyword args */
 
-kw_arg ::= ID(A) EQUAL send(B). { S->add_kw_arg(*A.s, B.i); }
+kw_arg ::= ID(A) EQUAL send(B). { S->add_kw_arg(*A.s, B.a); }
 
 kw_arg_list_elems ::= kw_arg_list_elems COMMA kw_arg.
 kw_arg_list_elems ::= kw_arg.
@@ -95,25 +91,23 @@ kw_arg_list_elems ::= kw_arg.
 kw_arg_list ::= arg_list_start kw_arg_list_elems.
 
 send(A) ::= send(B) DOT ID(C) kw_arg_list RP. {
-              A.i = S->call_kw_args(B.i, *C.s);
+              A.a = S->call_kw_args(B.a, *C.s);
             }
 
 /* Cascade args */
 
-message_seq(A) ::= message_seq(B) fin ID(C). {
-                     S->recycle(B.i);
-                     A.i = S->cascade(*C.s);
-                   }
+message_seq ::= message_seq fin ID(C). { S->cascade(*C.s); }
+message_seq ::= ID(B). { S->cascade(*B.s); }
 
-message_seq(A) ::= ID(B). { A.i = S->cascade(*B.s); }
+cascade_start ::= send(B) CASCADE. { S->start_cascade(B.a); }
+cascade(A) ::= cascade_start message_seq RB. { A.a = S->end_cascade(); }
 
-cascade_start ::= send(B) CASCADE. { S->start_cascade(B.i); }
-cascade(A) ::= cascade_start message_seq(C) RB. {
-                 A.i = C.i;
-                 S->end_cascade();
-               }
+cascade(A) ::= send(B). { A.a = B.a; }
 
-cascade(A) ::= send(B). { A.i = B.i; }
+expr(A) ::= cascade(B). { A.a = B.a; }
 
-expr(A) ::= cascade(B). { A.i = B.i; }
+/* Conditions */
 
+/* cond_start(A) ::= IF send(B) FIN. { A.i = S->start_cond(B.i); } */
+
+/* cond(A) ::= cond_start(B) seq(C) END. { A.i = S->end_cond(C.i, B.i); } */
