@@ -17,7 +17,9 @@
 
 %extra_argument { marius::ParserState* S }
    
-%syntax_error {  
+%syntax_error {
+  S->set_syntax_error();
+
   std::cout << "Syntax error at line " << S->line()
             << ", column " << S->column() << std::endl;  
 }
@@ -70,13 +72,20 @@ sexpr(A) ::= ID(B).                    { A.i = S->named(*B.s);      }
 send(A) ::= sexpr(B). { A.i = B.i; }
 send(A) ::= send(B) DOT ID(C). { A.i = S->call(B.i, *C.s); }
 
+/* Positional args */
+
 arg_list_start ::= LP. { S->start_arg_list(); }
 arg_list_elems ::= arg_list_elems COMMA send(A). { S->add_arg(A.i); }
 arg_list_elems ::= send(A). { S->add_arg(A.i); }
 
-arg_list ::= arg_list_start arg_list_elems.
+opt_kw_arg_list ::= .
+opt_kw_arg_list ::= COMMA kw_arg_list_elems.
+
+arg_list ::= arg_list_start arg_list_elems opt_kw_arg_list.
 
 send(A) ::= send(B) DOT ID(C) arg_list RP. { A.i = S->call_args(B.i, *C.s); }
+
+/* Keyword args */
 
 kw_arg ::= ID(A) EQUAL send(B). { S->add_kw_arg(*A.s, B.i); }
 
@@ -88,6 +97,8 @@ kw_arg_list ::= arg_list_start kw_arg_list_elems.
 send(A) ::= send(B) DOT ID(C) kw_arg_list RP. {
               A.i = S->call_kw_args(B.i, *C.s);
             }
+
+/* Cascade args */
 
 message_seq(A) ::= message_seq(B) fin ID(C). {
                      S->recycle(B.i);

@@ -51,12 +51,23 @@ namespace marius {
     std::vector<int> cascades_;
     std::vector<ArgInfo> arg_infos_;
 
+    bool syntax_error_;
+
   public:
 
     ParserState(Parser& parse)
       : parser_(parse)
       , context_(new Context)
+      , syntax_error_(false)
     {}
+
+    bool syntax_error_p() {
+      return syntax_error_;
+    }
+
+    void set_syntax_error() {
+      syntax_error_ = true;
+    }
 
     Instruction* sequence();
 

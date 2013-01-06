@@ -54,7 +54,7 @@ int main(int argc, char** argv) {
 
   Parser parser(file);
 
-  parser.parse();
+  if(!parser.parse()) return 1;
 
   if(debug) parser.code()->print();
 

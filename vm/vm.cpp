@@ -119,9 +119,15 @@ namespace marius {
         i != args.end();
         ++i) {
       int req = (*i).second;
-      int is   = keywords[(*i).first];
 
-      temp[req] = fp[is];
+      ArgMap::iterator f = keywords.find((*i).first);
+
+      if(f == keywords.end()) {
+        temp[req] = fp[req];
+      } else {
+        int is   = (*f).second;
+        temp[req] = fp[is];
+      }
     }
 
     for(int i = 0; i < args.size(); i++) {

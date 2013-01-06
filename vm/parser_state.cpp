@@ -205,8 +205,8 @@ namespace marius {
 
   void ParserState::start_arg_list() {
     arg_infos_.push_back(arg_info_);
-    arg_info_.start = -1;
-    arg_info_.count = 0;
+
+    arg_info_ = ArgInfo();
   }
 
   void ParserState::add_arg(int r) {
@@ -236,11 +236,24 @@ namespace marius {
       assert(r + 1 == arg_info_.start);
     }
 
-    push(CALL);
-    push(r);
-    push(string(id.c_str()));
-    push(r);
-    push(arg_info_.count);
+    if(arg_info_.keywords.size() == 0) {
+      push(CALL);
+      push(r);
+      push(string(id.c_str()));
+      push(r);
+      push(arg_info_.count);
+    } else {
+      push(CALL_KW);
+      push(r);
+      push(string(id.c_str()));
+      push(r);
+      push(arg_info_.count);
+
+      int i = context_->keywords.size();
+      context_->keywords.push_back(arg_info_.keywords);
+
+      push(i);
+    }
 
     arg_info_ = arg_infos_.back();
     arg_infos_.pop_back();
@@ -260,6 +273,9 @@ namespace marius {
     push(r);
     push(arg_info_.count);
     push(i);
+
+    arg_info_ = arg_infos_.back();
+    arg_infos_.pop_back();
 
     return r;
   }

@@ -227,6 +227,8 @@ again:
 
       mariusParser(engine_, token, value_, &S);
 
+      if(S.syntax_error_p()) break;
+
       if(token == TK_EOF) {
         mariusParser(engine_, 0, value_, &S);
         break;
@@ -236,6 +238,8 @@ again:
     mariusParserFree(engine_, free);
 
     if(debug) fclose(stream);
+
+    if(S.syntax_error_p()) return false;
 
     code_ = S.to_code();
 
