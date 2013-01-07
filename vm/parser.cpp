@@ -158,71 +158,40 @@ again:
     return a < b ? a : b;
   }
 
-  int Parser::keyword_match() {
+  struct Keyword {
     const char* str;
+    int token;
+  };
 
-    switch(pos_[0]) {
-    case 'c':
-      str = next_str(5);
+  static Keyword cKeywords[256][10] = {
+    ['c'] = {{"class", TK_CLASS}, {0,0}},
+    ['d'] = {{"def", TK_DEF}, {0,0}},
+    ['e'] = {{"end", TK_END}, {0,0}},
+    ['f'] = {{"false", TK_FALSE}, {0,0}},
+    ['i'] = {{"if", TK_IF}, {"import", TK_IMPORT}, {0,0}},
+    ['n'] = {{"nil", TK_NIL}, {0,0}},
+    ['t'] = {{"true", TK_TRUE}, {0,0}}
+  };
 
-      if(str && strncmp(str, "class", 5) == 0) {
-        advance(5);
-        return TK_CLASS;
+  int Parser::keyword_match() {
+    Keyword* k = cKeywords[(int)pos_[0]];
+
+    while(k->str) {
+      int len = strlen(k->str);
+      const char* str = next_str(len);
+
+      if(str && strncmp(str, k->str, len) == 0) {
+        // Check that the data following it isn't an alpha
+        // character, otherwise we're inside this string
+        // as a subsequence.
+        const char n = pos_[len];
+        if(!n || !isalpha(n)) {
+          advance(len);
+          return k->token;
+        }
       }
-      break;
 
-    case 'd':
-      str = next_str(3);
-
-      if(str && strncmp(str, "def", 3) == 0) {
-        advance(3);
-        return TK_DEF;
-      }
-      break;
-
-    case 'e':
-      str = next_str(3);
-
-      if(str && strncmp(str, "end", 3) == 0) {
-        advance(3);
-        return TK_END;
-      }
-      break;
-    case 'f':
-      str = next_str(5);
-
-      if(str && strncmp(str, "false", 5) == 0) {
-        printf("false!\n");
-        advance(5);
-        return TK_FALSE;
-      }
-      break;
-    case 'i':
-      str = next_str(2);
-
-      if(str && strncmp(str, "if", 2) == 0) {
-        advance(2);
-        return TK_IF;
-      }
-      break;
-    case 'n':
-      str = next_str(3);
-
-      if(str && strncmp(str, "nil", 3) == 0) {
-        advance(3);
-        return TK_NIL;
-      }
-      break;
-
-    case 't':
-      str = next_str(4);
-
-      if(str && strncmp(str, "true", 4) == 0) {
-        advance(4);
-        return TK_TRUE;
-      }
-      break;
-
+      k++;
     }
 
     return -1;

@@ -20,3 +20,4 @@
 #define TK_CASCADE                        20
 #define TK_RB                             21
 #define TK_IF                             22
+#define TK_IMPORT                         23

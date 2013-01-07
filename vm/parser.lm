@@ -123,3 +123,7 @@ stmt(A) ::= expr(B). { A.a = B.a; }
 /* Conditions */
 
 stmt(A) ::= IF send(B) fin seq(C) fin END. { A.a = S->if_cond(B.a, C.a); }
+
+/* Import */
+
+stmt(A) ::= IMPORT ID(B). { A.a = S->import(*B.s); }

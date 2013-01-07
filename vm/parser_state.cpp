@@ -149,6 +149,10 @@ namespace marius {
     return new ast::False();
   }
 
+  ast::Node* ParserState::import(String& name) {
+    return 0;
+  }
+
   /*
   int ParserState::start_cond(int c) {
     push(GOTO_IF_FALSE);
