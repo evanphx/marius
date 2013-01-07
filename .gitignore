@@ -1,0 +1,6 @@
+*.o
+vm/parser.out
+tools/lemon
+scratch
+depend
+marius
