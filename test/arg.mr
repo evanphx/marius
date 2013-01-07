@@ -1,0 +1,8 @@
+
+class Blah
+  def foo(a)
+    a + 4
+  end
+end
+
+Blah.new.foo(3)

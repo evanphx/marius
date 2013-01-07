@@ -1,0 +1,11 @@
+
+# A very simple test
+
+class Blah
+  def foo
+    3 + 4
+  end
+end
+
+Blah.new.foo
+
