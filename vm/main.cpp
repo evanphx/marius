@@ -15,6 +15,8 @@ using namespace marius;
 int main(int argc, char** argv) {
 
   bool debug = false;
+  bool print = false;
+
   char** opt = argv + 1;
 
   while(*opt) {
@@ -23,6 +25,9 @@ int main(int argc, char** argv) {
       switch(s[1]) {
       case 'd':
         debug = true;
+        break;
+      case 'p':
+        print = true;
         break;
       default:
         printf("Unknown option: %s\n", s);
@@ -59,7 +64,7 @@ int main(int argc, char** argv) {
 
   OOP ret = vm.run(state, *compiler.code());
 
-  ret.print();
+  if(print) ret.print();
   return 0;
 }
 

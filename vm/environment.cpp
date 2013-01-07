@@ -4,6 +4,7 @@
 #include "code.hpp"
 #include "state.hpp"
 #include "vm.hpp"
+#include "module.hpp"
 
 #include <iostream>
 
@@ -80,6 +81,12 @@ namespace marius {
     return S.vm().run(S, code, fp + 1);
   }
 
+  static OOP io_puts(State& S, OOP recv, int argc, OOP* fp) {
+    assert(argc == 1);
+    fp[0].print();
+    return OOP::nil();
+  }
+
   void Environment::init_ontology() {
     String& mn = String::internalize("MetaClass");
     String& cn = String::internalize("Class");
@@ -121,5 +128,10 @@ namespace marius {
     tbl[OOP::eFalse] = f;
 
     Class::init_base(tbl);
+
+    Module* io = new Module;
+    io->add_method("puts", io_puts);
+
+    binding_[String::internalize("io")] = io;
   }
 }

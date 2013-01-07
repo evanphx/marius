@@ -1,6 +1,7 @@
 #include "oop.hpp"
 #include "class.hpp"
 #include "string.hpp"
+#include "module.hpp"
 
 namespace marius {
   Class* OOP::klass() {
@@ -8,6 +9,9 @@ namespace marius {
     case eInteger:
       return Class::base_class(eInteger);
     case eClass:
+      return class_->klass();
+    case eModule:
+      assert(false);
       return class_->klass();
     case eNil:
       return Class::base_class(eNil);
@@ -23,6 +27,14 @@ namespace marius {
       return Class::base_class(eFalse);
     case TotalTypes:
       assert(false);
+    }
+  }
+
+  Method* OOP::find_method(String& name) {
+    if(type_ == eModule) {
+      return module_->lookup(name);
+    } else {
+      return klass()->lookup(name);
     }
   }
 
@@ -51,6 +63,9 @@ namespace marius {
       return;
     case eFalse:
       printf("false\n");
+      return;
+    case eModule:
+      printf("<Module:%p>\n", module_);
       return;
     case TotalTypes:
       assert(false);

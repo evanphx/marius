@@ -135,8 +135,7 @@ namespace marius {
   OOP VM::run_method(State& S,
                      OOP recv, String& name, int argc, OOP* fp)
   {
-    Class*  cls  = recv.klass();
-    Method* meth = cls->lookup(name);
+    Method* meth = recv.find_method(name);
 
     if(!meth) {
       printf("NO METHOD :%s\n", name.c_str());
@@ -178,8 +177,7 @@ namespace marius {
                         OOP recv, String& name, int argc, OOP* fp,
                         ArgMap& keywords)
   {
-    Class*  cls  = recv.klass();
-    Method* meth = cls->lookup(name);
+    Method* meth = recv.find_method(name);
 
     if(!meth) {
       printf("NO METHOD :%s\n", name.c_str());

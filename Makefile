@@ -26,10 +26,13 @@ marius: $(OBJ)
 	c++ -ggdb -o marius $(OBJ)
 
 test: marius
-	test `./marius test/simp.mr` = 7
-	test `./marius test/arg.mr` = 7
-	test `./marius test/cascade.mr` = 7
-	test `./marius test/keyword.mr` = 7
-	test `./marius test/keyword_hybrid.mr` = 7
+	test `./marius -p test/simp.mr` = 7
+	test `./marius -p test/arg.mr` = 7
+	test `./marius -p test/cascade.mr` = 7
+	test `./marius -p test/keyword.mr` = 7
+	test `./marius -p test/keyword_hybrid.mr` = 7
+	test `./marius test/module.mr` = 7
+
+.PHONY: test
 
 -include depend
