@@ -190,4 +190,40 @@ namespace ast {
 
     return t;
   }
+  
+  int IfCond::drive(State& S, int t) {
+    recv_->drive(S, t);
+    S.push(JMPIF);
+    S.push(t);
+
+    Label l = S.label();
+    S.push(0);
+
+    body_->drive(S, t);
+
+    S.set_label(l);
+
+    return t;
+  }
+
+  int Nil::drive(State& S, int t) {
+    S.push(MOVN);
+    S.push(t);
+
+    return t;
+  }
+
+  int True::drive(State& S, int t) {
+    S.push(MOVT);
+    S.push(t);
+
+    return t;
+  }
+
+  int False::drive(State& S, int t) {
+    S.push(MOVF);
+    S.push(t);
+
+    return t;
+  }
 }}

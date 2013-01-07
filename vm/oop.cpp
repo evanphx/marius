@@ -6,17 +6,23 @@ namespace marius {
   Class* OOP::klass() {
     switch(type_) {
     case eInteger:
-      return Class::integer_class();
+      return Class::base_class(eInteger);
     case eClass:
       return class_->klass();
     case eNil:
-      return Class::nil_class();
+      return Class::base_class(eNil);
     case eString:
-      return Class::string_class();
+      return Class::base_class(eString);
     case eUser:
       return obj_->klass();
     case eCode:
-      return Class::code_class();
+      return Class::base_class(eCode);
+    case eTrue:
+      return Class::base_class(eTrue);
+    case eFalse:
+      return Class::base_class(eFalse);
+    case TotalTypes:
+      assert(false);
     }
   }
 
@@ -40,6 +46,14 @@ namespace marius {
     case eCode:
       printf("<Code:%p>\n", obj_);
       return;
+    case eTrue:
+      printf("true\n");
+      return;
+    case eFalse:
+      printf("false\n");
+      return;
+    case TotalTypes:
+      assert(false);
     }
 
   }

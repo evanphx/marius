@@ -133,6 +133,22 @@ namespace marius {
     return n;
   }
 
+  ast::Node* ParserState::if_cond(ast::Node* cond, ast::Node* body) {
+    return new ast::IfCond(cond, body);
+  }
+
+  ast::Node* ParserState::ast_nil() {
+    return new ast::Nil();
+  }
+
+  ast::Node* ParserState::ast_true() {
+    return new ast::True();
+  }
+
+  ast::Node* ParserState::ast_false() {
+    return new ast::False();
+  }
+
   /*
   int ParserState::start_cond(int c) {
     push(GOTO_IF_FALSE);

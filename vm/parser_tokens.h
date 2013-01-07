@@ -12,7 +12,11 @@
 #define TK_LP                             12
 #define TK_RP                             13
 #define TK_NUM                            14
-#define TK_DOT                            15
-#define TK_EQUAL                          16
-#define TK_CASCADE                        17
-#define TK_RB                             18
+#define TK_NIL                            15
+#define TK_TRUE                           16
+#define TK_FALSE                          17
+#define TK_DOT                            18
+#define TK_EQUAL                          19
+#define TK_CASCADE                        20
+#define TK_RB                             21
+#define TK_IF                             22

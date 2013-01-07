@@ -14,6 +14,9 @@ namespace marius {
     MOVI8   = 0,
     MOVI32,
     MOVR,
+    MOVN,
+    MOVT,
+    MOVF,
     CALL,
     CALL_KW,
     RET,
@@ -21,10 +24,10 @@ namespace marius {
     LOADS,
     LOADC,
     SELF,
-    GOTO,
-    GOTO_BACK,
-    GOTO_IF_TRUE,
-    GOTO_IF_FALSE,
+    JMPF,
+    JMPB,
+    JMPIT,
+    JMPIF,
     TotalInstructions
   };
 

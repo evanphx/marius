@@ -10,6 +10,20 @@ namespace marius {
   class String;
 
   namespace ast {
+
+    class State;
+
+    class Label {
+      int idx_;
+
+    public:
+      Label(int idx)
+        : idx_(idx)
+      {}
+
+      friend class State;
+    };
+
     class State {
       std::vector<Instruction> buffer;
       std::vector<String*> strings;
@@ -53,6 +67,14 @@ namespace marius {
         int idx = keywords.size();
         keywords.push_back(kw);
         return idx;
+      }
+
+      Label label() {
+        return Label(buffer.size());
+      }
+
+      void set_label(Label l) {
+        buffer[l.idx_] = buffer.size() - l.idx_;
       }
 
       Code* to_code();
@@ -194,6 +216,34 @@ namespace marius {
         messages_.push_back(n);
       }
 
+      int drive(State& S, int t);
+    };
+
+    class IfCond : public Node {
+      ast::Node* recv_;
+      ast::Node* body_;
+
+    public:
+      IfCond(ast::Node* r, ast::Node* b)
+        : recv_(r)
+        , body_(b)
+      {}
+
+      int drive(State& S, int t);
+    };
+
+    class Nil : public Node {
+    public:
+      int drive(State& S, int t);
+    };
+
+    class False : public Node {
+    public:
+      int drive(State& S, int t);
+    };
+
+    class True : public Node {
+    public:
       int drive(State& S, int t);
     };
 

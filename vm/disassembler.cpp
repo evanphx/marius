@@ -23,6 +23,18 @@ namespace marius {
       printf("R(%d) := R(%d)\n", seq[1], seq[2]);
       return 3;
 
+    case MOVN:
+      printf("R(%d) := nil", seq[1]);
+      return 2;
+
+    case MOVT:
+      printf("R(%d) := true", seq[1]);
+      return 2;
+
+    case MOVF:
+      printf("R(%d) := false", seq[1]);
+      return 2;
+
     case MOVI8:
       printf("R(%d) := %d\n", seq[1], seq[2]);
       return 3;
@@ -87,6 +99,21 @@ namespace marius {
       printf("R(%d) := R(-1)\n", seq[1]);
       return 2;
 
+    case JMPF:
+      printf("IP += %d\n", seq[1]);
+      return 2;
+
+    case JMPB:
+      printf("IP -= %d\n", seq[1]);
+      return 2;
+
+    case JMPIT:
+      printf("IP += %d if R(%d)\n", seq[2], seq[1]);
+      return 3;
+
+    case JMPIF:
+      printf("IP += %d if !R(%d)\n", seq[2], seq[1]);
+      return 3;
     default:
       assert(0);
     }

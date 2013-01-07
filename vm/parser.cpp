@@ -31,12 +31,14 @@ namespace marius {
       // Ok, we need more data and there is a file source registered.
 
       if(!buffer_) {
-        size_ = 1024;
-        buffer_ = new char[size_];
+        size_ = 1023;
+        buffer_ = new char[size_ + 1];
         end_ = buffer_ + size_;
       } else {
         // shift the unused data up to the front of the buffer.
         memmove((void*)buffer_, pos_, left);
+        end_ = buffer_ + left;
+        *end_ = 0;
       }
 
       pos_ = buffer_;
@@ -47,6 +49,8 @@ namespace marius {
 
       // Pin the end to where the actual filled data ends
       end_ = pos_ + left + r;
+
+      *end_ = 0;
 
       // We still couldn't read in enough data, dang.
       if(end_ - pos_ < count) return 0;
@@ -184,6 +188,41 @@ again:
         return TK_END;
       }
       break;
+    case 'f':
+      str = next_str(5);
+
+      if(str && strncmp(str, "false", 5) == 0) {
+        printf("false!\n");
+        advance(5);
+        return TK_FALSE;
+      }
+      break;
+    case 'i':
+      str = next_str(2);
+
+      if(str && strncmp(str, "if", 2) == 0) {
+        advance(2);
+        return TK_IF;
+      }
+      break;
+    case 'n':
+      str = next_str(3);
+
+      if(str && strncmp(str, "nil", 3) == 0) {
+        advance(3);
+        return TK_NIL;
+      }
+      break;
+
+    case 't':
+      str = next_str(4);
+
+      if(str && strncmp(str, "true", 4) == 0) {
+        advance(4);
+        return TK_TRUE;
+      }
+      break;
+
     }
 
     return -1;

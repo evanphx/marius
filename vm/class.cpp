@@ -41,37 +41,13 @@ namespace marius {
     method_table_.add(s, meth);
   }
 
-  static Class* integer_class_;
-  static Class* class_class_;
-  static Class* nil_class_;
-  static Class* str_class_;
-  static Class* code_class_;
+  static Class** base_classes_;
 
-  void Class::init_base(Class* i, Class* c, Class* n, Class* s, Class* d) {
-    integer_class_ = i;
-    class_class_ = c;
-    nil_class_ = n;
-    str_class_ = s;
-    code_class_ = d;
+  void Class::init_base(Class** base) {
+    base_classes_ = base;
   }
 
-  Class* Class::integer_class() {
-    return integer_class_;
-  }
-
-  Class* Class::class_class() {
-    return class_class_;
-  }
-
-  Class* Class::nil_class() {
-    return nil_class_;
-  }
-
-  Class* Class::string_class() {
-    return str_class_;
-  }
-
-  Class* Class::code_class() {
-    return code_class_;
+  Class* Class::base_class(int idx) {
+    return base_classes_[idx];
   }
 }

@@ -12,7 +12,11 @@ namespace marius {
       "LOADN",
       "LOADS",
       "LOADC",
-      "SELF"
+      "SELF",
+      "JMPF",
+      "JMPB",
+      "JMPIT",
+      "JMPIF"
     };
 
   void Code::print() {

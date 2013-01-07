@@ -17,13 +17,13 @@ namespace marius {
   };
 
   class Parser {
-    const char* buffer_;
+    char* buffer_;
     int size_;
-    const char* end_;
+    char* end_;
 
     int left_;
 
-    const char* pos_;
+    char* pos_;
 
     FILE* file_;
 
@@ -38,8 +38,8 @@ namespace marius {
     Code* code_;
 
   public:
-    Parser(const char* buf, int sz=-1)
-      : buffer_(buf)
+    Parser(char* buf, int sz=-1)
+      : buffer_(strdup(buf))
       , size_(sz == -1 ? strlen(buf) : sz)
       , end_(buf + size_)
       , left_(sz)

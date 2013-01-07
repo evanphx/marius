@@ -30,7 +30,10 @@ namespace marius {
 
     while(seq < end) {
 #ifdef TRACE
-      if(debug_) dis.print_one(seq);
+      if(debug_) {
+        printf("[%04ld] ", seq - code.code());
+        dis.print_one(seq);
+      }
 #endif
 
       switch(*seq++) {
@@ -46,6 +49,20 @@ namespace marius {
         fp[seq[0]] = fp[seq[1]];
         seq += 2;
         break;
+
+      case MOVN:
+        fp[seq[0]] = OOP(OOP::eNil);
+        seq += 1;
+        break;
+      case MOVT:
+        fp[seq[0]] = OOP(OOP::eTrue);
+        seq += 1;
+        break;
+      case MOVF:
+        fp[seq[0]] = OOP(OOP::eFalse);
+        seq += 1;
+        break;
+
       case CALL:
         fp[seq[0]] = run_method(S,
                                 fp[seq[2]], code.string(seq[1]),
@@ -88,26 +105,26 @@ namespace marius {
       case RET:
         return fp[*seq++];
 
-      case GOTO:
+      case JMPF:
         seq += (seq[0] + 1);
         break;
 
-      case GOTO_BACK:
+      case JMPB:
         seq -= (seq[0] + 1);
         break;
 
-      case GOTO_IF_TRUE:
+      case JMPIT:
         if(fp[seq[0]].true_condition_p()) {
-          seq += (seq[0] + 1);
+          seq += (seq[1] + 1);
         } else {
-          seq += 1;
+          seq += 2;
         }
 
-      case GOTO_IF_FALSE:
+      case JMPIF:
         if(!fp[seq[0]].true_condition_p()) {
-          seq += (seq[0] + 1);
+          seq += (seq[1] + 1);
         } else {
-          seq += 1;
+          seq += 2;
         }
       }
     }

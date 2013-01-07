@@ -6,7 +6,7 @@ namespace marius {
   bool Compiler::compile(FILE* f) {
     Parser parser(f);
 
-    if(!parser.parse()) return false;
+    if(!parser.parse(debug_)) return false;
 
     ast::Node* top = parser.top();
 

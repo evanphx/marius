@@ -23,12 +23,9 @@ namespace marius {
       return name_;
     }
 
-    static void init_base(Class* i, Class* c, Class* n, Class* s, Class* d);
-    static Class* integer_class();
-    static Class* class_class();
-    static Class* nil_class();
-    static Class* string_class();
-    static Class* code_class();
+    static void init_base(Class** tbl);
+
+    static Class* base_class(int idx);
 
     Method* lookup(String& name);
     void add_method(const char* name, SimpleFunc func);

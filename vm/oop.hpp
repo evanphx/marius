@@ -15,11 +15,14 @@ namespace marius {
   class MemoryObject;
 
   class OOP {
+  public:
     enum Type {
       eNil, eClass, eInteger, eString, eCode, eUser,
-      eTrue
+      eTrue, eFalse,
+      TotalTypes
     };
 
+  private:
     Type type_;
 
     union {
@@ -97,7 +100,7 @@ namespace marius {
     }
 
     bool true_condition_p() {
-      return type_ == eTrue;
+      return type_ != eFalse;
     }
 
     Class* klass();

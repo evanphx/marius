@@ -61,13 +61,13 @@
 **                       defined, then do no error processing.
 */
 #define YYCODETYPE unsigned char
-#define YYNOCODE 45
+#define YYNOCODE 54
 #define YYACTIONTYPE unsigned char
 #define mariusParserTOKENTYPE  marius::ParserToken 
 typedef union {
   int yyinit;
   mariusParserTOKENTYPE yy0;
-  marius::ParserToken yy32;
+  marius::ParserToken yy36;
 } YYMINORTYPE;
 #ifndef YYSTACKDEPTH
 #define YYSTACKDEPTH 100
@@ -76,8 +76,8 @@ typedef union {
 #define mariusParserARG_PDECL , marius::ParserState* S 
 #define mariusParserARG_FETCH  marius::ParserState* S  = yypParser->S 
 #define mariusParserARG_STORE yypParser->S  = S 
-#define YYNSTATE 77
-#define YYNRULE 45
+#define YYNSTATE 92
+#define YYNRULE 55
 #define YY_NO_ACTION      (YYNSTATE+YYNRULE+2)
 #define YY_ACCEPT_ACTION  (YYNSTATE+YYNRULE+1)
 #define YY_ERROR_ACTION   (YYNSTATE+YYNRULE)
@@ -146,66 +146,86 @@ static const YYMINORTYPE yyzerominor = { 0 };
 **                     shifting non-terminals after a reduce.
 **  yy_default[]       Default action for each state.
 */
-#define YY_ACTTAB_COUNT (130)
+#define YY_ACTTAB_COUNT (208)
 static const YYACTIONTYPE yy_action[] = {
- /*     0 */    24,   13,   14,   49,   44,   47,   43,   42,   25,   68,
- /*    10 */    26,   28,   20,   74,   77,   49,   44,   54,   43,   48,
- /*    20 */    17,   50,   26,   28,   45,    6,   74,   75,   72,   23,
- /*    30 */    62,   70,   17,   50,   11,   63,   62,   49,   44,   69,
- /*    40 */    43,   63,   53,   76,   26,   28,   41,    7,   55,   73,
- /*    50 */    44,   33,   43,   32,   17,   50,   26,   28,   26,   39,
- /*    60 */    74,   53,   72,   71,   62,   70,   17,   50,   74,   63,
- /*    70 */    72,   66,   62,   70,   52,   40,    9,   63,   26,   38,
- /*    80 */    63,   19,   57,   34,   46,   59,   72,   10,   62,   70,
- /*    90 */    74,   18,   72,   63,   62,   70,  123,    3,    2,   63,
- /*   100 */    56,   15,   16,   13,   14,   26,   37,   53,   41,   21,
- /*   110 */    36,   22,   59,    5,   31,   67,    1,   58,    4,    8,
- /*   120 */    35,   60,   51,   30,   12,   27,   61,   29,   65,   64,
+ /*     0 */    29,   15,   16,   54,   90,   89,   88,   86,   49,   53,
+ /*    10 */    48,   63,   92,   14,   31,   33,   54,   90,   89,   88,
+ /*    20 */    47,   49,   81,   48,   22,   59,   58,   31,   33,   91,
+ /*    30 */    90,   89,   88,   46,   49,   64,   48,   22,   59,   58,
+ /*    40 */    31,   33,   62,   30,   86,   87,   85,   28,   71,   83,
+ /*    50 */    22,   59,   58,   75,   74,   73,   72,   82,   61,   11,
+ /*    60 */    86,   12,   85,   84,   71,   83,   62,   50,    4,   75,
+ /*    70 */    74,   73,   72,   62,   52,   13,   51,   12,   85,   46,
+ /*    80 */    71,   83,   31,   44,   46,   75,   74,   73,   72,   31,
+ /*    90 */    19,   23,   86,   12,   85,   66,   71,   83,  148,    2,
+ /*   100 */     1,   75,   74,   73,   72,   65,   62,   86,   26,   12,
+ /*   110 */    78,   71,   17,   18,   15,   16,   75,   74,   73,   72,
+ /*   120 */    27,    3,   86,   36,   12,   57,   71,   80,    5,   56,
+ /*   130 */    21,   75,   74,   73,   72,   56,   25,   31,   33,   12,
+ /*   140 */    55,    8,   79,   31,   33,   10,   69,   22,   59,   58,
+ /*   150 */    31,   33,   40,   22,   59,   58,   67,   60,   20,   86,
+ /*   160 */    22,   59,   58,   71,    7,   32,    6,   35,   75,   74,
+ /*   170 */    73,   72,   71,   34,   70,   77,   12,   75,   74,   73,
+ /*   180 */    72,   45,   76,  149,  149,  149,   75,   74,   73,   72,
+ /*   190 */    31,   43,  149,   24,  149,   39,  149,   68,    9,  149,
+ /*   200 */    31,   42,   38,  149,   37,   41,  149,   68,
 };
 static const YYCODETYPE yy_lookahead[] = {
- /*     0 */    22,    3,    4,   25,   26,   27,   28,   11,    9,   13,
- /*    10 */    32,   33,   22,    5,    0,   25,   26,    9,   28,   29,
- /*    20 */    42,   43,   32,   33,   23,   24,    5,    6,    7,    9,
- /*    30 */     9,   10,   42,   43,   22,   14,    9,   25,   26,    9,
- /*    40 */    28,   14,    5,    6,   32,   33,   15,   34,   17,   25,
- /*    50 */    26,   38,   28,   40,   42,   43,   32,   33,   32,   33,
- /*    60 */     5,    5,    7,    8,    9,   10,   42,   43,    5,   14,
- /*    70 */     7,    8,    9,   10,   18,    9,    9,   14,   32,   33,
- /*    80 */    14,   35,   13,   37,    5,   39,    7,   16,    9,   10,
- /*    90 */     5,   11,    7,   14,    9,   10,   20,   21,   24,   14,
- /*   100 */    13,    1,    2,    3,    4,   32,   33,    5,   15,   31,
- /*   110 */    37,   12,   39,   24,   30,    9,   24,   36,   24,   11,
- /*   120 */     9,   39,    9,   32,   41,   24,   12,   32,   32,   32,
+ /*     0 */    26,    3,    4,   29,   30,   31,   32,    5,   34,   35,
+ /*    10 */    36,    9,    0,   26,   40,   41,   29,   30,   31,   32,
+ /*    20 */    11,   34,   13,   36,   50,   51,   52,   40,   41,   29,
+ /*    30 */    30,   31,   32,   18,   34,   20,   36,   50,   51,   52,
+ /*    40 */    40,   41,    5,    9,    5,    6,    7,    9,    9,   10,
+ /*    50 */    50,   51,   52,   14,   15,   16,   17,    9,   21,    9,
+ /*    60 */     5,   22,    7,    8,    9,   10,    5,   27,   28,   14,
+ /*    70 */    15,   16,   17,    5,    6,   19,    5,   22,    7,   18,
+ /*    80 */     9,   10,   40,   41,   18,   14,   15,   16,   17,   40,
+ /*    90 */    41,   11,    5,   22,    7,   13,    9,   10,   24,   25,
+ /*   100 */    28,   14,   15,   16,   17,   13,    5,    5,   39,   22,
+ /*   110 */     8,    9,    1,    2,    3,    4,   14,   15,   16,   17,
+ /*   120 */    12,   28,    5,   38,   22,    8,    9,    9,   28,   32,
+ /*   130 */    33,   14,   15,   16,   17,   32,   33,   40,   41,   22,
+ /*   140 */    37,   28,   32,   40,   41,   11,   47,   50,   51,   52,
+ /*   150 */    40,   41,    9,   50,   51,   52,   44,    9,   49,    5,
+ /*   160 */    50,   51,   52,    9,   28,   28,   28,   40,   14,   15,
+ /*   170 */    16,   17,    9,   40,   12,   40,   22,   14,   15,   16,
+ /*   180 */    17,    9,   40,   53,   53,   53,   14,   15,   16,   17,
+ /*   190 */    40,   41,   53,   43,   53,   45,   53,   47,   42,   53,
+ /*   200 */    40,   41,   46,   53,   48,   45,   53,   47,
 };
-#define YY_SHIFT_USE_DFLT (-5)
-#define YY_SHIFT_COUNT (45)
-#define YY_SHIFT_MIN   (-4)
-#define YY_SHIFT_MAX   (114)
-static const signed char yy_shift_ofst[] = {
- /*     0 */    -5,   85,   85,   79,   63,   55,   21,   66,   66,  114,
- /*    10 */    27,   37,   56,   27,   27,   27,   27,  113,  111,  108,
- /*    20 */   102,  102,  106,   99,  102,  102,  100,    8,   31,   -2,
- /*    30 */    -2,   -4,   87,   69,   80,   71,   80,   93,   93,   93,
- /*    40 */    71,   67,   30,   20,   -1,   14,
+#define YY_SHIFT_USE_DFLT (-3)
+#define YY_SHIFT_COUNT (50)
+#define YY_SHIFT_MIN   (-2)
+#define YY_SHIFT_MAX   (172)
+static const short yy_shift_ofst[] = {
+ /*     0 */    -3,   87,   71,   55,   39,  154,  154,  117,  102,  172,
+ /*    10 */   172,  162,  163,  163,   68,  163,  163,  163,  163,   61,
+ /*    20 */    37,  101,  148,  143,  134,  101,  101,  118,  108,  101,
+ /*    30 */   101,  111,    2,   15,   -2,   -2,    9,   92,   82,   80,
+ /*    40 */    56,   80,   66,   66,   66,   56,   50,   48,   38,   34,
+ /*    50 */    12,
 };
-#define YY_REDUCE_USE_DFLT (-23)
-#define YY_REDUCE_COUNT (25)
-#define YY_REDUCE_MIN   (-22)
-#define YY_REDUCE_MAX   (101)
-static const signed char yy_reduce_ofst[] = {
- /*     0 */    76,  -10,  -22,   12,   24,   24,   24,   46,   73,   13,
- /*    10 */    26,    1,  101,   97,   96,   95,   91,   83,   82,   81,
- /*    20 */    94,   92,   84,   78,   89,   74,
+#define YY_REDUCE_USE_DFLT (-27)
+#define YY_REDUCE_COUNT (30)
+#define YY_REDUCE_MIN   (-26)
+#define YY_REDUCE_MAX   (160)
+static const short yy_reduce_ofst[] = {
+ /*     0 */    74,  -26,  -13,    0,    0,  103,   97,  110,  110,  150,
+ /*    10 */   160,  156,   49,   42,   40,  142,  135,  133,  127,  138,
+ /*    20 */   137,  136,  109,   99,  112,  113,  100,   85,   69,   93,
+ /*    30 */    72,
 };
 static const YYACTIONTYPE yy_default[] = {
- /*     0 */    78,  122,  122,  122,  122,  122,  122,  122,  122,  103,
- /*    10 */   122,  122,  122,  122,  122,  122,  122,  122,  122,  107,
- /*    20 */   122,  122,  122,   93,  122,  122,  102,  122,  120,   97,
- /*    30 */    96,  122,  122,  122,  114,  122,  108,  105,  106,  111,
- /*    40 */   101,  122,  122,  122,  122,  122,   79,   88,   95,   85,
- /*    50 */   121,  117,  119,   83,  116,  118,  115,  110,  109,  113,
- /*    60 */   112,  104,  101,  100,   99,   98,   90,   92,   94,   91,
- /*    70 */    89,   87,   86,   84,   82,   81,   80,
+ /*     0 */    98,  147,  147,  147,  147,  147,  147,  147,  147,  147,
+ /*    10 */   147,  126,  147,  147,  147,  147,  147,  147,  147,  147,
+ /*    20 */   147,  147,  147,  147,  130,  147,  147,  147,  113,  147,
+ /*    30 */   147,  125,  147,  143,  117,  116,  147,  147,  147,  137,
+ /*    40 */   147,  131,  128,  129,  134,  124,  147,  147,  147,  147,
+ /*    50 */   147,   99,  100,  108,   94,  115,  105,  146,  145,  144,
+ /*    60 */   140,  142,  103,  139,  141,  138,  133,  132,  136,  135,
+ /*    70 */   127,  124,  123,  122,  121,  120,  119,  118,  110,  104,
+ /*    80 */   112,  114,  111,  109,  107,  106,  102,  101,   97,   96,
+ /*    90 */    95,   93,
 };
 
 /* The next table maps tokens into fallback tokens.  If a construct
@@ -301,14 +321,17 @@ static const char *const yyTokenName[] = {
   "$",             "PLUS",          "MINUS",         "DIVIDE",      
   "TIMES",         "FIN",           "EOF",           "CLASS",       
   "END",           "ID",            "DEF",           "COMMA",       
-  "LP",            "RP",            "NUM",           "DOT",         
-  "EQUAL",         "CASCADE",       "RB",            "error",       
-  "program",       "opt_fin",       "seq",           "last_fin",    
-  "fin",           "expr",          "class_start",   "class_body",  
+  "LP",            "RP",            "NUM",           "NIL",         
+  "TRUE",          "FALSE",         "DOT",           "EQUAL",       
+  "CASCADE",       "RB",            "IF",            "error",       
+  "program",       "opt_fin",       "l1",            "last_fin",    
+  "fin",           "l1e",           "class",         "def",         
+  "stmt",          "seq",           "class_start",   "class_body",  
   "def_start",     "def_body",      "id_list",       "def_args",    
   "sexpr",         "send",          "arg_list_start",  "arg_list_elems",
   "opt_kw_arg_list",  "kw_arg_list_elems",  "arg_list",      "kw_arg",      
   "kw_arg_list",   "message_seq",   "cascade_start",  "cascade",     
+  "expr",        
 };
 #endif /* NDEBUG */
 
@@ -316,51 +339,61 @@ static const char *const yyTokenName[] = {
 /* For tracing reduce actions, the names of all rules are required.
 */
 static const char *const yyRuleName[] = {
- /*   0 */ "program ::= opt_fin seq last_fin",
- /*   1 */ "opt_fin ::=",
- /*   2 */ "opt_fin ::= opt_fin FIN",
- /*   3 */ "last_fin ::= EOF",
- /*   4 */ "last_fin ::= fin EOF",
- /*   5 */ "fin ::= fin FIN",
- /*   6 */ "fin ::= FIN",
- /*   7 */ "seq ::= seq fin expr",
- /*   8 */ "seq ::= expr",
- /*   9 */ "class_start ::= CLASS",
- /*  10 */ "class_body ::= seq fin END",
- /*  11 */ "expr ::= class_start ID fin class_body",
- /*  12 */ "def_start ::= DEF",
- /*  13 */ "def_body ::= seq fin END",
- /*  14 */ "id_list ::= id_list COMMA ID",
- /*  15 */ "id_list ::= ID",
- /*  16 */ "def_args ::=",
- /*  17 */ "def_args ::= LP id_list RP",
- /*  18 */ "expr ::= def_start ID def_args fin def_body",
- /*  19 */ "sexpr ::= sexpr MINUS sexpr",
- /*  20 */ "sexpr ::= sexpr PLUS sexpr",
- /*  21 */ "sexpr ::= sexpr TIMES sexpr",
- /*  22 */ "sexpr ::= sexpr DIVIDE sexpr",
- /*  23 */ "sexpr ::= NUM",
- /*  24 */ "sexpr ::= ID",
- /*  25 */ "send ::= sexpr",
- /*  26 */ "send ::= send DOT ID",
- /*  27 */ "arg_list_start ::= LP",
- /*  28 */ "arg_list_elems ::= arg_list_elems COMMA send",
- /*  29 */ "arg_list_elems ::= send",
- /*  30 */ "opt_kw_arg_list ::=",
- /*  31 */ "opt_kw_arg_list ::= COMMA kw_arg_list_elems",
- /*  32 */ "arg_list ::= arg_list_start arg_list_elems opt_kw_arg_list",
- /*  33 */ "send ::= send DOT ID arg_list RP",
- /*  34 */ "kw_arg ::= ID EQUAL send",
- /*  35 */ "kw_arg_list_elems ::= kw_arg_list_elems COMMA kw_arg",
- /*  36 */ "kw_arg_list_elems ::= kw_arg",
- /*  37 */ "kw_arg_list ::= arg_list_start kw_arg_list_elems",
- /*  38 */ "send ::= send DOT ID kw_arg_list RP",
- /*  39 */ "message_seq ::= message_seq fin ID",
- /*  40 */ "message_seq ::= ID",
- /*  41 */ "cascade_start ::= send CASCADE",
- /*  42 */ "cascade ::= cascade_start message_seq RB",
- /*  43 */ "cascade ::= send",
- /*  44 */ "expr ::= cascade",
+ /*   0 */ "program ::= opt_fin l1 last_fin",
+ /*   1 */ "l1 ::= l1 fin l1e",
+ /*   2 */ "l1 ::= l1e",
+ /*   3 */ "l1e ::= class",
+ /*   4 */ "l1e ::= def",
+ /*   5 */ "l1e ::= stmt",
+ /*   6 */ "opt_fin ::=",
+ /*   7 */ "opt_fin ::= opt_fin FIN",
+ /*   8 */ "last_fin ::= EOF",
+ /*   9 */ "last_fin ::= fin EOF",
+ /*  10 */ "fin ::= fin FIN",
+ /*  11 */ "fin ::= FIN",
+ /*  12 */ "seq ::= seq fin stmt",
+ /*  13 */ "seq ::= stmt",
+ /*  14 */ "class_start ::= CLASS",
+ /*  15 */ "class_body ::= l1 fin END",
+ /*  16 */ "class ::= class_start ID fin class_body",
+ /*  17 */ "def_start ::= DEF",
+ /*  18 */ "def_body ::= seq fin END",
+ /*  19 */ "id_list ::= id_list COMMA ID",
+ /*  20 */ "id_list ::= ID",
+ /*  21 */ "def_args ::=",
+ /*  22 */ "def_args ::= LP id_list RP",
+ /*  23 */ "def ::= def_start ID def_args fin def_body",
+ /*  24 */ "sexpr ::= sexpr MINUS sexpr",
+ /*  25 */ "sexpr ::= sexpr PLUS sexpr",
+ /*  26 */ "sexpr ::= sexpr TIMES sexpr",
+ /*  27 */ "sexpr ::= sexpr DIVIDE sexpr",
+ /*  28 */ "sexpr ::= NUM",
+ /*  29 */ "sexpr ::= NIL",
+ /*  30 */ "sexpr ::= TRUE",
+ /*  31 */ "sexpr ::= FALSE",
+ /*  32 */ "sexpr ::= ID",
+ /*  33 */ "send ::= sexpr",
+ /*  34 */ "send ::= send DOT ID",
+ /*  35 */ "arg_list_start ::= LP",
+ /*  36 */ "arg_list_elems ::= arg_list_elems COMMA send",
+ /*  37 */ "arg_list_elems ::= send",
+ /*  38 */ "opt_kw_arg_list ::=",
+ /*  39 */ "opt_kw_arg_list ::= COMMA kw_arg_list_elems",
+ /*  40 */ "arg_list ::= arg_list_start arg_list_elems opt_kw_arg_list",
+ /*  41 */ "send ::= send DOT ID arg_list RP",
+ /*  42 */ "kw_arg ::= ID EQUAL send",
+ /*  43 */ "kw_arg_list_elems ::= kw_arg_list_elems COMMA kw_arg",
+ /*  44 */ "kw_arg_list_elems ::= kw_arg",
+ /*  45 */ "kw_arg_list ::= arg_list_start kw_arg_list_elems",
+ /*  46 */ "send ::= send DOT ID kw_arg_list RP",
+ /*  47 */ "message_seq ::= message_seq fin ID",
+ /*  48 */ "message_seq ::= ID",
+ /*  49 */ "cascade_start ::= send CASCADE",
+ /*  50 */ "cascade ::= cascade_start message_seq RB",
+ /*  51 */ "cascade ::= send",
+ /*  52 */ "expr ::= cascade",
+ /*  53 */ "stmt ::= expr",
+ /*  54 */ "stmt ::= IF send fin seq fin END",
 };
 #endif /* NDEBUG */
 
@@ -675,51 +708,61 @@ static const struct {
   YYCODETYPE lhs;         /* Symbol on the left-hand side of the rule */
   unsigned char nrhs;     /* Number of right-hand side symbols in the rule */
 } yyRuleInfo[] = {
-  { 20, 3 },
-  { 21, 0 },
-  { 21, 2 },
-  { 23, 1 },
-  { 23, 2 },
-  { 24, 2 },
-  { 24, 1 },
-  { 22, 3 },
-  { 22, 1 },
+  { 24, 3 },
+  { 26, 3 },
   { 26, 1 },
-  { 27, 3 },
-  { 25, 4 },
+  { 29, 1 },
+  { 29, 1 },
+  { 29, 1 },
+  { 25, 0 },
+  { 25, 2 },
+  { 27, 1 },
+  { 27, 2 },
+  { 28, 2 },
   { 28, 1 },
-  { 29, 3 },
-  { 30, 3 },
-  { 30, 1 },
-  { 31, 0 },
-  { 31, 3 },
-  { 25, 5 },
-  { 32, 3 },
-  { 32, 3 },
-  { 32, 3 },
-  { 32, 3 },
-  { 32, 1 },
-  { 32, 1 },
-  { 33, 1 },
   { 33, 3 },
+  { 33, 1 },
   { 34, 1 },
   { 35, 3 },
-  { 35, 1 },
-  { 36, 0 },
-  { 36, 2 },
-  { 38, 3 },
-  { 33, 5 },
-  { 39, 3 },
+  { 30, 4 },
+  { 36, 1 },
   { 37, 3 },
-  { 37, 1 },
-  { 40, 2 },
-  { 33, 5 },
-  { 41, 3 },
+  { 38, 3 },
+  { 38, 1 },
+  { 39, 0 },
+  { 39, 3 },
+  { 31, 5 },
+  { 40, 3 },
+  { 40, 3 },
+  { 40, 3 },
+  { 40, 3 },
+  { 40, 1 },
+  { 40, 1 },
+  { 40, 1 },
+  { 40, 1 },
+  { 40, 1 },
   { 41, 1 },
-  { 42, 2 },
+  { 41, 3 },
+  { 42, 1 },
   { 43, 3 },
   { 43, 1 },
-  { 25, 1 },
+  { 44, 0 },
+  { 44, 2 },
+  { 46, 3 },
+  { 41, 5 },
+  { 47, 3 },
+  { 45, 3 },
+  { 45, 1 },
+  { 48, 2 },
+  { 41, 5 },
+  { 49, 3 },
+  { 49, 1 },
+  { 50, 2 },
+  { 51, 3 },
+  { 51, 1 },
+  { 52, 1 },
+  { 32, 1 },
+  { 32, 6 },
 };
 
 static void yy_accept(yyParser*);  /* Forward Declaration */
@@ -774,154 +817,180 @@ static void yy_reduce(
   **  #line <lineno> <thisfile>
   **     break;
   */
-      case 0: /* program ::= opt_fin seq last_fin */
+      case 0: /* program ::= opt_fin l1 last_fin */
 #line 27 "vm/parser.lm"
-{ S->set_top(S->ret(yymsp[-1].minor.yy32.a)); }
-#line 781 "vm/parser.c.inc"
+{ S->set_top(S->ret(yymsp[-1].minor.yy36.a)); }
+#line 824 "vm/parser.c.inc"
         break;
-      case 7: /* seq ::= seq fin expr */
-#line 38 "vm/parser.lm"
-{ yygotominor.yy32.a = S->seq(yymsp[-2].minor.yy32.a, yymsp[0].minor.yy32.a); }
-#line 786 "vm/parser.c.inc"
-        break;
-      case 8: /* seq ::= expr */
-      case 25: /* send ::= sexpr */ yytestcase(yyruleno==25);
-      case 43: /* cascade ::= send */ yytestcase(yyruleno==43);
-      case 44: /* expr ::= cascade */ yytestcase(yyruleno==44);
-#line 39 "vm/parser.lm"
-{ yygotominor.yy32.a = yymsp[0].minor.yy32.a; }
-#line 794 "vm/parser.c.inc"
-        break;
-      case 9: /* class_start ::= CLASS */
-#line 41 "vm/parser.lm"
-{ S->start_class(); }
-#line 799 "vm/parser.c.inc"
-        break;
-      case 10: /* class_body ::= seq fin END */
-      case 13: /* def_body ::= seq fin END */ yytestcase(yyruleno==13);
-#line 42 "vm/parser.lm"
-{ yygotominor.yy32.a = yymsp[-2].minor.yy32.a; }
-#line 805 "vm/parser.c.inc"
-        break;
-      case 11: /* expr ::= class_start ID fin class_body */
-#line 44 "vm/parser.lm"
-{
-              yygotominor.yy32.a = S->ast_class(*yymsp[-2].minor.yy0.s, yymsp[0].minor.yy32.a);
-            }
-#line 812 "vm/parser.c.inc"
-        break;
-      case 12: /* def_start ::= DEF */
-#line 48 "vm/parser.lm"
-{ S->start_def(); }
-#line 817 "vm/parser.c.inc"
-        break;
-      case 14: /* id_list ::= id_list COMMA ID */
-      case 15: /* id_list ::= ID */ yytestcase(yyruleno==15);
-#line 51 "vm/parser.lm"
-{ S->def_arg(*yymsp[0].minor.yy0.s); }
-#line 823 "vm/parser.c.inc"
-        break;
-      case 18: /* expr ::= def_start ID def_args fin def_body */
-#line 57 "vm/parser.lm"
-{
-              yygotominor.yy32.a = S->ast_def(*yymsp[-3].minor.yy0.s, yymsp[0].minor.yy32.a);
-            }
+      case 1: /* l1 ::= l1 fin l1e */
+      case 12: /* seq ::= seq fin stmt */ yytestcase(yyruleno==12);
+#line 29 "vm/parser.lm"
+{ yygotominor.yy36.a = S->seq(yymsp[-2].minor.yy36.a, yymsp[0].minor.yy36.a); }
 #line 830 "vm/parser.c.inc"
         break;
-      case 19: /* sexpr ::= sexpr MINUS sexpr */
-#line 61 "vm/parser.lm"
-{ yygotominor.yy32.a = S->ast_binop("-", yymsp[-2].minor.yy32.a, yymsp[0].minor.yy32.a); }
-#line 835 "vm/parser.c.inc"
+      case 2: /* l1 ::= l1e */
+      case 3: /* l1e ::= class */ yytestcase(yyruleno==3);
+      case 4: /* l1e ::= def */ yytestcase(yyruleno==4);
+      case 5: /* l1e ::= stmt */ yytestcase(yyruleno==5);
+      case 13: /* seq ::= stmt */ yytestcase(yyruleno==13);
+      case 33: /* send ::= sexpr */ yytestcase(yyruleno==33);
+      case 51: /* cascade ::= send */ yytestcase(yyruleno==51);
+      case 52: /* expr ::= cascade */ yytestcase(yyruleno==52);
+      case 53: /* stmt ::= expr */ yytestcase(yyruleno==53);
+#line 30 "vm/parser.lm"
+{ yygotominor.yy36.a = yymsp[0].minor.yy36.a; }
+#line 843 "vm/parser.c.inc"
         break;
-      case 20: /* sexpr ::= sexpr PLUS sexpr */
-#line 62 "vm/parser.lm"
-{ yygotominor.yy32.a = S->ast_binop("+", yymsp[-2].minor.yy32.a, yymsp[0].minor.yy32.a); }
-#line 840 "vm/parser.c.inc"
+      case 14: /* class_start ::= CLASS */
+#line 48 "vm/parser.lm"
+{ S->start_class(); }
+#line 848 "vm/parser.c.inc"
         break;
-      case 21: /* sexpr ::= sexpr TIMES sexpr */
-#line 63 "vm/parser.lm"
-{ yygotominor.yy32.a = S->ast_binop("*", yymsp[-2].minor.yy32.a, yymsp[0].minor.yy32.a); }
-#line 845 "vm/parser.c.inc"
+      case 15: /* class_body ::= l1 fin END */
+      case 18: /* def_body ::= seq fin END */ yytestcase(yyruleno==18);
+#line 49 "vm/parser.lm"
+{ yygotominor.yy36.a = yymsp[-2].minor.yy36.a; }
+#line 854 "vm/parser.c.inc"
         break;
-      case 22: /* sexpr ::= sexpr DIVIDE sexpr */
-#line 64 "vm/parser.lm"
-{ yygotominor.yy32.a = S->ast_binop("/", yymsp[-2].minor.yy32.a, yymsp[0].minor.yy32.a); }
-#line 850 "vm/parser.c.inc"
-        break;
-      case 23: /* sexpr ::= NUM */
-#line 65 "vm/parser.lm"
-{ yygotominor.yy32.a = S->number(yymsp[0].minor.yy0.i); }
-#line 855 "vm/parser.c.inc"
-        break;
-      case 24: /* sexpr ::= ID */
-#line 66 "vm/parser.lm"
-{ yygotominor.yy32.a = S->named(*yymsp[0].minor.yy0.s); }
-#line 860 "vm/parser.c.inc"
-        break;
-      case 26: /* send ::= send DOT ID */
-#line 69 "vm/parser.lm"
-{ yygotominor.yy32.a = S->call(yymsp[-2].minor.yy32.a, *yymsp[0].minor.yy0.s); }
-#line 865 "vm/parser.c.inc"
-        break;
-      case 27: /* arg_list_start ::= LP */
-#line 73 "vm/parser.lm"
-{ S->start_arg_list(); }
-#line 870 "vm/parser.c.inc"
-        break;
-      case 28: /* arg_list_elems ::= arg_list_elems COMMA send */
-      case 29: /* arg_list_elems ::= send */ yytestcase(yyruleno==29);
-#line 74 "vm/parser.lm"
-{ S->add_arg(yymsp[0].minor.yy32.a); }
-#line 876 "vm/parser.c.inc"
-        break;
-      case 33: /* send ::= send DOT ID arg_list RP */
-#line 82 "vm/parser.lm"
-{ yygotominor.yy32.a = S->call_args(yymsp[-4].minor.yy32.a, *yymsp[-2].minor.yy0.s); }
-#line 881 "vm/parser.c.inc"
-        break;
-      case 34: /* kw_arg ::= ID EQUAL send */
-#line 86 "vm/parser.lm"
-{ S->add_kw_arg(*yymsp[-2].minor.yy0.s, yymsp[0].minor.yy32.a); }
-#line 886 "vm/parser.c.inc"
-        break;
-      case 38: /* send ::= send DOT ID kw_arg_list RP */
-#line 93 "vm/parser.lm"
+      case 16: /* class ::= class_start ID fin class_body */
+#line 51 "vm/parser.lm"
 {
-              yygotominor.yy32.a = S->call_kw_args(yymsp[-4].minor.yy32.a, *yymsp[-2].minor.yy0.s);
-            }
-#line 893 "vm/parser.c.inc"
+               yygotominor.yy36.a = S->ast_class(*yymsp[-2].minor.yy0.s, yymsp[0].minor.yy36.a);
+             }
+#line 861 "vm/parser.c.inc"
         break;
-      case 39: /* message_seq ::= message_seq fin ID */
-      case 40: /* message_seq ::= ID */ yytestcase(yyruleno==40);
-#line 99 "vm/parser.lm"
-{ S->cascade(*yymsp[0].minor.yy0.s); }
+      case 17: /* def_start ::= DEF */
+#line 55 "vm/parser.lm"
+{ S->start_def(); }
+#line 866 "vm/parser.c.inc"
+        break;
+      case 19: /* id_list ::= id_list COMMA ID */
+      case 20: /* id_list ::= ID */ yytestcase(yyruleno==20);
+#line 58 "vm/parser.lm"
+{ S->def_arg(*yymsp[0].minor.yy0.s); }
+#line 872 "vm/parser.c.inc"
+        break;
+      case 23: /* def ::= def_start ID def_args fin def_body */
+#line 64 "vm/parser.lm"
+{
+              yygotominor.yy36.a = S->ast_def(*yymsp[-3].minor.yy0.s, yymsp[0].minor.yy36.a);
+            }
+#line 879 "vm/parser.c.inc"
+        break;
+      case 24: /* sexpr ::= sexpr MINUS sexpr */
+#line 68 "vm/parser.lm"
+{ yygotominor.yy36.a = S->ast_binop("-", yymsp[-2].minor.yy36.a, yymsp[0].minor.yy36.a); }
+#line 884 "vm/parser.c.inc"
+        break;
+      case 25: /* sexpr ::= sexpr PLUS sexpr */
+#line 69 "vm/parser.lm"
+{ yygotominor.yy36.a = S->ast_binop("+", yymsp[-2].minor.yy36.a, yymsp[0].minor.yy36.a); }
+#line 889 "vm/parser.c.inc"
+        break;
+      case 26: /* sexpr ::= sexpr TIMES sexpr */
+#line 70 "vm/parser.lm"
+{ yygotominor.yy36.a = S->ast_binop("*", yymsp[-2].minor.yy36.a, yymsp[0].minor.yy36.a); }
+#line 894 "vm/parser.c.inc"
+        break;
+      case 27: /* sexpr ::= sexpr DIVIDE sexpr */
+#line 71 "vm/parser.lm"
+{ yygotominor.yy36.a = S->ast_binop("/", yymsp[-2].minor.yy36.a, yymsp[0].minor.yy36.a); }
 #line 899 "vm/parser.c.inc"
         break;
-      case 41: /* cascade_start ::= send CASCADE */
-#line 102 "vm/parser.lm"
-{ S->start_cascade(yymsp[-1].minor.yy32.a); }
+      case 28: /* sexpr ::= NUM */
+#line 72 "vm/parser.lm"
+{ yygotominor.yy36.a = S->number(yymsp[0].minor.yy0.i); }
 #line 904 "vm/parser.c.inc"
         break;
-      case 42: /* cascade ::= cascade_start message_seq RB */
-#line 103 "vm/parser.lm"
-{ yygotominor.yy32.a = S->end_cascade(); }
+      case 29: /* sexpr ::= NIL */
+#line 73 "vm/parser.lm"
+{ yygotominor.yy36.a = S->ast_nil();  }
 #line 909 "vm/parser.c.inc"
         break;
+      case 30: /* sexpr ::= TRUE */
+#line 74 "vm/parser.lm"
+{ yygotominor.yy36.a = S->ast_true();  }
+#line 914 "vm/parser.c.inc"
+        break;
+      case 31: /* sexpr ::= FALSE */
+#line 75 "vm/parser.lm"
+{ yygotominor.yy36.a = S->ast_false(); }
+#line 919 "vm/parser.c.inc"
+        break;
+      case 32: /* sexpr ::= ID */
+#line 76 "vm/parser.lm"
+{ yygotominor.yy36.a = S->named(*yymsp[0].minor.yy0.s); }
+#line 924 "vm/parser.c.inc"
+        break;
+      case 34: /* send ::= send DOT ID */
+#line 79 "vm/parser.lm"
+{ yygotominor.yy36.a = S->call(yymsp[-2].minor.yy36.a, *yymsp[0].minor.yy0.s); }
+#line 929 "vm/parser.c.inc"
+        break;
+      case 35: /* arg_list_start ::= LP */
+#line 83 "vm/parser.lm"
+{ S->start_arg_list(); }
+#line 934 "vm/parser.c.inc"
+        break;
+      case 36: /* arg_list_elems ::= arg_list_elems COMMA send */
+      case 37: /* arg_list_elems ::= send */ yytestcase(yyruleno==37);
+#line 84 "vm/parser.lm"
+{ S->add_arg(yymsp[0].minor.yy36.a); }
+#line 940 "vm/parser.c.inc"
+        break;
+      case 41: /* send ::= send DOT ID arg_list RP */
+#line 92 "vm/parser.lm"
+{ yygotominor.yy36.a = S->call_args(yymsp[-4].minor.yy36.a, *yymsp[-2].minor.yy0.s); }
+#line 945 "vm/parser.c.inc"
+        break;
+      case 42: /* kw_arg ::= ID EQUAL send */
+#line 96 "vm/parser.lm"
+{ S->add_kw_arg(*yymsp[-2].minor.yy0.s, yymsp[0].minor.yy36.a); }
+#line 950 "vm/parser.c.inc"
+        break;
+      case 46: /* send ::= send DOT ID kw_arg_list RP */
+#line 103 "vm/parser.lm"
+{
+              yygotominor.yy36.a = S->call_kw_args(yymsp[-4].minor.yy36.a, *yymsp[-2].minor.yy0.s);
+            }
+#line 957 "vm/parser.c.inc"
+        break;
+      case 47: /* message_seq ::= message_seq fin ID */
+      case 48: /* message_seq ::= ID */ yytestcase(yyruleno==48);
+#line 109 "vm/parser.lm"
+{ S->cascade(*yymsp[0].minor.yy0.s); }
+#line 963 "vm/parser.c.inc"
+        break;
+      case 49: /* cascade_start ::= send CASCADE */
+#line 112 "vm/parser.lm"
+{ S->start_cascade(yymsp[-1].minor.yy36.a); }
+#line 968 "vm/parser.c.inc"
+        break;
+      case 50: /* cascade ::= cascade_start message_seq RB */
+#line 113 "vm/parser.lm"
+{ yygotominor.yy36.a = S->end_cascade(); }
+#line 973 "vm/parser.c.inc"
+        break;
+      case 54: /* stmt ::= IF send fin seq fin END */
+#line 125 "vm/parser.lm"
+{ yygotominor.yy36.a = S->if_cond(yymsp[-4].minor.yy36.a, yymsp[-2].minor.yy36.a); }
+#line 978 "vm/parser.c.inc"
+        break;
       default:
-      /* (1) opt_fin ::= */ yytestcase(yyruleno==1);
-      /* (2) opt_fin ::= opt_fin FIN */ yytestcase(yyruleno==2);
-      /* (3) last_fin ::= EOF */ yytestcase(yyruleno==3);
-      /* (4) last_fin ::= fin EOF */ yytestcase(yyruleno==4);
-      /* (5) fin ::= fin FIN */ yytestcase(yyruleno==5);
-      /* (6) fin ::= FIN */ yytestcase(yyruleno==6);
-      /* (16) def_args ::= */ yytestcase(yyruleno==16);
-      /* (17) def_args ::= LP id_list RP */ yytestcase(yyruleno==17);
-      /* (30) opt_kw_arg_list ::= */ yytestcase(yyruleno==30);
-      /* (31) opt_kw_arg_list ::= COMMA kw_arg_list_elems */ yytestcase(yyruleno==31);
-      /* (32) arg_list ::= arg_list_start arg_list_elems opt_kw_arg_list */ yytestcase(yyruleno==32);
-      /* (35) kw_arg_list_elems ::= kw_arg_list_elems COMMA kw_arg */ yytestcase(yyruleno==35);
-      /* (36) kw_arg_list_elems ::= kw_arg */ yytestcase(yyruleno==36);
-      /* (37) kw_arg_list ::= arg_list_start kw_arg_list_elems */ yytestcase(yyruleno==37);
+      /* (6) opt_fin ::= */ yytestcase(yyruleno==6);
+      /* (7) opt_fin ::= opt_fin FIN */ yytestcase(yyruleno==7);
+      /* (8) last_fin ::= EOF */ yytestcase(yyruleno==8);
+      /* (9) last_fin ::= fin EOF */ yytestcase(yyruleno==9);
+      /* (10) fin ::= fin FIN */ yytestcase(yyruleno==10);
+      /* (11) fin ::= FIN */ yytestcase(yyruleno==11);
+      /* (21) def_args ::= */ yytestcase(yyruleno==21);
+      /* (22) def_args ::= LP id_list RP */ yytestcase(yyruleno==22);
+      /* (38) opt_kw_arg_list ::= */ yytestcase(yyruleno==38);
+      /* (39) opt_kw_arg_list ::= COMMA kw_arg_list_elems */ yytestcase(yyruleno==39);
+      /* (40) arg_list ::= arg_list_start arg_list_elems opt_kw_arg_list */ yytestcase(yyruleno==40);
+      /* (43) kw_arg_list_elems ::= kw_arg_list_elems COMMA kw_arg */ yytestcase(yyruleno==43);
+      /* (44) kw_arg_list_elems ::= kw_arg */ yytestcase(yyruleno==44);
+      /* (45) kw_arg_list ::= arg_list_start kw_arg_list_elems */ yytestcase(yyruleno==45);
         break;
   };
   yygoto = yyRuleInfo[yyruleno].lhs;
@@ -987,7 +1056,7 @@ static void yy_syntax_error(
 
   std::cout << "Syntax error at line " << S->line()
             << ", column " << S->column() << std::endl;  
-#line 991 "vm/parser.c.inc"
+#line 1060 "vm/parser.c.inc"
   mariusParserARG_STORE; /* Suppress warning about unused %extra_argument variable */
 }
 

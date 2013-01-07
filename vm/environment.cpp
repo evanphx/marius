@@ -106,6 +106,20 @@ namespace marius {
     Class* d = new_class("Code");
     d->add_method("eval", run_code);
 
-    Class::init_base(i, m, n, s, d);
+    Class* t = new_class("TrueClass");
+    Class* f = new_class("FalseClass");
+
+    Class** tbl = new Class*[OOP::TotalTypes];
+
+    tbl[OOP::eNil] = n;
+    tbl[OOP::eClass] = c;
+    tbl[OOP::eInteger] = i;
+    tbl[OOP::eString] = s;
+    tbl[OOP::eCode] = d;
+    tbl[OOP::eUser] = 0;
+    tbl[OOP::eTrue] = t;
+    tbl[OOP::eFalse] = f;
+
+    Class::init_base(tbl);
   }
 }

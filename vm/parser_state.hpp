@@ -154,6 +154,11 @@ namespace marius {
     ast::Node* number(int a);
     ast::Call* ast_call(String& name, ast::Node* r, ast::Nodes args);
     ast::Call* ast_binop(const char* s, ast::Node* a, ast::Node* b);
+    ast::Node* if_cond(ast::Node* cond, ast::Node* body);
+
+    ast::Node* ast_nil();
+    ast::Node* ast_true();
+    ast::Node* ast_false();
   };
 }
 
