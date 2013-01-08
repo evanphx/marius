@@ -11,6 +11,20 @@ namespace marius {
   public:
     Method* lookup(String& name);
     void add_method(const char* name, SimpleFunc func);
+    void add_native_method(const char* name, Code& code);
+  };
+
+  class ModuleBuilder {
+    Module* module_;
+
+  public:
+    ModuleBuilder(Module* mod)
+      : module_(mod)
+    {}
+
+    Module* module() {
+      return module_;
+    }
   };
 }
 

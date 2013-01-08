@@ -25,6 +25,8 @@ namespace marius {
       return Class::base_class(eTrue);
     case eFalse:
       return Class::base_class(eFalse);
+    case eModuleBuilder:
+      return Class::base_class(eModuleBuilder);
     case TotalTypes:
       assert(false);
     }
@@ -66,6 +68,9 @@ namespace marius {
       return;
     case eModule:
       printf("<Module:%p>\n", module_);
+      return;
+    case eModuleBuilder:
+      printf("<ModuleBuilder:%p>\n", module_builder_);
       return;
     case TotalTypes:
       assert(false);

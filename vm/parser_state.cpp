@@ -150,7 +150,7 @@ namespace marius {
   }
 
   ast::Node* ParserState::import(String& name) {
-    return 0;
+    return new ast::Import(name);
   }
 
   /*

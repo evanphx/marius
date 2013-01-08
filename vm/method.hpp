@@ -21,7 +21,7 @@ namespace marius {
       return code_;
     }
 
-    OOP run(State& S, OOP recv, int argc, OOP* fp);
+    OOP run(State& S, OOP recv, Arguments& args);
   };
 }
 

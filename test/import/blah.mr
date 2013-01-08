@@ -1,0 +1,3 @@
+def show
+  io.puts(7)
+end

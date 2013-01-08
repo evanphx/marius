@@ -142,7 +142,9 @@ namespace marius {
       return OOP::nil();
     }
 
-    return meth->run(S, recv, argc, fp);
+    Arguments args(argc, fp);
+
+    return meth->run(S, recv, args);
   }
 
   void VM::reorg_args(OOP* fp, Method* meth, ArgMap& keywords) {
@@ -186,7 +188,9 @@ namespace marius {
 
     reorg_args(fp, meth, keywords);
 
-    return meth->run(S, recv, argc, fp);
+    Arguments args(argc, fp);
+
+    return meth->run(S, recv, args);
   }
 
   OOP VM::load_named(State& S, String& name) {

@@ -226,4 +226,22 @@ namespace ast {
 
     return t;
   }
+
+  int Import::drive(State& S, int t) {
+    S.push(LOADN);
+    S.push(t);
+    S.push(S.string(String::internalize("Importer")));
+
+    S.push(LOADS);
+    S.push(t+1);
+    S.push(S.string(name_));
+
+    S.push(CALL);
+    S.push(t);
+    S.push(S.string("import"));
+    S.push(t);
+    S.push(1);
+
+    return t;
+  }
 }}

@@ -27,6 +27,10 @@ namespace marius {
     void init_ontology();
 
     void print();
+
+    void bind(String& name, OOP val) {
+      binding_[name] = val;
+    }
   };
 }
 

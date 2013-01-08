@@ -6,6 +6,7 @@
 #include "parser.hpp"
 #include "state.hpp"
 #include "compiler.hpp"
+#include "settings.hpp"
 
 #include <vector>
 #include <iostream>
@@ -13,6 +14,7 @@
 using namespace marius;
 
 int main(int argc, char** argv) {
+  Settings settings;
 
   bool debug = false;
   bool print = false;
@@ -28,6 +30,18 @@ int main(int argc, char** argv) {
         break;
       case 'p':
         print = true;
+        break;
+      case 'I':
+        if(s[2]) {
+          settings.load_path().push_back(s+2);
+        } else {
+          if(!opt[1]) {
+            printf("-I requires an argument\n");
+            return 1;
+          }
+          settings.load_path().push_back(*++opt);
+        }
+
         break;
       default:
         printf("Unknown option: %s\n", s);
@@ -48,7 +62,7 @@ int main(int argc, char** argv) {
   VM vm(debug);
   Environment env;
 
-  State state(vm, env);
+  State state(vm, env, settings);
 
   env.init_ontology();
 

@@ -43,49 +43,51 @@ namespace marius {
     }
   }
 
-  static OOP int_plus(State& S, OOP recv, int argc, OOP* fp) {
-    if(argc == 0) return OOP::nil();
+  static OOP int_plus(State& S, OOP recv, Arguments& args) {
+    if(args.count() == 0) return OOP::nil();
 
-    int val = recv.int_value() + fp[0].int_value();
+    int val = recv.int_value() + args[0].int_value();
     return OOP::integer(val);
   }
 
-  static OOP class_new(State& S, OOP recv, int argc, OOP* fp) {
-    assert(argc == 1);
+  static OOP class_new(State& S, OOP recv, Arguments& args) {
+    assert(args.count() == 1);
 
-    String& name = fp[0].as_string();
+    String& name = args[0].as_string();
 
     return OOP(S.env().new_class(name.c_str()));
   }
 
-  static OOP add_method(State& S, OOP recv, int argc, OOP* fp) {
-    assert(argc == 2);
+  static OOP add_method(State& S, OOP recv, Arguments& args) {
+    assert(args.count() == 2);
 
-    String& name = fp[0].as_string();
-    Code& code = fp[1].as_code();
+    String& name = args[0].as_string();
+    Code& code = args[1].as_code();
 
     recv.as_class()->add_native_method(name.c_str(), code);
 
     return OOP::nil();
   }
 
-  static OOP new_instance(State& S, OOP recv, int argc, OOP* fp) {
+  static OOP new_instance(State& S, OOP recv, Arguments& args) {
     Class* cls = recv.as_class();
 
     return OOP(new MemoryObject(cls));
   }
 
-  static OOP run_code(State& S, OOP recv, int argc, OOP* fp) {
+  static OOP run_code(State& S, OOP recv, Arguments& args) {
     Code& code = recv.as_code();
 
-    return S.vm().run(S, code, fp + 1);
+    return S.vm().run(S, code, args.frame() + 1);
   }
 
-  static OOP io_puts(State& S, OOP recv, int argc, OOP* fp) {
-    assert(argc == 1);
-    fp[0].print();
+  static OOP io_puts(State& S, OOP recv, Arguments& args) {
+    assert(args.count() == 1);
+    args[0].print();
     return OOP::nil();
   }
+
+  void init_import(Environment& env, Class** tbl);
 
   void Environment::init_ontology() {
     String& mn = String::internalize("MetaClass");
@@ -133,5 +135,7 @@ namespace marius {
     io->add_method("puts", io_puts);
 
     binding_[String::internalize("io")] = io;
+
+    init_import(*this, tbl);
   }
 }

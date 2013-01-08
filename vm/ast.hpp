@@ -57,6 +57,10 @@ namespace marius {
         return idx;
       }
 
+      int string(const char* n) {
+        return string(String::internalize(n));
+      }
+
       int code(Code* code) {
         int idx = codes.size();
         codes.push_back(code);
@@ -247,6 +251,16 @@ namespace marius {
       int drive(State& S, int t);
     };
 
+    class Import : public Node {
+      String& name_;
+
+    public:
+      Import(String& n)
+        : name_(n)
+      {}
+
+      int drive(State& S, int t);
+    };
   }
 }
 

@@ -14,5 +14,13 @@ namespace marius {
     method_table_.add(s, meth);
   }
 
+  void Module::add_native_method(const char* name, Code& code) {
+    Method* meth = new Method(code);
+
+    String& s = String::internalize(name);
+
+    method_table_.add(s, meth);
+  }
+
 
 }

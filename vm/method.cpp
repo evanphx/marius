@@ -13,11 +13,11 @@ namespace marius {
     , code_(&code)
   {}
 
-  OOP Method::run(State& S, OOP recv, int argc, OOP* fp) {
+  OOP Method::run(State& S, OOP recv, Arguments& args) {
     if(func_) {
-      return func_(S, recv, argc, fp);
+      return func_(S, recv, args);
     } else if(code_) {
-      return S.vm().run(S, *code_, fp);
+      return S.vm().run(S, *code_, args.frame());
     }
 
     return OOP::nil();
