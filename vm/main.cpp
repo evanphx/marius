@@ -7,6 +7,7 @@
 #include "state.hpp"
 #include "compiler.hpp"
 #include "settings.hpp"
+#include "unwind.hpp"
 
 #include <vector>
 #include <iostream>
@@ -77,6 +78,14 @@ int main(int argc, char** argv) {
   if(!compiler.compile(file)) return 1;
 
   OOP ret = vm.run(state, *compiler.code());
+
+  if(ret.unwind_p()) {
+    std::cout << "Unwind error at toplevel: "
+              << ret.unwind_value()->message()
+              << std::endl;
+
+    return 1;
+  }
 
   if(print) ret.print();
   return 0;

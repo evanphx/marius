@@ -244,4 +244,27 @@ namespace ast {
 
     return t;
   }
+
+  int Try::drive(State& S, int t) {
+    S.push(REGE);
+    S.push(t);
+
+    Label h = S.label();
+    S.push(0);
+
+    body_->drive(S, t);
+
+    S.push(JMPF);
+
+    Label b = S.label();
+    S.push(0);
+
+    S.set_label_abs(h);
+
+    handler_->drive(S, t);
+
+    S.set_label(b);
+
+    return t;
+  }
 }}

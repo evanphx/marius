@@ -30,6 +30,8 @@ namespace marius {
     case TotalTypes:
       assert(false);
     }
+
+    assert(false);
   }
 
   Method* OOP::find_method(String& name) {

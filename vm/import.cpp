@@ -10,6 +10,8 @@
 #include "settings.hpp"
 #include "state.hpp"
 
+#include "unwind.hpp"
+
 namespace marius {
   namespace {
 
@@ -41,21 +43,18 @@ namespace marius {
       const char* path = find_path(S, name);
 
       if(!path) {
-        printf("UNABLE TO FIND: %s\n", name.c_str());
-        return OOP::nil();
+        return Unwind::import_error(name);
       }
 
       FILE* file = fopen(path, "r");
       if(!file) {
-        printf("UNABLE TO OPEN: %s\n", path);
-        return OOP::nil();
+        return Unwind::import_error(name);
       }
 
       Compiler compiler;
 
       if(!compiler.compile(file)) {
-        printf("UNABLE TO COMPILE: %s\n", path);
-        return OOP::nil();
+        return Unwind::import_error(name);
       }
 
       Module* m = new Module;

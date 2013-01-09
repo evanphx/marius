@@ -168,9 +168,17 @@ again:
     ['d'] = {{"def", TK_DEF}, {0,0}},
     ['e'] = {{"end", TK_END}, {0,0}},
     ['f'] = {{"false", TK_FALSE}, {0,0}},
-    ['i'] = {{"if", TK_IF}, {"import", TK_IMPORT}, {0,0}},
+    ['i'] = {
+              {"if", TK_IF}, {"import", TK_IMPORT},
+              {0,0}
+            },
     ['n'] = {{"nil", TK_NIL}, {0,0}},
-    ['t'] = {{"true", TK_TRUE}, {0,0}}
+    ['r'] = {{"rescue", TK_RESCUE}, {0,0}},
+    ['t'] = {
+              {"true", TK_TRUE},
+              {"try", TK_TRY},
+              {0,0}
+            }
   };
 
   int Parser::keyword_match() {

@@ -114,6 +114,15 @@ namespace marius {
     case JMPIF:
       printf("IP += %d if !R(%d)\n", seq[2], seq[1]);
       return 3;
+
+    case REGE:
+      printf("R(E).push <reg:%d, ip:%d>\n", seq[1], seq[2]);
+      return 3;
+
+    case POPE:
+      printf("R(E).pop\n");
+      return 1;
+
     default:
       assert(0);
     }

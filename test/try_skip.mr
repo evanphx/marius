@@ -1,0 +1,5 @@
+try
+  io.puts(7)
+rescue
+  io.puts(3)
+end

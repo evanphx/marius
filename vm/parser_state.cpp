@@ -153,6 +153,10 @@ namespace marius {
     return new ast::Import(name);
   }
 
+  ast::Node* ParserState::ast_try(ast::Node* b, ast::Node* h) {
+    return new ast::Try(b, h);
+  }
+
   /*
   int ParserState::start_cond(int c) {
     push(GOTO_IF_FALSE);

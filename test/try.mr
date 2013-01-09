@@ -1,0 +1,6 @@
+try
+  import bad
+  io.puts(3)
+rescue
+  io.puts(7)
+end

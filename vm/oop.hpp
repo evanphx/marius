@@ -16,12 +16,13 @@ namespace marius {
   class MemoryObject;
   class Method;
   class ModuleBuilder;
+  class Unwind;
 
   class OOP {
   public:
     enum Type {
       eNil, eClass, eInteger, eString, eCode, eUser,
-      eTrue, eFalse, eModule, eModuleBuilder,
+      eTrue, eFalse, eModule, eModuleBuilder, eUnwind,
       TotalTypes
     };
 
@@ -35,6 +36,7 @@ namespace marius {
       String* string_;
       Code* code_;
       MemoryObject* obj_;
+      Unwind* unwind_;
       int int_;
     };
 
@@ -78,6 +80,11 @@ namespace marius {
       , module_builder_(b)
     {}
 
+    OOP(Unwind* u)
+      : type_(eUnwind)
+      , unwind_(u)
+    {}
+
     static OOP nil() {
       return OOP();
     }
@@ -88,6 +95,10 @@ namespace marius {
 
     static OOP wrap_klass(Class* cls) {
       return OOP(cls);
+    }
+
+    static OOP unwind() {
+      return OOP(eUnwind);
     }
 
     int int_value() {
@@ -126,6 +137,15 @@ namespace marius {
 
     bool true_condition_p() {
       return type_ != eFalse;
+    }
+
+    bool unwind_p() {
+      return type_ == eUnwind;
+    }
+
+    Unwind* unwind_value() {
+      assert(type_ == eUnwind);
+      return unwind_;
     }
 
     Class* klass();

@@ -20,9 +20,24 @@ namespace marius {
     return run(S, code, stack_);
   }
 
+  struct Exception {
+    int reg;
+    int ip;
+
+    Exception(int r, int i)
+      : reg(r)
+      , ip(i)
+    {}
+  };
+
   OOP VM::run(State& S, Code& code, OOP* fp) {
     Instruction* seq = code.code();
     Instruction* end = seq + code.size();
+
+    std::vector<Exception> es;
+
+    OOP t;
+    Exception te(0,0);
 
 #ifdef TRACE
     Disassembler dis(code);
@@ -64,25 +79,61 @@ namespace marius {
         break;
 
       case CALL:
-        fp[seq[0]] = run_method(S,
-                                fp[seq[2]], code.string(seq[1]),
-                                seq[3],     fp + (seq[2] + 1));
+        t = run_method(S,
+                       fp[seq[2]], code.string(seq[1]),
+                       seq[3],     fp + (seq[2] + 1));
 
-        seq += 4;
+        if(t.unwind_p()) {
+          if(es.size() == 0) return t;
+          te = es.back();
+          es.pop_back();
+
+          fp[te.reg] = t.unwind_value();
+
+          seq = code.code() + te.ip;
+        } else {
+          fp[seq[0]] = t;
+          seq += 4;
+        }
+
         break;
       case CALL_KW:
-        fp[seq[0]] = run_kw_method(S,
-                                   fp[seq[2]], code.string(seq[1]),
-                                   seq[3],     fp + (seq[2] + 1),
-                                   code.keywords(seq[4]));
+        t = run_kw_method(S,
+                          fp[seq[2]], code.string(seq[1]),
+                          seq[3],     fp + (seq[2] + 1),
+                          code.keywords(seq[4]));
 
-        seq += 5;
+        if(t.unwind_p()) {
+          if(es.size() == 0) return t;
+          te = es.back();
+          es.pop_back();
+
+          fp[te.reg] = t.unwind_value();
+
+          seq = code.code() + te.ip;
+        } else {
+          fp[seq[0]] = t;
+          seq += 5;
+        }
+
         break;
 
       case LOADN:
-        fp[seq[0]] = load_named(S, code.string(seq[1]));
+        t = load_named(S, code.string(seq[1]));
 
-        seq += 2;
+        if(t.unwind_p()) {
+          if(es.size() == 0) return t;
+          te = es.back();
+          es.pop_back();
+
+          fp[te.reg] = t.unwind_value();
+
+          seq = code.code() + te.ip;
+        } else {
+          fp[seq[0]] = t;
+          seq += 2;
+        }
+
         break;
       case LOADS:
         fp[seq[0]] = OOP(code.string(seq[1]));
@@ -120,12 +171,26 @@ namespace marius {
           seq += 2;
         }
 
+        break;
+
       case JMPIF:
         if(!fp[seq[0]].true_condition_p()) {
           seq += (seq[1] + 1);
         } else {
           seq += 2;
         }
+
+        break;
+
+      case REGE:
+        es.push_back(Exception(seq[0], seq[1]));
+        seq += 2;
+
+        break;
+
+      case POPE:
+        es.pop_back();
+        break;
       }
     }
 

@@ -21,3 +21,5 @@
 #define TK_RB                             21
 #define TK_IF                             22
 #define TK_IMPORT                         23
+#define TK_TRY                            24
+#define TK_RESCUE                         25

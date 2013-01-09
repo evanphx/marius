@@ -19,7 +19,9 @@ namespace marius {
       "JMPF",
       "JMPB",
       "JMPIT",
-      "JMPIF"
+      "JMPIF",
+      "REGE",
+      "POPE"
     };
 
   void Code::print() {

@@ -33,6 +33,8 @@ test: marius
 	test `./marius -p test/keyword_hybrid.mr` = 7
 	test `./marius test/module.mr` = 7
 	test `./marius -I test/import test/import.mr` = 7
+	test `./marius test/try.mr` = 7
+	test `./marius test/try_skip.mr` = 7
 
 .PHONY: test
 

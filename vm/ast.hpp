@@ -78,7 +78,11 @@ namespace marius {
       }
 
       void set_label(Label l) {
-        buffer[l.idx_] = buffer.size() - l.idx_;
+        buffer[l.idx_] = buffer.size() - l.idx_ - 1;
+      }
+
+      void set_label_abs(Label l) {
+        buffer[l.idx_] = buffer.size();
       }
 
       Code* to_code();
@@ -257,6 +261,19 @@ namespace marius {
     public:
       Import(String& n)
         : name_(n)
+      {}
+
+      int drive(State& S, int t);
+    };
+
+    class Try : public Node {
+      Node* body_;
+      Node* handler_;
+
+    public:
+      Try(Node* b, Node* h)
+        : body_(b)
+        , handler_(h)
       {}
 
       int drive(State& S, int t);

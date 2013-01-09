@@ -161,6 +161,8 @@ namespace marius {
     ast::Node* ast_false();
 
     ast::Node* import(String& name);
+
+    ast::Node* ast_try(ast::Node* b, ast::Node* h);
   };
 }
 

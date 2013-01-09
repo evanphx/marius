@@ -28,6 +28,8 @@ namespace marius {
     JMPB,
     JMPIT,
     JMPIF,
+    REGE,
+    POPE,
     TotalInstructions
   };
 
