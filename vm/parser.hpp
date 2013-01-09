@@ -3,6 +3,8 @@
 
 #include "code.hpp"
 
+#include <string.h>
+
 namespace marius {
   class String;
 
