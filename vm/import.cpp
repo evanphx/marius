@@ -12,6 +12,8 @@
 
 #include "unwind.hpp"
 
+#include <string.h>
+
 namespace marius {
   namespace {
 
