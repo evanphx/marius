@@ -21,11 +21,15 @@ namespace marius {
       std::vector<ArgMap> keywords;
 
       ArgMap args; 
+      ArgMap local_names;
 
       int next_reg;
 
+      int locals;
+
       Context()
         : next_reg(0)
+        , locals(0)
       {}
     };
 
@@ -44,7 +48,7 @@ namespace marius {
 
     bool syntax_error_;
 
-    ast::Node* top_;
+    ast::Top* top_;
 
   public:
 
@@ -63,13 +67,11 @@ namespace marius {
       syntax_error_ = true;
     }
 
-    ast::Node* top() {
+    ast::Top* top() {
       return top_;
     }
 
-    void set_top(ast::Node* n) {
-      top_ = n;
-    }
+    void set_top(ast::Node* n);
 
     Instruction* sequence();
 
@@ -115,6 +117,14 @@ namespace marius {
 
     int column() {
       return parser_.column();
+    }
+
+    int new_local() {
+      return context_->locals++;
+    }
+
+    int locals() {
+      return context_->locals;
     }
 
     void start_def(String& s);
@@ -163,6 +173,7 @@ namespace marius {
     ast::Node* import(String& name);
 
     ast::Node* ast_try(ast::Node* b, ast::Node* h);
+    ast::Node* assign(String& name, ast::Node* n);
   };
 }
 

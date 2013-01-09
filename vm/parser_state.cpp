@@ -14,6 +14,10 @@ namespace marius {
     return seq;
   }
 
+  void ParserState::set_top(ast::Node* b) {
+    top_ = new ast::Top(b, context_->local_names);
+  }
+
   ast::Node* ParserState::seq(ast::Node* l, ast::Node* r) {
     return new ast::Seq(l, r);
   }
@@ -155,6 +159,12 @@ namespace marius {
 
   ast::Node* ParserState::ast_try(ast::Node* b, ast::Node* h) {
     return new ast::Try(b, h);
+  }
+
+  ast::Node* ParserState::assign(String& name, ast::Node* n) {
+    int r = new_local();
+    context_->local_names[name] = r;
+    return new ast::Assign(name, r, n);
   }
 
   /*

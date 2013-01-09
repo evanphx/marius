@@ -35,6 +35,7 @@ test: marius
 	test `./marius -I test/import test/import.mr` = 7
 	test `./marius test/try.mr` = 7
 	test `./marius test/try_skip.mr` = 7
+	test `./marius test/local.mr` = 7
 
 .PHONY: test
 

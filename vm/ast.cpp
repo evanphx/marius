@@ -15,15 +15,27 @@ namespace ast {
                     args_, keywords);
   }
 
-  int State::find_arg(String& name) {
+  int State::find_local(String& name) {
     ArgMap::iterator i = args_.find(name);
-    if(i == args_.end()) return -1;
-    return i->second;
+    if(i != args_.end()) return i->second;
+
+    i = locals_.find(name);
+    if(i != locals_.end()) return i->second;
+
+    return -1;
   }
 
   int Seq::drive(State& S, int t) {
     parent_->drive(S, t);
     return child_->drive(S, t);
+  }
+
+  int Top::drive(State& S, int t) {
+    S.reserve(locals_.size());
+
+    body_->drive(S, locals_.size());
+
+    return t;
   }
 
   int Call::drive(State& S, int t) {
@@ -76,7 +88,7 @@ namespace ast {
   }
 
   int Named::drive(State& S, int t) {
-    int reg = S.find_arg(name_);
+    int reg = S.find_local(name_);
     if(reg >= 0) {
       S.push(MOVR);
       S.push(t);
@@ -98,7 +110,9 @@ namespace ast {
     S.push(t+1);
     S.push(S.string(name_));
 
-    ast::State subS(args_);
+    ArgMap locals;
+
+    ast::State subS(args_, locals);
 
     int r = body_->drive(subS, args_.size());
     subS.push(RET);
@@ -132,9 +146,10 @@ namespace ast {
     S.push(t);
     S.push(1);
 
+    ArgMap locals;
     ArgMap args;
 
-    ast::State subS(args);
+    ast::State subS(args, locals);
     int r = body_->drive(subS, 0);
     subS.push(RET);
     subS.push(r);
@@ -266,6 +281,15 @@ namespace ast {
     handler_->drive(S, t);
 
     S.set_label(b);
+
+    return t;
+  }
+
+  int Assign::drive(State& S, int t) {
+    value_->drive(S, reg_);
+    S.push(MOVR);
+    S.push(t);
+    S.push(reg_);
 
     return t;
   }

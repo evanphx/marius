@@ -31,11 +31,14 @@ namespace marius {
       std::vector<ArgMap> keywords;
 
       ArgMap args_;
+      ArgMap locals_;
 
       int next_reg;
+
     public:
-      State(ArgMap args)
+      State(ArgMap args, ArgMap locals)
         : args_(args)
+        , locals_(locals)
         , next_reg(args.size())
       {}
 
@@ -45,6 +48,10 @@ namespace marius {
 
       void recycle(int p) {
         next_reg = p;
+      }
+
+      void reserve(int c) {
+        next_reg = c;
       }
 
       void push(Instruction op) {
@@ -86,7 +93,7 @@ namespace marius {
       }
 
       Code* to_code();
-      int find_arg(String& name);
+      int find_local(String& name);
 
     };
 
@@ -104,6 +111,23 @@ namespace marius {
         : parent_(p)
         , child_(c)
       {}
+
+      int drive(State& S, int t);
+    };
+
+    class Top : public Node {
+      ArgMap locals_;
+      Node* body_;
+
+    public:
+      Top(ast::Node* body, ArgMap& locals)
+        : locals_(locals)
+        , body_(body)
+      {}
+
+      ArgMap& locals() {
+        return locals_;
+      }
 
       int drive(State& S, int t);
     };
@@ -274,6 +298,21 @@ namespace marius {
       Try(Node* b, Node* h)
         : body_(b)
         , handler_(h)
+      {}
+
+      int drive(State& S, int t);
+    };
+
+    class Assign : public Node {
+      String& name_;
+      int reg_;
+      Node* value_;
+
+    public:
+      Assign(String& n, int r, Node* v)
+        : name_(n)
+        , reg_(r)
+        , value_(v)
       {}
 
       int drive(State& S, int t);

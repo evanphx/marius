@@ -8,13 +8,13 @@ namespace marius {
 
     if(!parser.parse(debug_)) return false;
 
-    ast::Node* top = parser.top();
+    ast::Top* top = parser.top();
 
     if(!top) return false;
 
     ArgMap args;
 
-    ast::State S(args);
+    ast::State S(args, top->locals());
 
     top->drive(S, 0);
 
