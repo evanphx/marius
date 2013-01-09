@@ -1,0 +1,8 @@
+class Blah
+  def foo
+    a = 3 + 4
+    io.puts(a)
+  end
+end
+
+Blah.new.foo
