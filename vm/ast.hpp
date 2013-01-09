@@ -115,12 +115,12 @@ namespace marius {
       int drive(State& S, int t);
     };
 
-    class Top : public Node {
+    class Scope : public Node {
       ArgMap locals_;
       Node* body_;
 
     public:
-      Top(ast::Node* body, ArgMap& locals)
+      Scope(ast::Node* body, ArgMap& locals)
         : locals_(locals)
         , body_(body)
       {}
@@ -197,10 +197,10 @@ namespace marius {
 
     class Class : public Node {
       String& name_;
-      Node* body_;
+      Scope* body_;
 
     public:
-      Class(String& n, Node* b)
+      Class(String& n, Scope* b)
         : name_(n)
         , body_(b)
       {}
@@ -210,11 +210,11 @@ namespace marius {
 
     class Def : public Node {
       String& name_;
-      Node* body_;
+      Scope* body_;
       ArgMap args_;
 
     public:
-      Def(String& name, Node* body, ArgMap args)
+      Def(String& name, Scope* body, ArgMap args)
         : name_(name)
         , body_(body)
         , args_(args)

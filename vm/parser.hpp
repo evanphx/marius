@@ -8,7 +8,7 @@ namespace marius {
 
   namespace ast {
     class Node;
-    class Top;
+    class Scope;
   }
 
   union ParserToken {
@@ -34,7 +34,7 @@ namespace marius {
     int column_;
     int line_;
 
-    ast::Top* top_;
+    ast::Scope* top_;
 
     Code* code_;
 
@@ -73,7 +73,7 @@ namespace marius {
       return code_;
     }
 
-    ast::Top* top() {
+    ast::Scope* top() {
       return top_;
     }
 

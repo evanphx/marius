@@ -8,7 +8,7 @@ namespace marius {
 
     if(!parser.parse(debug_)) return false;
 
-    ast::Top* top = parser.top();
+    ast::Scope* top = parser.top();
 
     if(!top) return false;
 
@@ -16,7 +16,7 @@ namespace marius {
 
     ast::State S(args, top->locals());
 
-    top->drive(S, 0);
+    top->drive(S, top->locals().size());
 
     code_ = S.to_code();
 

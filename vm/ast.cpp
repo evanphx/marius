@@ -30,10 +30,8 @@ namespace ast {
     return child_->drive(S, t);
   }
 
-  int Top::drive(State& S, int t) {
-    S.reserve(locals_.size());
-
-    body_->drive(S, locals_.size());
+  int Scope::drive(State& S, int t) {
+    body_->drive(S, t);
 
     return t;
   }
@@ -110,11 +108,9 @@ namespace ast {
     S.push(t+1);
     S.push(S.string(name_));
 
-    ArgMap locals;
+    ast::State subS(args_, body_->locals());
 
-    ast::State subS(args_, locals);
-
-    int r = body_->drive(subS, args_.size());
+    int r = body_->drive(subS, args_.size() + body_->locals().size());
     subS.push(RET);
     subS.push(r);
 
@@ -149,8 +145,8 @@ namespace ast {
     ArgMap locals;
     ArgMap args;
 
-    ast::State subS(args, locals);
-    int r = body_->drive(subS, 0);
+    ast::State subS(args, body_->locals());
+    int r = body_->drive(subS, body_->locals().size());
     subS.push(RET);
     subS.push(r);
 
@@ -286,10 +282,10 @@ namespace ast {
   }
 
   int Assign::drive(State& S, int t) {
-    value_->drive(S, reg_);
+    value_->drive(S, t);
     S.push(MOVR);
-    S.push(t);
     S.push(reg_);
+    S.push(t);
 
     return t;
   }

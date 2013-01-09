@@ -15,7 +15,7 @@ namespace marius {
   }
 
   void ParserState::set_top(ast::Node* b) {
-    top_ = new ast::Top(b, context_->local_names);
+    top_ = new ast::Scope(b, context_->local_names);
   }
 
   ast::Node* ParserState::seq(ast::Node* l, ast::Node* r) {
@@ -23,7 +23,15 @@ namespace marius {
   }
 
   ast::Node* ParserState::ast_class(String& name, ast::Node* body) {
-    return new ast::Class(name, body);
+    ast::Node* n = new ast::Class(name,
+                     new ast::Scope(body, context_->local_names));
+
+    delete context_;
+
+    context_ = stack_.back();
+    stack_.pop_back();
+
+    return n;
   }
 
   void ParserState::start_def() {
@@ -33,7 +41,9 @@ namespace marius {
   }
 
   ast::Node* ParserState::ast_def(String& name, ast::Node* b) {
-    ast::Node* n = new ast::Def(name, b, context_->args);
+    ast::Node* n = new ast::Def(name, 
+                     new ast::Scope(b, context_->local_names),
+                     context_->args);
     delete context_;
 
     context_ = stack_.back();

@@ -48,7 +48,7 @@ namespace marius {
 
     bool syntax_error_;
 
-    ast::Top* top_;
+    ast::Scope* top_;
 
   public:
 
@@ -67,7 +67,7 @@ namespace marius {
       syntax_error_ = true;
     }
 
-    ast::Top* top() {
+    ast::Scope* top() {
       return top_;
     }
 
