@@ -3,6 +3,8 @@
 #include "string.hpp"
 #include "module.hpp"
 
+#include <stdio.h>
+
 namespace marius {
   Class* OOP::klass() {
     switch(type_) {
@@ -27,6 +29,8 @@ namespace marius {
       return Class::base_class(eFalse);
     case eModuleBuilder:
       return Class::base_class(eModuleBuilder);
+    case eUnwind:
+      return Class::base_class(eUnwind);
     case TotalTypes:
       assert(false);
     }
@@ -74,6 +78,8 @@ namespace marius {
     case eModuleBuilder:
       printf("<ModuleBuilder:%p>\n", module_builder_);
       return;
+    case eUnwind:
+      printf("<Unwind:%p>\n", unwind_);
     case TotalTypes:
       assert(false);
     }

@@ -128,6 +128,7 @@ namespace marius {
     tbl[OOP::eUser] = 0;
     tbl[OOP::eTrue] = t;
     tbl[OOP::eFalse] = f;
+    tbl[OOP::eUnwind] = new_class("Unwind");
 
     Class::init_base(tbl);
 
