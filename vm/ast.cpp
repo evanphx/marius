@@ -254,6 +254,8 @@ namespace ast {
 
     body_->drive(S, t);
 
+    S.push(POPE);
+
     S.push(JMPF);
 
     Label b = S.label();

@@ -47,6 +47,8 @@ namespace marius {
       }
 
       FILE* file = fopen(path, "r");
+      delete path;
+
       if(!file) {
         return Unwind::import_error(name);
       }
