@@ -93,6 +93,7 @@ namespace marius {
     }
 
     bool parse(bool debug=false);
+    static void init_keywords();
 
   private:
     char next_c();

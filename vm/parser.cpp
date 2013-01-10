@@ -1,7 +1,6 @@
 
-extern "C" {
-  #include <string.h>
-}
+#include <string.h>
+#include <stdlib.h>
 
 #include "parser.hpp"
 
@@ -161,28 +160,68 @@ again:
   struct Keyword {
     const char* str;
     int token;
+
+    Keyword()
+      : str(0)
+      , token(0)
+    {}
+
+    Keyword(const char* s, int t)
+      : str(s)
+      , token(t)
+    {}
   };
 
-  static Keyword cKeywords[256][10] = {
-    ['c'] = {{"class", TK_CLASS}, {0,0}},
-    ['d'] = {{"def", TK_DEF}, {0,0}},
-    ['e'] = {{"end", TK_END}, {0,0}},
-    ['f'] = {{"false", TK_FALSE}, {0,0}},
-    ['i'] = {
-              {"if", TK_IF}, {"import", TK_IMPORT},
-              {0,0}
-            },
-    ['n'] = {{"nil", TK_NIL}, {0,0}},
-    ['r'] = {{"rescue", TK_RESCUE}, {0,0}},
-    ['t'] = {
-              {"true", TK_TRUE},
-              {"try", TK_TRY},
-              {0,0}
-            }
-  };
+  static Keyword* cKeywords[256] = {0};
+
+  void Parser::init_keywords() {
+    Keyword* k = new Keyword[2];
+    k[0] = Keyword("class", TK_CLASS);
+
+    cKeywords[(int)'c'] = k;
+
+    k = new Keyword[2];
+    k[0] = Keyword("def", TK_DEF);
+
+    cKeywords[(int)'d'] = k;
+
+    k = new Keyword[2];
+    k[0] = Keyword("end", TK_END);
+
+    cKeywords[(int)'e'] = k;
+
+    k = new Keyword[2];
+    k[0] = Keyword("false", TK_FALSE);
+
+    cKeywords[(int)'f'] = k;
+
+    k = new Keyword[3];
+    k[0] = Keyword("if", TK_IF);
+    k[1] = Keyword("import", TK_IMPORT);
+
+    cKeywords[(int)'i'] = k;
+
+    k = new Keyword[2];
+    k[0] = Keyword("nil", TK_NIL);
+
+    cKeywords[(int)'n'] = k;
+
+    k = new Keyword[2];
+    k[0] = Keyword("rescue", TK_RESCUE);
+
+    cKeywords[(int)'r'] = k;
+
+    k = new Keyword[2];
+    k[0] = Keyword("true", TK_TRUE);
+    k[1] = Keyword("try", TK_TRY);
+
+    cKeywords[(int)'t'] = k;
+  }
 
   int Parser::keyword_match() {
     Keyword* k = cKeywords[(int)pos_[0]];
+
+    if(!k) return -1;
 
     while(k->str) {
       int len = strlen(k->str);
@@ -225,6 +264,12 @@ again:
   }
 
   bool Parser::parse(bool debug) {
+    static bool setup_keywords = false;
+    if(!setup_keywords) {
+      init_keywords();
+      setup_keywords = true;
+    }
+
     next_c(); // prime the buffer
     engine_ = mariusParserAlloc(malloc);
 
