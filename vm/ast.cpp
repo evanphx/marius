@@ -242,6 +242,11 @@ namespace ast {
     S.push(LOADN);
     S.push(t);
     S.push(S.string(String::internalize("Importer")));
+    S.push(CALL);
+    S.push(t);
+    S.push(S.string("current"));
+    S.push(t);
+    S.push(0);
 
     S.push(LOADS);
     S.push(t+1);

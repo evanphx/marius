@@ -75,14 +75,14 @@ namespace marius {
       return m;
     }
 
+    OOP current(State& S, OOP recv, Arguments& args) {
+      return S.importer();
+    }
   }
 
-  void init_import(Environment& env, Class** tbl) {
-    Class* x = env.new_class("ImporterClass");
+  void init_import(State& S) {
+    Class* x = S.env().new_class("Importer");
     x->add_method("import", import);
-
-    MemoryObject* obj = new MemoryObject(x);
-
-    env.bind(String::internalize("Importer"), obj);
+    x->add_class_method("current", current);
   }
 }

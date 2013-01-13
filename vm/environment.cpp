@@ -91,9 +91,9 @@ namespace marius {
     return OOP::nil();
   }
 
-  void init_import(Environment& env, Class** tbl);
+  void init_import(State& S);
 
-  void Environment::init_ontology() {
+  void Environment::init_ontology(State& S) {
     String& mn = String::internalize("MetaClass");
     String& cn = String::internalize("Class");
 
@@ -145,6 +145,6 @@ namespace marius {
 
     binding_[io_n] = io;
 
-    init_import(*this, tbl);
+    init_import(S);
   }
 }

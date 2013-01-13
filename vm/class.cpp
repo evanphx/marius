@@ -47,6 +47,10 @@ namespace marius {
     method_table_.add(s, meth);
   }
 
+  void Class::add_class_method(const char* name, SimpleFunc func) {
+    klass()->add_method(name, func);
+  }
+
   static Class** base_classes_;
 
   void Class::init_base(Class** base) {

@@ -8,6 +8,7 @@
 #include "compiler.hpp"
 #include "settings.hpp"
 #include "unwind.hpp"
+#include "memory_object.hpp"
 
 #include <vector>
 #include <iostream>
@@ -65,7 +66,9 @@ int main(int argc, char** argv) {
 
   State state(vm, env, settings);
 
-  env.init_ontology();
+  env.init_ontology(state);
+
+  state.set_importer(new MemoryObject(env.lookup("Importer").as_class()));
 
   FILE* file = fopen(*opt, "r");
   if(!file) {

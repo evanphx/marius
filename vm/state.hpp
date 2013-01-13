@@ -5,11 +5,13 @@ namespace marius {
   class Environment;
   class VM;
   class Settings;
+  class MemoryObject;
 
   class State {
     VM& vm_;
     Environment& env_;
     Settings& settings_;
+    MemoryObject* importer_;
 
   public:
 
@@ -17,6 +19,7 @@ namespace marius {
       : vm_(vm)
       , env_(env)
       , settings_(set)
+      , importer_(0)
     {}
 
     VM& vm() {
@@ -29,6 +32,14 @@ namespace marius {
 
     Settings& settings() {
       return settings_;
+    }
+
+    MemoryObject* importer() {
+      return importer_;
+    }
+
+    void set_importer(MemoryObject* obj) {
+      importer_ = obj;
     }
   };
 }

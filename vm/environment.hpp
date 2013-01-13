@@ -9,6 +9,7 @@
 namespace marius {
   class String;
   class Class;
+  class State;
 
   class Environment {
     Environment* parent_;
@@ -25,7 +26,7 @@ namespace marius {
     OOP lookup(const char* str);
 
     Class* new_class(const char* name);
-    void init_ontology();
+    void init_ontology(State& S);
 
     void print();
 
