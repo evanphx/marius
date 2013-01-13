@@ -15,14 +15,13 @@ namespace marius {
   class Code;
   class MemoryObject;
   class Method;
-  class ModuleBuilder;
   class Unwind;
 
   class OOP {
   public:
     enum Type {
       eNil, eClass, eInteger, eString, eCode, eUser,
-      eTrue, eFalse, eModule, eModuleBuilder, eUnwind,
+      eTrue, eFalse, eModule, eUnwind,
       TotalTypes
     };
 
@@ -32,7 +31,6 @@ namespace marius {
     union {
       Class* class_;
       Module* module_;
-      ModuleBuilder* module_builder_;
       String* string_;
       Code* code_;
       MemoryObject* obj_;
@@ -75,11 +73,6 @@ namespace marius {
       , obj_(obj)
     {}
 
-    OOP(ModuleBuilder* b)
-      : type_(eModuleBuilder)
-      , module_builder_(b)
-    {}
-
     OOP(Unwind* u)
       : type_(eUnwind)
       , unwind_(u)
@@ -118,11 +111,6 @@ namespace marius {
     Code& as_code() {
       assert(type_ == eCode);
       return *code_;
-    }
-
-    ModuleBuilder* as_module_builder() {
-      assert(type_ == eModuleBuilder);
-      return module_builder_;
     }
 
     Module* as_module() {

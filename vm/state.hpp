@@ -22,6 +22,7 @@ namespace marius {
     VM& vm() {
       return vm_;
     }
+
     Environment& env() {
       return env_;
     }

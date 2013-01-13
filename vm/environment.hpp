@@ -22,6 +22,7 @@ namespace marius {
     {}
 
     OOP lookup(String& name);
+    OOP lookup(const char* str);
 
     Class* new_class(const char* name);
     void init_ontology();

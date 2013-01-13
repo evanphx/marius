@@ -3,15 +3,18 @@
 
 #include "method_table.hpp"
 #include "simple_func.hpp"
+#include "memory_object.hpp"
 
 namespace marius {
-  class Module {
-    MethodTable method_table_;
-
+  class Module : public MemoryObject {
   public:
+    Module(Class* cls, Class* mod, String& name);
+
     Method* lookup(String& name);
     void add_method(const char* name, SimpleFunc func);
     void add_native_method(const char* name, Code& code);
+
+    static Class* init(Environment& env);
   };
 
   class ModuleBuilder {

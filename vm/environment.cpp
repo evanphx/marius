@@ -22,6 +22,10 @@ namespace marius {
     return OOP::nil();
   }
 
+  OOP Environment::lookup(const char* name) {
+    return lookup(String::internalize(name));
+  }
+
   Class* Environment::new_class(const char* name) {
     String& s = String::internalize(name);
 
@@ -132,10 +136,14 @@ namespace marius {
 
     Class::init_base(tbl);
 
-    Module* io = new Module;
+    Class* mod = Module::init(*this);
+
+    String& io_n = String::internalize("io");
+
+    Module* io = new Module(c, mod, io_n);
     io->add_method("puts", io_puts);
 
-    binding_[String::internalize("io")] = io;
+    binding_[io_n] = io;
 
     init_import(*this, tbl);
   }

@@ -1,26 +1,43 @@
 #include "module.hpp"
 #include "method.hpp"
+#include "class.hpp"
+#include "environment.hpp"
 
 namespace marius {
+  namespace {
+    OOP module_add(State& S, OOP recv, Arguments& args) {
+      assert(args.count() == 2);
+
+      String& name = args[0].as_string();
+      Code& code = args[1].as_code();
+
+      Module* mod = recv.as_module();
+
+      mod->add_native_method(name.c_str(), code);
+
+      return recv;
+    }
+  }
+
+  Class* Module::init(Environment& env) {
+    Class* mod = env.new_class("Module");
+    mod->add_method("add_method", module_add);
+    return mod;
+  }
+
+  Module::Module(Class* cls, Class* mod, String& name)
+    : MemoryObject(new Class(cls, mod, name))
+  {}
+
   Method* Module::lookup(String& name) {
-    return method_table_.lookup(name);
+    return klass()->lookup(name);
   }
 
   void Module::add_method(const char* name, SimpleFunc func) {
-    Method* meth = new Method(func);
-
-    String& s = String::internalize(name);
-
-    method_table_.add(s, meth);
+    klass()->add_method(name, func);
   }
 
   void Module::add_native_method(const char* name, Code& code) {
-    Method* meth = new Method(code);
-
-    String& s = String::internalize(name);
-
-    method_table_.add(s, meth);
+    klass()->add_native_method(name, code);
   }
-
-
 }

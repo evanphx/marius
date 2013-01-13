@@ -10,6 +10,12 @@ namespace marius {
     , superclass_(0)
   {}
 
+  Class::Class(Class* cls, Class* sup, String& name)
+    : MemoryObject(cls)
+    , name_(name)
+    , superclass_(sup)
+  {}
+
   Method* Class::lookup(String& name) {
     Method* meth;
 

@@ -8,34 +8,13 @@
 namespace marius {
   Class* OOP::klass() {
     switch(type_) {
-    case eInteger:
-      return Class::base_class(eInteger);
-    case eClass:
-      return class_->klass();
-    case eModule:
-      assert(false);
-      return class_->klass();
-    case eNil:
-      return Class::base_class(eNil);
-    case eString:
-      return Class::base_class(eString);
     case eUser:
       return obj_->klass();
-    case eCode:
-      return Class::base_class(eCode);
-    case eTrue:
-      return Class::base_class(eTrue);
-    case eFalse:
-      return Class::base_class(eFalse);
-    case eModuleBuilder:
-      return Class::base_class(eModuleBuilder);
-    case eUnwind:
-      return Class::base_class(eUnwind);
-    case TotalTypes:
-      assert(false);
+    case eClass:
+      return class_->klass();
+    default:
+      return Class::base_class(type_);
     }
-
-    assert(false);
   }
 
   Method* OOP::find_method(String& name) {
@@ -74,9 +53,6 @@ namespace marius {
       return;
     case eModule:
       printf("<Module:%p>\n", module_);
-      return;
-    case eModuleBuilder:
-      printf("<ModuleBuilder:%p>\n", module_builder_);
       return;
     case eUnwind:
       printf("<Unwind:%p>\n", unwind_);

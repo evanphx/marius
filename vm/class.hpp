@@ -18,6 +18,7 @@ namespace marius {
 
   public:
     Class(Class* cls, String& name);
+    Class(Class* cls, Class* sup, String& name);
 
     String& name() {
       return name_;

@@ -61,12 +61,12 @@ namespace marius {
         return Unwind::import_error(name);
       }
 
-      Module* m = new Module;
-
-      ModuleBuilder* b = new ModuleBuilder(m);
+      Module* m = new Module(
+          S.env().lookup("Class").as_class(),
+          S.env().lookup("Module").as_class(), name);
 
       OOP* fp = args.frame() + 1;
-      fp[0] = b;
+      fp[0] = m;
 
       S.env().bind(name, m);
 
@@ -75,28 +75,11 @@ namespace marius {
       return m;
     }
 
-    OOP builder_add(State& S, OOP recv, Arguments& args) {
-      assert(args.count() == 2);
-
-      String& name = args[0].as_string();
-      Code& code = args[1].as_code();
-
-      Module* mod = recv.as_module_builder()->module();
-
-      mod->add_native_method(name.c_str(), code);
-
-      return recv;
-    }
   }
 
   void init_import(Environment& env, Class** tbl) {
     Class* x = env.new_class("ImporterClass");
     x->add_method("import", import);
-
-    Class* b = env.new_class("ModuleBuilder");
-    b->add_method("add_method", builder_add);
-
-    tbl[OOP::eModuleBuilder] = b;
 
     MemoryObject* obj = new MemoryObject(x);
 
