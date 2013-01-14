@@ -148,6 +148,7 @@ namespace marius {
     ast::Node* ast_def(String& name, ast::Node* b);
 
     ast::Node* call(ast::Node* recv, String& id);
+    ast::Node* attr(ast::Node* recv, String& id);
 
     void start_cascade(ast::Node* n);
     void cascade(String& name);

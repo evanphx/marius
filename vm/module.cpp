@@ -5,13 +5,13 @@
 
 namespace marius {
   namespace {
-    OOP module_add(State& S, OOP recv, Arguments& args) {
+    Handle module_add(State& S, Handle recv, Arguments& args) {
       assert(args.count() == 2);
 
-      String& name = args[0].as_string();
-      Code& code = args[1].as_code();
+      String& name = args[0]->as_string();
+      Code& code = args[1]->as_code();
 
-      Module* mod = recv.as_module();
+      Module* mod = recv->as_module();
 
       mod->add_native_method(name.c_str(), code);
 
@@ -20,7 +20,7 @@ namespace marius {
   }
 
   Class* Module::init(Environment& env) {
-    Class* mod = env.new_class("Module");
+    Class* mod = env.lookup("Module").as_class();
     mod->add_method("add_method", module_add);
     return mod;
   }
@@ -39,5 +39,20 @@ namespace marius {
 
   void Module::add_native_method(const char* name, Code& code) {
     klass()->add_native_method(name, code);
+  }
+
+  OOP Module::attribute(String& name, bool* found) {
+    Bindings::iterator i = attributes_.find(name);
+    if(i == attributes_.end()) {
+      if(found) *found = false;
+      return OOP::nil();
+    }
+
+    if(found) *found = true;
+    return i->second;
+  }
+
+  void Module::set_attribute(String& name, OOP val) {
+    attributes_[name] = val;
   }
 }

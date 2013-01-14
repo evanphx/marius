@@ -1,15 +1,20 @@
 #ifndef ARGUMENTS_HPP
 #define ARGUMENTS_HPP
 
+#include "state.hpp"
+#include "handle.hpp"
+
 namespace marius {
   class Arguments {
+    State& S_;
     OOP* fp_;
     int argc_;
 
   public:
 
-    Arguments(int argc, OOP* fp)
-      : fp_(fp)
+    Arguments(State& S, int argc, OOP* fp)
+      : S_(S)
+      , fp_(fp)
       , argc_(argc)
     {}
 
@@ -21,13 +26,13 @@ namespace marius {
       return argc_;
     }
 
-    OOP self() {
-      return fp_[-1];
+    Handle self() {
+      return handle(S_, fp_[-1]);
     }
 
-    OOP operator[](int idx) {
+    Handle operator[](int idx) {
       assert(idx < argc_);
-      return fp_[idx];
+      return handle(S_, fp_[idx]);
     }
   };
 }

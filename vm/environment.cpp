@@ -10,16 +10,7 @@
 
 namespace marius {
   OOP Environment::lookup(String& name) {
-    Environment* env = this;
-
-    while(env) {
-      Bindings::iterator i = binding_.find(name);
-
-      if(i != binding_.end()) return (*i).second;
-      env = env->parent_;
-    }
-
-    return OOP::nil();
+    return top_->attribute(name);
   }
 
   OOP Environment::lookup(const char* name) {
@@ -29,80 +20,83 @@ namespace marius {
   Class* Environment::new_class(const char* name) {
     String& s = String::internalize(name);
 
-    Class* obj = binding_[String::internalize("Class")].as_class();
+    Class* obj = lookup("Class").as_class();
 
     Class* cls = new Class(obj, s);
 
-    binding_[s] = OOP(cls);
+    bind(s, cls);
 
     return cls;
   }
 
-  void Environment::print() {
-    for(Bindings::iterator i = binding_.begin();
-        i != binding_.end();
-        ++i) {
-      std::cout << (*i).first.val().c_str() << " => ";
-      (*i).second.print();
-    }
+  void Environment::bind(String& name, OOP val) {
+    top_->set_attribute(name, val);
   }
 
-  static OOP int_plus(State& S, OOP recv, Arguments& args) {
-    if(args.count() == 0) return OOP::nil();
+  static Handle int_plus(State& S, Handle recv, Arguments& args) {
+    if(args.count() == 0) return handle(S, OOP::nil());
 
-    int val = recv.int_value() + args[0].int_value();
-    return OOP::integer(val);
+    int val = recv->int_value() + args[0]->int_value();
+    return handle(S, OOP::integer(val));
   }
 
-  static OOP class_new(State& S, OOP recv, Arguments& args) {
+  static Handle class_new(State& S, Handle recv, Arguments& args) {
     assert(args.count() == 1);
 
-    String& name = args[0].as_string();
+    String& name = args[0]->as_string();
 
-    return OOP(S.env().new_class(name.c_str()));
+    return handle(S, OOP(S.env().new_class(name.c_str())));
   }
 
-  static OOP add_method(State& S, OOP recv, Arguments& args) {
+  static Handle add_method(State& S, Handle recv, Arguments& args) {
     assert(args.count() == 2);
 
-    String& name = args[0].as_string();
-    Code& code = args[1].as_code();
+    String& name = args[0]->as_string();
+    Code& code = args[1]->as_code();
 
-    recv.as_class()->add_native_method(name.c_str(), code);
+    recv->as_class()->add_native_method(name.c_str(), code);
 
-    return OOP::nil();
+    return handle(S, OOP::nil());
   }
 
-  static OOP new_instance(State& S, OOP recv, Arguments& args) {
-    Class* cls = recv.as_class();
+  static Handle new_instance(State& S, Handle recv, Arguments& args) {
+    Class* cls = recv->as_class();
 
-    return OOP(new MemoryObject(cls));
+    return handle(S, OOP(new MemoryObject(cls)));
   }
 
-  static OOP run_code(State& S, OOP recv, Arguments& args) {
-    Code& code = recv.as_code();
+  static Handle run_code(State& S, Handle recv, Arguments& args) {
+    Code& code = recv->as_code();
 
-    return S.vm().run(S, code, args.frame() + 1);
+    return handle(S, S.vm().run(S, code, args.frame() + 1));
   }
 
-  static OOP io_puts(State& S, OOP recv, Arguments& args) {
+  static Handle io_puts(State& S, Handle recv, Arguments& args) {
     assert(args.count() == 1);
-    args[0].print();
-    return OOP::nil();
+    args[0]->print();
+    return handle(S, OOP::nil());
   }
 
   void init_import(State& S);
 
   void Environment::init_ontology(State& S) {
+    assert(!top_);
+
     String& mn = String::internalize("MetaClass");
     String& cn = String::internalize("Class");
 
     Class* m = new Class(0, mn);
-    binding_[mn] = m;
 
     Class* c = new Class(m, cn);
     m->klass_ = c;
-    binding_[cn] = c;
+
+    Class* mod = new Class(c, String::internalize("Module"));
+
+    top_ = new Module(c, mod, String::internalize("lang"));
+
+    bind(cn, c);
+    bind(mn, m);
+    bind(String::internalize("Module"), mod);
 
     m->add_method("new", class_new);
 
@@ -136,14 +130,14 @@ namespace marius {
 
     Class::init_base(tbl);
 
-    Class* mod = Module::init(*this);
+    Module::init(*this);
 
     String& io_n = String::internalize("io");
 
     Module* io = new Module(c, mod, io_n);
     io->add_method("puts", io_puts);
 
-    binding_[io_n] = io;
+    bind(io_n, io);
 
     init_import(S);
   }

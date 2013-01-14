@@ -11,6 +11,7 @@ namespace marius {
       "MOVF",
       "CALL",
       "CALL_KW",
+      "LATTR",
       "RET",
       "LOADN",
       "LOADS",

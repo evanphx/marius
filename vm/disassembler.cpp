@@ -80,6 +80,11 @@ namespace marius {
       printf("\n");
       return 6;
 
+    case LATTR:
+      printf("R(%d) := R(%d)::%s\n", seq[1], seq[3],
+             code_.string(seq[2]).c_str());
+      return 4;
+
     case LOADS:
       printf("R(%d) := \"%s\"\n",
                 seq[1],

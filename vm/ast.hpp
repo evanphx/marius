@@ -317,6 +317,19 @@ namespace marius {
 
       int drive(State& S, int t);
     };
+
+    class LoadAttr : public Node {
+      Node* recv_;
+      String& name_;
+
+    public:
+      LoadAttr(Node* recv, String& n)
+        : recv_(recv)
+        , name_(n)
+      {}
+
+      int drive(State& S, int t);
+    };
   }
 }
 

@@ -10,6 +10,8 @@
 #include "unwind.hpp"
 #include "memory_object.hpp"
 
+#include "handle.hpp"
+
 #include <vector>
 #include <iostream>
 
@@ -65,6 +67,8 @@ int main(int argc, char** argv) {
   Environment env;
 
   State state(vm, env, settings);
+
+  HandleScope handles(state);
 
   env.init_ontology(state);
 

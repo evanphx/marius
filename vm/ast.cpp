@@ -294,4 +294,14 @@ namespace ast {
 
     return t;
   }
+
+  int LoadAttr::drive(State& S, int t) {
+    recv_->drive(S, t);
+    S.push(LATTR);
+    S.push(t);
+    S.push(S.string(name_));
+    S.push(t);
+
+    return t;
+  }
 }}

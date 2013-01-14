@@ -78,6 +78,10 @@ namespace marius {
       , unwind_(u)
     {}
 
+    Type type() {
+      return type_;
+    }
+
     static OOP nil() {
       return OOP();
     }
@@ -136,12 +140,51 @@ namespace marius {
       return unwind_;
     }
 
+    // template <typename T>
+      // class Caster {
+        // static T cast(OOP val) {
+          // assert(false);
+        // }
+      // };
+
+    // template <>
+      // class Caster<int> {
+        // static int cast(OOP val) {
+          // assert(val.type_ == eInteger);
+          // return val.int_;
+        // }
+      // }
+
+    // template <typename T>
+      // T as() {
+        // return Caster<T>::cast(*this);
+      // }
+
+    template <typename T>
+      T as() {
+        assert(false);
+      }
+
     Class* klass();
 
     Method* find_method(String& name);
+    OOP attribute(String& name, bool* found=0);
 
     void print();
   };
+
+#define SPEC(T, E, V) template <> inline T OOP::as<T>() { assert(type_ == E); return V; }
+
+  SPEC(Class*, eClass, class_);
+  SPEC(Module*, eModule, module_);
+  SPEC(String*, eString, string_);
+  SPEC(Code*, eCode, code_);
+  SPEC(MemoryObject*, eUser, obj_);
+  SPEC(Unwind*, eUnwind, unwind_);
+  SPEC(int, eInteger, int_);
+
+#undef SPEC
+
 }
 
 #endif

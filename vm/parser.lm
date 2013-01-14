@@ -76,7 +76,7 @@ sexpr(A) ::= FALSE.                    { A.a = S->ast_false(); }
 sexpr(A) ::= ID(B).                    { A.a = S->named(*B.s); }
 
 send(A) ::= sexpr(B). { A.a = B.a; }
-send(A) ::= send(B) DOT ID(C). { A.a = S->call(B.a, *C.s); }
+send(A) ::= send(B) DOT ID(C). { A.a = S->attr(B.a, *C.s); }
 
 /* Positional args */
 
@@ -89,6 +89,7 @@ opt_kw_arg_list ::= COMMA kw_arg_list_elems.
 
 arg_list ::= arg_list_start arg_list_elems opt_kw_arg_list.
 
+send(A) ::= send(B) DOT ID(C) LP RP. { A.a = S->call(B.a, *C.s); }
 send(A) ::= send(B) DOT ID(C) arg_list RP. { A.a = S->call_args(B.a, *C.s); }
 
 /* Keyword args */

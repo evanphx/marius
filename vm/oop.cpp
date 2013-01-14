@@ -59,6 +59,15 @@ namespace marius {
     case TotalTypes:
       assert(false);
     }
+  }
 
+  OOP OOP::attribute(String& name, bool* found) {
+    switch(type_) {
+    case eModule:
+      return as_module()->attribute(name, found);
+    default:
+      if(found) *found = false;
+      return OOP::nil();
+    }
   }
 }

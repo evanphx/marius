@@ -37,28 +37,28 @@ namespace marius {
       return 0;
     }
 
-    OOP import(State& S, OOP recv, Arguments& args) {
+    Handle import(State& S, Handle recv, Arguments& args) {
       assert(args.count() == 1);
 
-      String& name = args[0].as_string();
+      String& name = args[0]->as_string();
 
       const char* path = find_path(S, name);
 
       if(!path) {
-        return Unwind::import_error(name);
+        return handle(S, Unwind::import_error(name));
       }
 
       FILE* file = fopen(path, "r");
       delete path;
 
       if(!file) {
-        return Unwind::import_error(name);
+        return handle(S, Unwind::import_error(name));
       }
 
       Compiler compiler;
 
       if(!compiler.compile(file)) {
-        return Unwind::import_error(name);
+        return handle(S, Unwind::import_error(name));
       }
 
       Module* m = new Module(
@@ -72,11 +72,11 @@ namespace marius {
 
       S.vm().run(S, *compiler.code(), fp + 1);
 
-      return m;
+      return handle(S, m);
     }
 
-    OOP current(State& S, OOP recv, Arguments& args) {
-      return S.importer();
+    Handle current(State& S, Handle recv, Arguments& args) {
+      return handle(S, S.importer());
     }
   }
 

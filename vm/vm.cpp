@@ -120,6 +120,25 @@ namespace marius {
 
         break;
 
+      case LATTR:
+        t = load_attr(S, code.string(seq[1]), fp[seq[2]],
+                      fp + (seq[2] + 1));
+
+        if(t.unwind_p()) {
+          if(es.size() == 0) return t;
+          te = es.back();
+          es.pop_back();
+
+          fp[te.reg] = t.unwind_value();
+
+          seq = code.code() + te.ip;
+        } else {
+          fp[seq[0]] = t;
+          seq += 3;
+        }
+
+        break;
+
       case LOADN:
         t = load_named(S, code.string(seq[1]));
 
@@ -209,7 +228,7 @@ namespace marius {
       return OOP::nil();
     }
 
-    Arguments args(argc, fp);
+    Arguments args(S, argc, fp);
 
     return meth->run(S, recv, args);
   }
@@ -255,12 +274,31 @@ namespace marius {
 
     reorg_args(fp, meth, keywords);
 
-    Arguments args(argc, fp);
+    Arguments args(S, argc, fp);
 
     return meth->run(S, recv, args);
   }
 
   OOP VM::load_named(State& S, String& name) {
     return S.env().lookup(name);
+  }
+
+  OOP VM::load_attr(State& S, String& name, OOP recv, OOP* fp) {
+    if(recv.type() == OOP::eModule) {
+      bool found = false; 
+      OOP val = recv.attribute(name, &found);
+      if(found) return val;
+    }
+
+    Method* meth = recv.find_method(name);
+
+    if(!meth) {
+      printf("NO METHOD :%s\n", name.c_str());
+      return OOP::nil();
+    }
+
+    Arguments args(S, 0, fp);
+
+    return meth->run(S, recv, args);
   }
 }

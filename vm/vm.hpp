@@ -6,6 +6,7 @@
 
 #include "string_map.hpp"
 #include "string_vector.hpp"
+#include "handle.hpp"
 
 namespace marius {
   const static int cInitialStack = 4096;
@@ -25,12 +26,15 @@ namespace marius {
 
     OOP run(State& S, Code& code);
     OOP run(State& S, Code& code, OOP* fp);
-    OOP run_method(State& S, OOP recv, String& name, int argc, OOP* argv);
+    OOP run_method(State& S, OOP recv,
+                           String& name, int argc, OOP* argv);
 
     void reorg_args(OOP* fp, Method* meth, ArgMap& keywords);
-    OOP run_kw_method(State& S, OOP recv, String& name, int argc, OOP* argv,
-                      ArgMap& keywords);
+    OOP run_kw_method(State& S, OOP recv,
+                              String& name, int argc, OOP* argv,
+                              ArgMap& keywords);
     OOP load_named(State& S, String& name);
+    OOP load_attr(State& S, String& name, OOP recv, OOP* fp);
   };
 }
 

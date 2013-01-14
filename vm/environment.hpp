@@ -10,29 +10,26 @@ namespace marius {
   class String;
   class Class;
   class State;
+  class Module;
 
   class Environment {
-    Environment* parent_;
-
-    typedef StringMap<OOP>::type Bindings;
-    Bindings binding_;
+    Module* top_;
 
   public:
-    Environment()
-      : parent_(0)
+    Environment(Module* m=0)
+      : top_(m)
     {}
 
     OOP lookup(String& name);
     OOP lookup(const char* str);
 
     Class* new_class(const char* name);
+
     void init_ontology(State& S);
 
     void print();
 
-    void bind(String& name, OOP val) {
-      binding_[name] = val;
-    }
+    void bind(String& name, OOP val);
   };
 }
 

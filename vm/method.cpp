@@ -15,7 +15,9 @@ namespace marius {
 
   OOP Method::run(State& S, OOP recv, Arguments& args) {
     if(func_) {
-      return func_(S, recv, args);
+      HandleScope scope(S);
+
+      return *func_(S, handle(S, recv), args);
     } else if(code_) {
       return S.vm().run(S, *code_, args.frame());
     }

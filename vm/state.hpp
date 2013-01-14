@@ -1,17 +1,22 @@
 #ifndef STATE_HPP
 #define STATE_HPP
 
+#include "handle_sets.hpp"
+
 namespace marius {
   class Environment;
   class VM;
   class Settings;
   class MemoryObject;
+  class HandleScope;
 
   class State {
     VM& vm_;
     Environment& env_;
     Settings& settings_;
     MemoryObject* importer_;
+    HandleScope* handles_;
+    HandleSets handle_sets_;
 
   public:
 
@@ -20,6 +25,7 @@ namespace marius {
       , env_(env)
       , settings_(set)
       , importer_(0)
+      , handles_(0)
     {}
 
     VM& vm() {
@@ -38,9 +44,24 @@ namespace marius {
       return importer_;
     }
 
+    HandleSet* pull_set() {
+      return handle_sets_.pull();
+    }
+
     void set_importer(MemoryObject* obj) {
       importer_ = obj;
     }
+
+    HandleScope* set_handles(HandleScope* scope) {
+      HandleScope* cur = handles_;
+      handles_ = scope;
+      return cur;
+    }
+
+    HandleScope* handles() {
+      return handles_;
+    }
+
   };
 }
 
