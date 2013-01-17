@@ -1,0 +1,13 @@
+class Blah
+  def s
+    @a = 7
+  end
+
+  def r
+    @a
+  end
+end
+
+b = Blah.new
+b.s
+io.puts(b.r)

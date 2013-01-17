@@ -2,6 +2,8 @@
 #include "class.hpp"
 #include "string.hpp"
 #include "module.hpp"
+#include "attributes.hpp"
+#include "user.hpp"
 
 #include <stdio.h>
 
@@ -9,13 +11,14 @@ namespace marius {
   Class* OOP::klass() {
     switch(type_) {
     case eUser:
-      return obj_->klass();
+      return user_->klass();
     case eClass:
       return class_->klass();
     default:
       return Class::base_class(type_);
     }
   }
+
 
   Method* OOP::find_method(String& name) {
     if(type_ == eModule) {
@@ -40,10 +43,10 @@ namespace marius {
       printf("\"%s\"\n", string_->c_str());
       return;
     case eUser:
-      printf("<%s:%p>\n", obj_->klass()->name().c_str(), obj_);
+      printf("<%s:%p>\n", user_->klass()->name().c_str(), user_);
       return;
     case eCode:
-      printf("<Code:%p>\n", obj_);
+      printf("<Code:%p>\n", user_);
       return;
     case eTrue:
       printf("true\n");
@@ -61,11 +64,31 @@ namespace marius {
     }
   }
 
-  OOP OOP::attribute(String& name, bool* found) {
+  Attributes* OOP::as_attributes() {
     switch(type_) {
     case eModule:
-      return as_module()->attribute(name, found);
+      return module_;
+    case eClass:
+      return class_;
+    case eUser:
+      return user_;
     default:
+      return 0;
+    }
+  }
+
+  OOP OOP::set_attribute(String& name, OOP val) {
+    if(Attributes* attrs = as_attributes()) {
+      attrs->set_attribute(name, val);
+    }
+
+    return val;
+  }
+
+  OOP OOP::attribute(String& name, bool* found) {
+    if(Attributes* attrs = as_attributes()) {
+      return attrs->attribute(name, found);
+    } else {
       if(found) *found = false;
       return OOP::nil();
     }

@@ -128,6 +128,10 @@ again:
         advance(1);
         return TK_FIN;
 
+      case '@':
+        advance(1);
+        return id_match(TK_IVAR);
+
       case '#':
         while(next_c() != '\n') advance(1);
 
@@ -143,7 +147,7 @@ again:
           int t = keyword_match();
           if(t != -1) return t;
 
-          if(isalpha(c)) return id_match();
+          if(isalpha(c)) return id_match(TK_ID);
           printf("Unknown token at line %d, column %d: '%c'\n",
                  line_, column_, c);
         }
@@ -244,7 +248,7 @@ again:
     return -1;
   }
 
-  int Parser::id_match() {
+  int Parser::id_match(int tk) {
     const char* start = pos_;
     const char* p = pos_;
 
@@ -260,7 +264,7 @@ again:
     advance(p - pos_);
 
     value_.s = &String::internalize(strndup(start, p - start));
-    return TK_ID;
+    return tk;
   }
 
   bool Parser::parse(bool debug) {

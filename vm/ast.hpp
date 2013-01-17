@@ -330,6 +330,30 @@ namespace marius {
 
       int drive(State& S, int t);
     };
+
+    class IvarAssign : public Node {
+      String& name_;
+      Node* value_;
+
+    public:
+      IvarAssign(String& n, Node* v)
+        : name_(n)
+        , value_(v)
+      {}
+
+      int drive(State& S, int t);
+    };
+
+    class IvarRead : public Node {
+      String& name_;
+
+    public:
+      IvarRead(String& n)
+        : name_(n)
+      {}
+
+      int drive(State& S, int t);
+    };
   }
 }
 

@@ -100,8 +100,7 @@ namespace marius {
     const char* next_str(int count);
 
     int next_token();
-    int id_match();
-    int bigid_match();
+    int id_match(int tk);
     int keyword_match();
   };
 }

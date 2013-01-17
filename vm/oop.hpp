@@ -13,29 +13,36 @@ namespace marius {
   class Module;
   class String;
   class Code;
-  class MemoryObject;
   class Method;
   class Unwind;
+  class User;
+  class Attributes;
 
   class OOP {
   public:
     enum Type {
-      eNil, eClass, eInteger, eString, eCode, eUser,
-      eTrue, eFalse, eModule, eUnwind,
+      // Value object types
+      eNil, eTrue, eFalse, eInteger, eString, eUnwind, eCode,
+
+      // Mutable object types
+      eClass, eUser, eModule,
       TotalTypes
     };
+
+    const static int cMutableObjects = eClass;
 
   private:
     Type type_;
 
     union {
-      Class* class_;
-      Module* module_;
+      int int_;
       String* string_;
       Code* code_;
-      MemoryObject* obj_;
       Unwind* unwind_;
-      int int_;
+
+      Class* class_;
+      Module* module_;
+      User* user_;
     };
 
   public:
@@ -68,9 +75,9 @@ namespace marius {
       , code_(&code)
     {}
 
-    OOP(MemoryObject* obj)
+    OOP(User* obj)
       : type_(eUser)
-      , obj_(obj)
+      , user_(obj)
     {}
 
     OOP(Unwind* u)
@@ -80,6 +87,14 @@ namespace marius {
 
     Type type() {
       return type_;
+    }
+
+    bool value_p() {
+      return type_ < cMutableObjects;
+    }
+
+    bool mutable_p() {
+      return type_ >= cMutableObjects;
     }
 
     static OOP nil() {
@@ -122,10 +137,12 @@ namespace marius {
       return module_;
     }
 
-    MemoryObject* as_obj() {
+    User* as_obj() {
       assert(type_ == eUser);
-      return obj_;
+      return user_;
     }
+
+    Attributes* as_attributes();
 
     bool true_condition_p() {
       return type_ != eFalse;
@@ -168,6 +185,7 @@ namespace marius {
     Class* klass();
 
     Method* find_method(String& name);
+    OOP set_attribute(String& name, OOP val);
     OOP attribute(String& name, bool* found=0);
 
     void print();
@@ -179,7 +197,7 @@ namespace marius {
   SPEC(Module*, eModule, module_);
   SPEC(String*, eString, string_);
   SPEC(Code*, eCode, code_);
-  SPEC(MemoryObject*, eUser, obj_);
+  SPEC(User*, eUser, user_);
   SPEC(Unwind*, eUnwind, unwind_);
   SPEC(int, eInteger, int_);
 

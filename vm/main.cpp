@@ -8,7 +8,7 @@
 #include "compiler.hpp"
 #include "settings.hpp"
 #include "unwind.hpp"
-#include "memory_object.hpp"
+#include "user.hpp"
 
 #include "handle.hpp"
 
@@ -72,7 +72,7 @@ int main(int argc, char** argv) {
 
   env.init_ontology(state);
 
-  state.set_importer(new MemoryObject(env.lookup("Importer").as_class()));
+  state.set_importer(new User(env.lookup("Importer").as_class()));
 
   FILE* file = fopen(*opt, "r");
   if(!file) {

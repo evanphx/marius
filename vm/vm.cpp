@@ -156,6 +156,17 @@ namespace marius {
         }
 
         break;
+
+      case IVA:
+        fp[seq[0]] = fp[-1].set_attribute(code.string(seq[1]), fp[seq[2]]);
+        seq += 3;
+        break;
+
+      case IVR:
+        fp[seq[0]] = fp[-1].attribute(code.string(seq[1]), 0);
+        seq += 2;
+        break;
+
       case LOADS:
         fp[seq[0]] = OOP(code.string(seq[1]));
 
@@ -212,6 +223,9 @@ namespace marius {
       case POPE:
         es.pop_back();
         break;
+      default:
+        printf("UNKNOWN INSTRUCTION: %d\n", seq[-1]);
+        assert(false);
       }
     }
 
@@ -284,11 +298,9 @@ namespace marius {
   }
 
   OOP VM::load_attr(State& S, String& name, OOP recv, OOP* fp) {
-    if(recv.type() == OOP::eModule) {
-      bool found = false; 
-      OOP val = recv.attribute(name, &found);
-      if(found) return val;
-    }
+    bool found = false;
+    OOP val = recv.attribute(name, &found);
+    if(found) return val;
 
     Method* meth = recv.find_method(name);
 

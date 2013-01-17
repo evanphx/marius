@@ -37,6 +37,7 @@ test: marius
 	test `./marius test/try_skip.mr` = 7
 	test `./marius test/local.mr` = 7
 	test `./marius test/local_def.mr` = 7
+	test `./marius test/ivar.mr` = 7
 
 .PHONY: test
 

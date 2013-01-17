@@ -5,13 +5,14 @@
 #include "simple_func.hpp"
 #include "method_table.hpp"
 #include "memory_object.hpp"
+#include "attributes.hpp"
 
 namespace marius {
   class Method;
   class String;
   class MethodTable;
 
-  class Class : public MemoryObject {
+  class Class : public MemoryObject, public Attributes {
     String& name_;
     Class* superclass_;
     MethodTable method_table_;

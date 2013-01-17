@@ -12,6 +12,8 @@ namespace marius {
       "CALL",
       "CALL_KW",
       "LATTR",
+      "IVA",
+      "IVR",
       "RET",
       "LOADN",
       "LOADS",

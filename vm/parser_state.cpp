@@ -181,6 +181,14 @@ namespace marius {
     return new ast::Assign(name, r, n);
   }
 
+  ast::Node* ParserState::ivar_assign(String& name, ast::Node* v) {
+    return new ast::IvarAssign(name, v);
+  }
+
+  ast::Node* ParserState::ivar_read(String& name) {
+    return new ast::IvarRead(name);
+  }
+
   /*
   int ParserState::start_cond(int c) {
     push(GOTO_IF_FALSE);

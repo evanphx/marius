@@ -5,6 +5,7 @@
 #include "state.hpp"
 #include "vm.hpp"
 #include "module.hpp"
+#include "user.hpp"
 
 #include <iostream>
 
@@ -62,7 +63,7 @@ namespace marius {
   static Handle new_instance(State& S, Handle recv, Arguments& args) {
     Class* cls = recv->as_class();
 
-    return handle(S, OOP(new MemoryObject(cls)));
+    return handle(S, OOP(new User(cls)));
   }
 
   static Handle run_code(State& S, Handle recv, Arguments& args) {

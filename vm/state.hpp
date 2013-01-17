@@ -7,14 +7,14 @@ namespace marius {
   class Environment;
   class VM;
   class Settings;
-  class MemoryObject;
+  class User;
   class HandleScope;
 
   class State {
     VM& vm_;
     Environment& env_;
     Settings& settings_;
-    MemoryObject* importer_;
+    User* importer_;
     HandleScope* handles_;
     HandleSets handle_sets_;
 
@@ -40,7 +40,7 @@ namespace marius {
       return settings_;
     }
 
-    MemoryObject* importer() {
+    User* importer() {
       return importer_;
     }
 
@@ -48,7 +48,7 @@ namespace marius {
       return handle_sets_.pull();
     }
 
-    void set_importer(MemoryObject* obj) {
+    void set_importer(User* obj) {
       importer_ = obj;
     }
 

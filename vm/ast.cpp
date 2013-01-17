@@ -304,4 +304,22 @@ namespace ast {
 
     return t;
   }
+
+  int IvarAssign::drive(State& S, int t) {
+    value_->drive(S, t);
+    S.push(IVA);
+    S.push(t);
+    S.push(S.string(name_));
+    S.push(t);
+
+    return t;
+  }
+
+  int IvarRead::drive(State& S, int t) {
+    S.push(IVR);
+    S.push(t);
+    S.push(S.string(name_));
+
+    return t;
+  }
 }}

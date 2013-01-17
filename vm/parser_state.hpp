@@ -175,6 +175,8 @@ namespace marius {
 
     ast::Node* ast_try(ast::Node* b, ast::Node* h);
     ast::Node* assign(String& name, ast::Node* n);
+    ast::Node* ivar_assign(String& name, ast::Node* n);
+    ast::Node* ivar_read(String& name);
   };
 }
 

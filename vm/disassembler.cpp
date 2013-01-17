@@ -80,6 +80,18 @@ namespace marius {
       printf("\n");
       return 6;
 
+    case IVA:
+      printf("R(%d) := @%s = R(%d)\n",
+             seq[1],
+             code_.string(seq[2]).c_str(), seq[3]);
+      return 4;
+
+    case IVR:
+      printf("R(%d) := @%s\n",
+             seq[1],
+             code_.string(seq[2]).c_str());
+      return 3;
+
     case LATTR:
       printf("R(%d) := R(%d)::%s\n", seq[1], seq[3],
              code_.string(seq[2]).c_str());

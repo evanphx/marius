@@ -16,12 +16,12 @@
 %left DIVIDE TIMES.
 
 %extra_argument { marius::ParserState* S }
-   
+
 %syntax_error {
   S->set_syntax_error();
 
   std::cout << "Syntax error at line " << S->line()
-            << ", column " << S->column() << std::endl;  
+            << ", column " << S->column() << std::endl;
 }
 
 program ::= opt_fin l1(A) last_fin. { S->set_top(S->ret(A.a)); }
@@ -45,7 +45,7 @@ fin ::= FIN.
 seq(A) ::= seq(B) fin stmt(C). { A.a = S->seq(B.a, C.a); }
 seq(A) ::= stmt(B). { A.a = B.a; }
 
-class_start ::= CLASS. { S->start_class(); } 
+class_start ::= CLASS. { S->start_class(); }
 class_body(A) ::= l1(B) fin END. { A.a = B.a; }
 
 class(A) ::= class_start ID(B) fin class_body(C). {
@@ -74,6 +74,7 @@ sexpr(A) ::= NIL.                      { A.a = S->ast_nil();  }
 sexpr(A) ::= TRUE.                     { A.a = S->ast_true();  }
 sexpr(A) ::= FALSE.                    { A.a = S->ast_false(); }
 sexpr(A) ::= ID(B).                    { A.a = S->named(*B.s); }
+sexpr(A) ::= IVAR(B).                  { A.a = S->ivar_read(*B.s); }
 
 send(A) ::= sexpr(B). { A.a = B.a; }
 send(A) ::= send(B) DOT ID(C). { A.a = S->attr(B.a, *C.s); }
@@ -134,3 +135,4 @@ stmt(A) ::= TRY fin seq(C) fin RESCUE fin seq(D) fin END. {
             }
 
 stmt(A) ::= ID(B) EQUAL expr(C). { A.a = S->assign(*B.s, C.a); }
+stmt(A) ::= IVAR(B) EQUAL expr(C). { A.a = S->ivar_assign(*B.s, C.a); }
