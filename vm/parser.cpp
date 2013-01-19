@@ -8,6 +8,9 @@
 
 #include "parser.c.inc"
 
+#include "buffer.hpp"
+#include "utf8.hpp"
+
 namespace marius {
 
   char Parser::next_c() {
@@ -249,21 +252,25 @@ again:
   }
 
   int Parser::id_match(int tk) {
-    const char* start = pos_;
-    const char* p = pos_;
+    char* start = pos_;
 
-    if(!isalpha(*p)) return -1;
+    Buffer buf(pos_, end_ - pos_);
+    uint32_t cp;
 
-    p++;
+    int len = decode_utf8(buf, &cp);
+    if(!isalpha(cp)) return -1;
 
-    while(p < end_) {
-      if(!isalnum(*p)) break;
-      p++;
+    buf.trim(len);
+
+    while(!buf.empty_p()) {
+      int l = decode_utf8(buf, &cp);
+      if(!isalnum(cp)) break;
+      buf.trim(l);
     }
 
-    advance(p - pos_);
+    advance(buf.c_buf() - pos_);
 
-    value_.s = &String::internalize(strndup(start, p - start));
+    value_.s = &String::internalize(strndup(start, buf.c_buf() - start));
     return tk;
   }
 
