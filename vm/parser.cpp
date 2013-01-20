@@ -100,6 +100,11 @@ again:
           return TK_CASCADE;
         }
 
+        if(next_c() == '@') {
+          advance(1);
+          return TK_ATTR;
+        }
+
         return TK_DOT;
 
       case ',':
@@ -264,7 +269,8 @@ again:
 
     while(!buf.empty_p()) {
       int l = decode_utf8(buf, &cp);
-      if(!isalnum(cp)) break;
+      bool valid = isalnum(cp) || cp == '_';
+      if(!valid) break;
       buf.trim(l);
     }
 

@@ -302,15 +302,6 @@ namespace marius {
     OOP val = recv.attribute(name, &found);
     if(found) return val;
 
-    Method* meth = recv.find_method(name);
-
-    if(!meth) {
-      printf("NO METHOD :%s\n", name.c_str());
-      return OOP::nil();
-    }
-
-    Arguments args(S, 0, fp);
-
-    return meth->run(S, recv, args);
+    return OOP::nil();
   }
 }

@@ -61,13 +61,13 @@
 **                       defined, then do no error processing.
 */
 #define YYCODETYPE unsigned char
-#define YYNOCODE 58
+#define YYNOCODE 59
 #define YYACTIONTYPE unsigned char
 #define mariusParserTOKENTYPE  marius::ParserToken 
 typedef union {
   int yyinit;
   mariusParserTOKENTYPE yy0;
-  marius::ParserToken yy70;
+  marius::ParserToken yy88;
 } YYMINORTYPE;
 #ifndef YYSTACKDEPTH
 #define YYSTACKDEPTH 100
@@ -76,8 +76,8 @@ typedef union {
 #define mariusParserARG_PDECL , marius::ParserState* S 
 #define mariusParserARG_FETCH  marius::ParserState* S  = yypParser->S 
 #define mariusParserARG_STORE yypParser->S  = S 
-#define YYNSTATE 111
-#define YYNRULE 61
+#define YYNSTATE 113
+#define YYNRULE 62
 #define YY_NO_ACTION      (YYNSTATE+YYNRULE+2)
 #define YY_ACCEPT_ACTION  (YYNSTATE+YYNRULE+1)
 #define YY_ERROR_ACTION   (YYNSTATE+YYNRULE)
@@ -146,114 +146,112 @@ static const YYMINORTYPE yyzerominor = { 0 };
 **                     shifting non-terminals after a reduce.
 **  yy_default[]       Default action for each state.
 */
-#define YY_ACTTAB_COUNT (327)
+#define YY_ACTTAB_COUNT (313)
 static const YYACTIONTYPE yy_action[] = {
- /*     0 */   105,  106,  104,   40,   60,  102,   21,   22,  111,   94,
- /*    10 */    93,   92,   91,   48,   23,   24,   21,   22,   18,   47,
- /*    20 */    30,   61,   80,  100,  105,   38,  104,  103,   60,  102,
- /*    30 */    59,  101,   82,   94,   93,   92,   91,   48,   15,   79,
- /*    40 */    41,   54,   18,   47,   30,   53,   17,   86,  105,   88,
- /*    50 */    39,   19,   81,   68,  109,  108,  107,   59,   63,   67,
- /*    60 */    62,   64,    4,   90,   41,   43,   80,   33,   94,   93,
- /*    70 */    92,   91,   89,   14,   32,   77,   74,   50,   84,   49,
- /*    80 */    59,   20,   80,   66,   68,  109,  108,  107,   83,   63,
- /*    90 */   105,   62,   13,   97,   60,   41,   43,   41,   56,   94,
- /*   100 */    93,   92,   91,   48,   72,   32,   77,   74,   18,   47,
- /*   110 */    30,   65,    1,  104,   80,   60,  102,   41,   25,    3,
- /*   120 */    94,   93,   92,   91,   48,  173,    2,   36,   37,   18,
- /*   130 */    47,   30,   46,   99,    5,  105,   12,  104,   16,   60,
- /*   140 */   102,   85,   87,   52,   94,   93,   92,   91,   48,   26,
- /*   150 */    78,   11,    7,   18,   47,   30,   45,   10,    6,  105,
- /*   160 */     9,   42,   73,   60,    8,   44,   96,   95,   94,   93,
- /*   170 */    92,   91,   48,   58,  174,  174,  105,   18,   47,   30,
- /*   180 */    60,  174,  174,  174,  174,   94,   93,   92,   91,   48,
- /*   190 */   174,  174,  174,  174,   18,   47,   30,   28,  174,  174,
- /*   200 */   105,  174,  174,   71,   60,  174,  174,  174,  174,   94,
- /*   210 */    93,   92,   91,   48,  174,  174,  174,  174,   18,   47,
- /*   220 */    30,  110,  109,  108,  107,  174,   63,  105,   62,  174,
- /*   230 */   174,   60,   41,   43,  174,  174,   94,   93,   92,   91,
- /*   240 */    48,  174,   32,   77,   74,   18,   47,   30,   70,   35,
- /*   250 */   174,  174,  174,   69,  174,  174,   41,   43,  174,  174,
- /*   260 */   174,   70,   31,  174,   70,   29,   32,   77,   74,   41,
- /*   270 */    43,  174,   41,   43,  174,  174,  174,   70,   27,   32,
- /*   280 */    77,   74,   32,   77,   74,   41,   43,   41,   55,  174,
- /*   290 */    34,  174,   51,   57,   86,   32,   77,   74,   94,   93,
- /*   300 */    92,   91,   89,   98,  174,  174,   41,   43,  174,  174,
- /*   310 */   174,   41,   43,  174,   41,   43,   32,   77,   76,  174,
- /*   320 */   174,   32,   77,   74,   32,   77,   75,
+ /*     0 */   107,  108,  106,  113,   61,  104,   41,   42,   40,   96,
+ /*    10 */    95,   94,   93,   51,   21,   22,   32,   78,   77,   18,
+ /*    20 */    50,   30,  107,   71,   31,  107,   82,  106,  105,   61,
+ /*    30 */   104,   41,   42,   81,   96,   95,   94,   93,   51,   41,
+ /*    40 */    42,   32,   78,   75,   18,   50,   30,   60,   57,   32,
+ /*    50 */    78,   76,   39,   60,   57,   69,  111,  110,  109,   38,
+ /*    60 */    64,   68,   63,   71,   35,  103,   41,   42,   70,   14,
+ /*    70 */    15,   41,   42,   53,   17,   52,   32,   78,   75,   65,
+ /*    80 */     4,   32,   78,   75,   20,   81,   67,   69,  111,  110,
+ /*    90 */   109,   90,   64,   62,   63,  102,   19,   92,   41,   42,
+ /*   100 */    41,   46,   96,   95,   94,   93,   91,   89,   32,   78,
+ /*   110 */    75,   13,   60,   57,   66,   83,  106,   33,   61,  104,
+ /*   120 */   176,    2,   81,   96,   95,   94,   93,   51,   23,   24,
+ /*   130 */    21,   22,   85,   18,   50,   30,   84,   71,   29,  107,
+ /*   140 */    80,  106,   73,   61,  104,   41,   42,    1,   96,   95,
+ /*   150 */    94,   93,   51,   81,    3,   32,   78,   75,   18,   50,
+ /*   160 */    30,   71,   27,   37,  107,   41,   25,   99,   61,   41,
+ /*   170 */    42,  101,   36,   96,   95,   94,   93,   51,   49,   32,
+ /*   180 */    78,   75,   16,   18,   50,   30,  100,    5,   12,  107,
+ /*   190 */    86,   88,   74,   61,   41,   42,   55,   26,   96,   95,
+ /*   200 */    94,   93,   51,   79,   32,   78,   75,  107,   18,   50,
+ /*   210 */    30,   61,   11,    7,   10,    6,   96,   95,   94,   93,
+ /*   220 */    51,    9,   43,    8,   59,  177,   18,   50,   30,   28,
+ /*   230 */    48,   47,  107,  177,  177,   72,   61,   98,   97,  177,
+ /*   240 */   177,   96,   95,   94,   93,   51,  177,  177,  177,  177,
+ /*   250 */   177,   18,   50,   30,  112,  111,  110,  109,  177,   64,
+ /*   260 */   107,   63,  177,  177,   61,   41,   42,  177,  177,   96,
+ /*   270 */    95,   94,   93,   51,  177,   32,   78,   75,  177,   18,
+ /*   280 */    50,   30,   58,  177,  177,  177,  177,   96,   95,   94,
+ /*   290 */    93,   91,  177,  177,  177,  177,  177,   41,   45,  177,
+ /*   300 */    34,  177,   54,  177,   87,   41,   44,  177,  177,  177,
+ /*   310 */    56,  177,   87,
 };
 static const YYCODETYPE yy_lookahead[] = {
- /*     0 */     5,    6,    7,    9,    9,   10,    3,    4,    0,   14,
- /*    10 */    15,   16,   17,   18,    1,    2,    3,    4,   23,   24,
- /*    20 */    25,   11,    5,   13,    5,    9,    7,    8,    9,   10,
- /*    30 */    19,    9,   21,   14,   15,   16,   17,   18,   20,   22,
- /*    40 */    44,   45,   23,   24,   25,   49,    9,   51,    5,   13,
- /*    50 */    30,   20,    9,   33,   34,   35,   36,   19,   38,   39,
- /*    60 */    40,   31,   32,    9,   44,   45,    5,   11,   14,   15,
- /*    70 */    16,   17,   18,   46,   54,   55,   56,   50,   13,   52,
- /*    80 */    19,   30,    5,    6,   33,   34,   35,   36,   13,   38,
- /*    90 */     5,   40,   20,    8,    9,   44,   45,   44,   45,   14,
- /*   100 */    15,   16,   17,   18,    9,   54,   55,   56,   23,   24,
- /*   110 */    25,    5,   32,    7,    5,    9,   10,   44,   45,   32,
- /*   120 */    14,   15,   16,   17,   18,   28,   29,   43,   12,   23,
- /*   130 */    24,   25,   42,    9,   32,    5,   32,    7,   11,    9,
- /*   140 */    10,   48,   51,    9,   14,   15,   16,   17,   18,   53,
- /*   150 */     9,   32,   32,   23,   24,   25,   44,   32,   32,    5,
- /*   160 */    32,   32,    8,    9,   32,   44,   44,   44,   14,   15,
- /*   170 */    16,   17,   18,   12,   57,   57,    5,   23,   24,   25,
- /*   180 */     9,   57,   57,   57,   57,   14,   15,   16,   17,   18,
- /*   190 */    57,   57,   57,   57,   23,   24,   25,   26,   57,   57,
- /*   200 */     5,   57,   57,    8,    9,   57,   57,   57,   57,   14,
- /*   210 */    15,   16,   17,   18,   57,   57,   57,   57,   23,   24,
- /*   220 */    25,   33,   34,   35,   36,   57,   38,    5,   40,   57,
- /*   230 */    57,    9,   44,   45,   57,   57,   14,   15,   16,   17,
- /*   240 */    18,   57,   54,   55,   56,   23,   24,   25,   36,   37,
- /*   250 */    57,   57,   57,   41,   57,   57,   44,   45,   57,   57,
- /*   260 */    57,   36,   37,   57,   36,   37,   54,   55,   56,   44,
- /*   270 */    45,   57,   44,   45,   57,   57,   57,   36,   37,   54,
- /*   280 */    55,   56,   54,   55,   56,   44,   45,   44,   45,   57,
- /*   290 */    47,   57,   49,    9,   51,   54,   55,   56,   14,   15,
- /*   300 */    16,   17,   18,   36,   57,   57,   44,   45,   57,   57,
- /*   310 */    57,   44,   45,   57,   44,   45,   54,   55,   56,   57,
- /*   320 */    57,   54,   55,   56,   54,   55,   56,
+ /*     0 */     5,    6,    7,    0,    9,   10,   45,   46,    9,   14,
+ /*    10 */    15,   16,   17,   18,    3,    4,   55,   56,   57,   24,
+ /*    20 */    25,   26,    5,   37,   38,    5,    9,    7,    8,    9,
+ /*    30 */    10,   45,   46,    5,   14,   15,   16,   17,   18,   45,
+ /*    40 */    46,   55,   56,   57,   24,   25,   26,   19,   20,   55,
+ /*    50 */    56,   57,   31,   19,   20,   34,   35,   36,   37,    9,
+ /*    60 */    39,   40,   41,   37,   38,    9,   45,   46,   42,   47,
+ /*    70 */    21,   45,   46,   51,    9,   53,   55,   56,   57,   32,
+ /*    80 */    33,   55,   56,   57,   31,    5,    6,   34,   35,   36,
+ /*    90 */    37,   13,   39,   11,   41,   13,   21,    9,   45,   46,
+ /*   100 */    45,   46,   14,   15,   16,   17,   18,    9,   55,   56,
+ /*   110 */    57,   21,   19,   20,    5,   22,    7,   11,    9,   10,
+ /*   120 */    29,   30,    5,   14,   15,   16,   17,   18,    1,    2,
+ /*   130 */     3,    4,   13,   24,   25,   26,   13,   37,   38,    5,
+ /*   140 */    23,    7,    9,    9,   10,   45,   46,   33,   14,   15,
+ /*   150 */    16,   17,   18,    5,   33,   55,   56,   57,   24,   25,
+ /*   160 */    26,   37,   38,   12,    5,   45,   46,    8,    9,   45,
+ /*   170 */    46,    9,   44,   14,   15,   16,   17,   18,   43,   55,
+ /*   180 */    56,   57,   11,   24,   25,   26,   37,   33,   33,    5,
+ /*   190 */    49,   52,    8,    9,   45,   46,    9,   54,   14,   15,
+ /*   200 */    16,   17,   18,    9,   55,   56,   57,    5,   24,   25,
+ /*   210 */    26,    9,   33,   33,   33,   33,   14,   15,   16,   17,
+ /*   220 */    18,   33,   33,   33,   12,   58,   24,   25,   26,   27,
+ /*   230 */    45,   45,    5,   58,   58,    8,    9,   45,   45,   58,
+ /*   240 */    58,   14,   15,   16,   17,   18,   58,   58,   58,   58,
+ /*   250 */    58,   24,   25,   26,   34,   35,   36,   37,   58,   39,
+ /*   260 */     5,   41,   58,   58,    9,   45,   46,   58,   58,   14,
+ /*   270 */    15,   16,   17,   18,   58,   55,   56,   57,   58,   24,
+ /*   280 */    25,   26,    9,   58,   58,   58,   58,   14,   15,   16,
+ /*   290 */    17,   18,   58,   58,   58,   58,   58,   45,   46,   58,
+ /*   300 */    48,   58,   50,   58,   52,   45,   46,   58,   58,   58,
+ /*   310 */    50,   58,   52,
 };
-#define YY_SHIFT_USE_DFLT (-7)
-#define YY_SHIFT_COUNT (64)
-#define YY_SHIFT_MIN   (-6)
-#define YY_SHIFT_MAX   (284)
+#define YY_SHIFT_USE_DFLT (-6)
+#define YY_SHIFT_COUNT (65)
+#define YY_SHIFT_MIN   (-5)
+#define YY_SHIFT_MAX   (273)
 static const short yy_shift_ofst[] = {
- /*     0 */    -7,  130,  106,   19,   -5,  222,  222,  222,  222,  195,
- /*    10 */   171,  154,   85,   54,  284,   54,  284,  161,   54,   54,
- /*    20 */    77,   54,   54,   54,   54,   61,   17,  109,  109,  109,
- /*    30 */   109,  109,  141,  134,  127,  109,  109,  124,  116,  109,
- /*    40 */   109,   13,   43,   11,    3,    3,   10,   95,   72,   75,
- /*    50 */    65,   56,   31,   56,   38,   38,   38,   31,   36,   37,
- /*    60 */    18,   22,   16,   -6,    8,
+ /*     0 */    -6,  134,  109,   20,   -5,  255,  255,  255,  255,  227,
+ /*    10 */   202,  184,  159,   88,  273,   88,  273,  212,   88,   88,
+ /*    20 */    80,   88,   88,   88,   88,   28,  117,  148,  148,  148,
+ /*    30 */   148,  148,  194,  187,  171,  148,  148,  162,  151,  148,
+ /*    40 */   148,  127,   93,   17,   34,   34,   34,   11,   11,   82,
+ /*    50 */   133,   90,  123,  119,  106,   75,  106,   98,   75,   78,
+ /*    60 */    65,   49,   56,   50,   -1,    3,
 };
-#define YY_REDUCE_USE_DFLT (-5)
+#define YY_REDUCE_USE_DFLT (-40)
 #define YY_REDUCE_COUNT (40)
-#define YY_REDUCE_MIN   (-4)
-#define YY_REDUCE_MAX   (270)
+#define YY_REDUCE_MIN   (-39)
+#define YY_REDUCE_MAX   (260)
 static const short yy_reduce_ofst[] = {
- /*     0 */    97,   20,   51,  188,  188,  212,  241,  228,  225,  267,
- /*    10 */   267,  267,  267,  270,  243,  262,   -4,   27,   73,   53,
- /*    20 */    30,  123,  122,  121,  112,  132,  129,  128,  126,  125,
- /*    30 */   120,  119,   96,   91,   93,  104,  102,   90,   84,   87,
- /*    40 */    80,
+ /*     0 */    91,   21,   53,  220,  220,   26,  124,  100,  -14,  149,
+ /*    10 */   149,  149,  149,   -6,  252,  -39,  260,   22,  120,   55,
+ /*    20 */    47,  193,  192,  186,  185,  190,  189,  188,  182,  181,
+ /*    30 */   180,  179,  143,  139,  141,  155,  154,  135,  128,  121,
+ /*    40 */   114,
 };
 static const YYACTIONTYPE yy_default[] = {
- /*     0 */   117,  172,  172,  172,  172,  172,  172,  172,  172,  172,
- /*    10 */   172,  172,  172,  172,  172,  172,  172,  146,  172,  172,
- /*    20 */   172,  172,  172,  172,  172,  172,  172,  172,  172,  172,
- /*    30 */   172,  172,  172,  172,  150,  172,  172,  172,  132,  172,
- /*    40 */   172,  145,  172,  164,  136,  135,  172,  172,  144,  172,
- /*    50 */   172,  158,  172,  151,  148,  149,  155,  143,  147,  172,
- /*    60 */   143,  172,  172,  172,  172,  118,  119,  127,  113,  134,
- /*    70 */   124,  169,  168,  167,  166,  171,  170,  165,  161,  163,
- /*    80 */   122,  160,  162,  159,  154,  152,  157,  156,  153,  144,
- /*    90 */   143,  142,  141,  140,  139,  138,  137,  129,  123,  131,
- /*   100 */   133,  130,  128,  126,  125,  121,  120,  116,  115,  114,
- /*   110 */   112,
+ /*     0 */   119,  175,  175,  175,  175,  175,  175,  175,  175,  175,
+ /*    10 */   175,  175,  175,  175,  175,  175,  175,  148,  175,  175,
+ /*    20 */   175,  175,  175,  175,  175,  175,  175,  175,  175,  175,
+ /*    30 */   175,  175,  175,  175,  153,  175,  175,  175,  134,  175,
+ /*    40 */   175,  147,  167,  175,  151,  152,  158,  138,  137,  175,
+ /*    50 */   175,  146,  175,  175,  161,  175,  154,  175,  145,  150,
+ /*    60 */   175,  145,  175,  175,  175,  175,  120,  121,  129,  115,
+ /*    70 */   136,  126,  172,  171,  170,  169,  174,  173,  168,  164,
+ /*    80 */   166,  124,  163,  165,  162,  157,  155,  160,  159,  149,
+ /*    90 */   156,  146,  145,  144,  143,  142,  141,  140,  139,  131,
+ /*   100 */   125,  133,  135,  132,  130,  128,  127,  123,  122,  118,
+ /*   110 */   117,  116,  114,
 };
 
 /* The next table maps tokens into fallback tokens.  If a construct
@@ -351,16 +349,16 @@ static const char *const yyTokenName[] = {
   "END",           "ID",            "DEF",           "COMMA",       
   "LP",            "RP",            "NUM",           "NIL",         
   "TRUE",          "FALSE",         "IVAR",          "DOT",         
-  "EQUAL",         "CASCADE",       "RB",            "IF",          
-  "IMPORT",        "TRY",           "RESCUE",        "error",       
-  "program",       "opt_fin",       "l1",            "last_fin",    
-  "fin",           "l1e",           "class",         "def",         
-  "stmt",          "seq",           "class_start",   "class_body",  
-  "def_start",     "def_body",      "id_list",       "def_args",    
-  "sexpr",         "send",          "arg_list_start",  "arg_list_elems",
-  "opt_kw_arg_list",  "kw_arg_list_elems",  "arg_list",      "kw_arg",      
-  "kw_arg_list",   "message_seq",   "cascade_start",  "cascade",     
-  "expr",        
+  "ATTR",          "EQUAL",         "CASCADE",       "RB",          
+  "IF",            "IMPORT",        "TRY",           "RESCUE",      
+  "error",         "program",       "opt_fin",       "l1",          
+  "last_fin",      "fin",           "l1e",           "class",       
+  "def",           "stmt",          "seq",           "class_start", 
+  "class_body",    "def_start",     "def_body",      "id_list",     
+  "def_args",      "sexpr",         "send",          "arg_list_start",
+  "arg_list_elems",  "opt_kw_arg_list",  "kw_arg_list_elems",  "arg_list",    
+  "kw_arg",        "kw_arg_list",   "message_seq",   "cascade_start",
+  "cascade",       "expr",        
 };
 #endif /* NDEBUG */
 
@@ -404,31 +402,32 @@ static const char *const yyRuleName[] = {
  /*  33 */ "sexpr ::= IVAR",
  /*  34 */ "send ::= sexpr",
  /*  35 */ "send ::= send DOT ID",
- /*  36 */ "arg_list_start ::= LP",
- /*  37 */ "arg_list_elems ::= arg_list_elems COMMA send",
- /*  38 */ "arg_list_elems ::= send",
- /*  39 */ "opt_kw_arg_list ::=",
- /*  40 */ "opt_kw_arg_list ::= COMMA kw_arg_list_elems",
- /*  41 */ "arg_list ::= arg_list_start arg_list_elems opt_kw_arg_list",
- /*  42 */ "send ::= send DOT ID LP RP",
- /*  43 */ "send ::= send DOT ID arg_list RP",
- /*  44 */ "kw_arg ::= ID EQUAL send",
- /*  45 */ "kw_arg_list_elems ::= kw_arg_list_elems COMMA kw_arg",
- /*  46 */ "kw_arg_list_elems ::= kw_arg",
- /*  47 */ "kw_arg_list ::= arg_list_start kw_arg_list_elems",
- /*  48 */ "send ::= send DOT ID kw_arg_list RP",
- /*  49 */ "message_seq ::= message_seq fin ID",
- /*  50 */ "message_seq ::= ID",
- /*  51 */ "cascade_start ::= send CASCADE",
- /*  52 */ "cascade ::= cascade_start message_seq RB",
- /*  53 */ "cascade ::= send",
- /*  54 */ "expr ::= cascade",
- /*  55 */ "stmt ::= expr",
- /*  56 */ "stmt ::= IF send fin seq fin END",
- /*  57 */ "stmt ::= IMPORT ID",
- /*  58 */ "stmt ::= TRY fin seq fin RESCUE fin seq fin END",
- /*  59 */ "stmt ::= ID EQUAL expr",
- /*  60 */ "stmt ::= IVAR EQUAL expr",
+ /*  36 */ "send ::= send ATTR ID",
+ /*  37 */ "arg_list_start ::= LP",
+ /*  38 */ "arg_list_elems ::= arg_list_elems COMMA send",
+ /*  39 */ "arg_list_elems ::= send",
+ /*  40 */ "opt_kw_arg_list ::=",
+ /*  41 */ "opt_kw_arg_list ::= COMMA kw_arg_list_elems",
+ /*  42 */ "arg_list ::= arg_list_start arg_list_elems opt_kw_arg_list",
+ /*  43 */ "send ::= send DOT ID LP RP",
+ /*  44 */ "send ::= send DOT ID arg_list RP",
+ /*  45 */ "kw_arg ::= ID EQUAL send",
+ /*  46 */ "kw_arg_list_elems ::= kw_arg_list_elems COMMA kw_arg",
+ /*  47 */ "kw_arg_list_elems ::= kw_arg",
+ /*  48 */ "kw_arg_list ::= arg_list_start kw_arg_list_elems",
+ /*  49 */ "send ::= send DOT ID kw_arg_list RP",
+ /*  50 */ "message_seq ::= message_seq fin ID",
+ /*  51 */ "message_seq ::= ID",
+ /*  52 */ "cascade_start ::= send CASCADE",
+ /*  53 */ "cascade ::= cascade_start message_seq RB",
+ /*  54 */ "cascade ::= send",
+ /*  55 */ "expr ::= cascade",
+ /*  56 */ "stmt ::= expr",
+ /*  57 */ "stmt ::= IF send fin seq fin END",
+ /*  58 */ "stmt ::= IMPORT ID",
+ /*  59 */ "stmt ::= TRY fin seq fin RESCUE fin seq fin END",
+ /*  60 */ "stmt ::= ID EQUAL expr",
+ /*  61 */ "stmt ::= IVAR EQUAL expr",
 };
 #endif /* NDEBUG */
 
@@ -743,67 +742,68 @@ static const struct {
   YYCODETYPE lhs;         /* Symbol on the left-hand side of the rule */
   unsigned char nrhs;     /* Number of right-hand side symbols in the rule */
 } yyRuleInfo[] = {
-  { 28, 3 },
-  { 30, 3 },
-  { 30, 1 },
-  { 33, 1 },
-  { 33, 1 },
-  { 33, 1 },
-  { 29, 0 },
-  { 29, 2 },
+  { 29, 3 },
+  { 31, 3 },
   { 31, 1 },
-  { 31, 2 },
-  { 32, 2 },
+  { 34, 1 },
+  { 34, 1 },
+  { 34, 1 },
+  { 30, 0 },
+  { 30, 2 },
   { 32, 1 },
-  { 37, 3 },
-  { 37, 1 },
+  { 32, 2 },
+  { 33, 2 },
+  { 33, 1 },
+  { 38, 3 },
   { 38, 1 },
-  { 39, 3 },
-  { 34, 4 },
-  { 40, 1 },
-  { 41, 3 },
+  { 39, 1 },
+  { 40, 3 },
+  { 35, 4 },
+  { 41, 1 },
   { 42, 3 },
-  { 42, 1 },
-  { 43, 0 },
   { 43, 3 },
-  { 35, 5 },
+  { 43, 1 },
+  { 44, 0 },
   { 44, 3 },
-  { 44, 3 },
-  { 44, 3 },
-  { 44, 3 },
-  { 44, 1 },
-  { 44, 1 },
-  { 44, 1 },
-  { 44, 1 },
-  { 44, 1 },
-  { 44, 1 },
-  { 45, 1 },
+  { 36, 5 },
   { 45, 3 },
+  { 45, 3 },
+  { 45, 3 },
+  { 45, 3 },
+  { 45, 1 },
+  { 45, 1 },
+  { 45, 1 },
+  { 45, 1 },
+  { 45, 1 },
+  { 45, 1 },
   { 46, 1 },
-  { 47, 3 },
+  { 46, 3 },
+  { 46, 3 },
   { 47, 1 },
-  { 48, 0 },
-  { 48, 2 },
-  { 50, 3 },
-  { 45, 5 },
-  { 45, 5 },
+  { 48, 3 },
+  { 48, 1 },
+  { 49, 0 },
+  { 49, 2 },
   { 51, 3 },
-  { 49, 3 },
-  { 49, 1 },
-  { 52, 2 },
-  { 45, 5 },
-  { 53, 3 },
-  { 53, 1 },
-  { 54, 2 },
-  { 55, 3 },
-  { 55, 1 },
+  { 46, 5 },
+  { 46, 5 },
+  { 52, 3 },
+  { 50, 3 },
+  { 50, 1 },
+  { 53, 2 },
+  { 46, 5 },
+  { 54, 3 },
+  { 54, 1 },
+  { 55, 2 },
+  { 56, 3 },
   { 56, 1 },
-  { 36, 1 },
-  { 36, 6 },
-  { 36, 2 },
-  { 36, 9 },
-  { 36, 3 },
-  { 36, 3 },
+  { 57, 1 },
+  { 37, 1 },
+  { 37, 6 },
+  { 37, 2 },
+  { 37, 9 },
+  { 37, 3 },
+  { 37, 3 },
 };
 
 static void yy_accept(yyParser*);  /* Forward Declaration */
@@ -860,13 +860,13 @@ static void yy_reduce(
   */
       case 0: /* program ::= opt_fin l1 last_fin */
 #line 27 "vm/parser.lm"
-{ S->set_top(S->ret(yymsp[-1].minor.yy70.a)); }
+{ S->set_top(S->ret(yymsp[-1].minor.yy88.a)); }
 #line 865 "vm/parser.c.inc"
         break;
       case 1: /* l1 ::= l1 fin l1e */
       case 12: /* seq ::= seq fin stmt */ yytestcase(yyruleno==12);
 #line 29 "vm/parser.lm"
-{ yygotominor.yy70.a = S->seq(yymsp[-2].minor.yy70.a, yymsp[0].minor.yy70.a); }
+{ yygotominor.yy88.a = S->seq(yymsp[-2].minor.yy88.a, yymsp[0].minor.yy88.a); }
 #line 871 "vm/parser.c.inc"
         break;
       case 2: /* l1 ::= l1e */
@@ -875,11 +875,11 @@ static void yy_reduce(
       case 5: /* l1e ::= stmt */ yytestcase(yyruleno==5);
       case 13: /* seq ::= stmt */ yytestcase(yyruleno==13);
       case 34: /* send ::= sexpr */ yytestcase(yyruleno==34);
-      case 53: /* cascade ::= send */ yytestcase(yyruleno==53);
-      case 54: /* expr ::= cascade */ yytestcase(yyruleno==54);
-      case 55: /* stmt ::= expr */ yytestcase(yyruleno==55);
+      case 54: /* cascade ::= send */ yytestcase(yyruleno==54);
+      case 55: /* expr ::= cascade */ yytestcase(yyruleno==55);
+      case 56: /* stmt ::= expr */ yytestcase(yyruleno==56);
 #line 30 "vm/parser.lm"
-{ yygotominor.yy70.a = yymsp[0].minor.yy70.a; }
+{ yygotominor.yy88.a = yymsp[0].minor.yy88.a; }
 #line 884 "vm/parser.c.inc"
         break;
       case 14: /* class_start ::= CLASS */
@@ -890,13 +890,13 @@ static void yy_reduce(
       case 15: /* class_body ::= l1 fin END */
       case 18: /* def_body ::= seq fin END */ yytestcase(yyruleno==18);
 #line 49 "vm/parser.lm"
-{ yygotominor.yy70.a = yymsp[-2].minor.yy70.a; }
+{ yygotominor.yy88.a = yymsp[-2].minor.yy88.a; }
 #line 895 "vm/parser.c.inc"
         break;
       case 16: /* class ::= class_start ID fin class_body */
 #line 51 "vm/parser.lm"
 {
-               yygotominor.yy70.a = S->ast_class(*yymsp[-2].minor.yy0.s, yymsp[0].minor.yy70.a);
+               yygotominor.yy88.a = S->ast_class(*yymsp[-2].minor.yy0.s, yymsp[0].minor.yy88.a);
              }
 #line 902 "vm/parser.c.inc"
         break;
@@ -914,140 +914,145 @@ static void yy_reduce(
       case 23: /* def ::= def_start ID def_args fin def_body */
 #line 64 "vm/parser.lm"
 {
-              yygotominor.yy70.a = S->ast_def(*yymsp[-3].minor.yy0.s, yymsp[0].minor.yy70.a);
+              yygotominor.yy88.a = S->ast_def(*yymsp[-3].minor.yy0.s, yymsp[0].minor.yy88.a);
             }
 #line 920 "vm/parser.c.inc"
         break;
       case 24: /* sexpr ::= sexpr MINUS sexpr */
 #line 68 "vm/parser.lm"
-{ yygotominor.yy70.a = S->ast_binop("-", yymsp[-2].minor.yy70.a, yymsp[0].minor.yy70.a); }
+{ yygotominor.yy88.a = S->ast_binop("-", yymsp[-2].minor.yy88.a, yymsp[0].minor.yy88.a); }
 #line 925 "vm/parser.c.inc"
         break;
       case 25: /* sexpr ::= sexpr PLUS sexpr */
 #line 69 "vm/parser.lm"
-{ yygotominor.yy70.a = S->ast_binop("+", yymsp[-2].minor.yy70.a, yymsp[0].minor.yy70.a); }
+{ yygotominor.yy88.a = S->ast_binop("+", yymsp[-2].minor.yy88.a, yymsp[0].minor.yy88.a); }
 #line 930 "vm/parser.c.inc"
         break;
       case 26: /* sexpr ::= sexpr TIMES sexpr */
 #line 70 "vm/parser.lm"
-{ yygotominor.yy70.a = S->ast_binop("*", yymsp[-2].minor.yy70.a, yymsp[0].minor.yy70.a); }
+{ yygotominor.yy88.a = S->ast_binop("*", yymsp[-2].minor.yy88.a, yymsp[0].minor.yy88.a); }
 #line 935 "vm/parser.c.inc"
         break;
       case 27: /* sexpr ::= sexpr DIVIDE sexpr */
 #line 71 "vm/parser.lm"
-{ yygotominor.yy70.a = S->ast_binop("/", yymsp[-2].minor.yy70.a, yymsp[0].minor.yy70.a); }
+{ yygotominor.yy88.a = S->ast_binop("/", yymsp[-2].minor.yy88.a, yymsp[0].minor.yy88.a); }
 #line 940 "vm/parser.c.inc"
         break;
       case 28: /* sexpr ::= NUM */
 #line 72 "vm/parser.lm"
-{ yygotominor.yy70.a = S->number(yymsp[0].minor.yy0.i); }
+{ yygotominor.yy88.a = S->number(yymsp[0].minor.yy0.i); }
 #line 945 "vm/parser.c.inc"
         break;
       case 29: /* sexpr ::= NIL */
 #line 73 "vm/parser.lm"
-{ yygotominor.yy70.a = S->ast_nil();  }
+{ yygotominor.yy88.a = S->ast_nil();  }
 #line 950 "vm/parser.c.inc"
         break;
       case 30: /* sexpr ::= TRUE */
 #line 74 "vm/parser.lm"
-{ yygotominor.yy70.a = S->ast_true();  }
+{ yygotominor.yy88.a = S->ast_true();  }
 #line 955 "vm/parser.c.inc"
         break;
       case 31: /* sexpr ::= FALSE */
 #line 75 "vm/parser.lm"
-{ yygotominor.yy70.a = S->ast_false(); }
+{ yygotominor.yy88.a = S->ast_false(); }
 #line 960 "vm/parser.c.inc"
         break;
       case 32: /* sexpr ::= ID */
 #line 76 "vm/parser.lm"
-{ yygotominor.yy70.a = S->named(*yymsp[0].minor.yy0.s); }
+{ yygotominor.yy88.a = S->named(*yymsp[0].minor.yy0.s); }
 #line 965 "vm/parser.c.inc"
         break;
       case 33: /* sexpr ::= IVAR */
 #line 77 "vm/parser.lm"
-{ yygotominor.yy70.a = S->ivar_read(*yymsp[0].minor.yy0.s); }
+{ yygotominor.yy88.a = S->ivar_read(*yymsp[0].minor.yy0.s); }
 #line 970 "vm/parser.c.inc"
         break;
       case 35: /* send ::= send DOT ID */
 #line 80 "vm/parser.lm"
-{ yygotominor.yy70.a = S->attr(yymsp[-2].minor.yy70.a, *yymsp[0].minor.yy0.s); }
+{ yygotominor.yy88.a = S->call(yymsp[-2].minor.yy88.a, *yymsp[0].minor.yy0.s); }
 #line 975 "vm/parser.c.inc"
         break;
-      case 36: /* arg_list_start ::= LP */
-#line 84 "vm/parser.lm"
-{ S->start_arg_list(); }
+      case 36: /* send ::= send ATTR ID */
+#line 81 "vm/parser.lm"
+{ yygotominor.yy88.a = S->attr(yymsp[-2].minor.yy88.a, *yymsp[0].minor.yy0.s); }
 #line 980 "vm/parser.c.inc"
         break;
-      case 37: /* arg_list_elems ::= arg_list_elems COMMA send */
-      case 38: /* arg_list_elems ::= send */ yytestcase(yyruleno==38);
+      case 37: /* arg_list_start ::= LP */
 #line 85 "vm/parser.lm"
-{ S->add_arg(yymsp[0].minor.yy70.a); }
-#line 986 "vm/parser.c.inc"
+{ S->start_arg_list(); }
+#line 985 "vm/parser.c.inc"
         break;
-      case 42: /* send ::= send DOT ID LP RP */
-#line 93 "vm/parser.lm"
-{ yygotominor.yy70.a = S->call(yymsp[-4].minor.yy70.a, *yymsp[-2].minor.yy0.s); }
+      case 38: /* arg_list_elems ::= arg_list_elems COMMA send */
+      case 39: /* arg_list_elems ::= send */ yytestcase(yyruleno==39);
+#line 86 "vm/parser.lm"
+{ S->add_arg(yymsp[0].minor.yy88.a); }
 #line 991 "vm/parser.c.inc"
         break;
-      case 43: /* send ::= send DOT ID arg_list RP */
+      case 43: /* send ::= send DOT ID LP RP */
 #line 94 "vm/parser.lm"
-{ yygotominor.yy70.a = S->call_args(yymsp[-4].minor.yy70.a, *yymsp[-2].minor.yy0.s); }
+{ yygotominor.yy88.a = S->call(yymsp[-4].minor.yy88.a, *yymsp[-2].minor.yy0.s); }
 #line 996 "vm/parser.c.inc"
         break;
-      case 44: /* kw_arg ::= ID EQUAL send */
-#line 98 "vm/parser.lm"
-{ S->add_kw_arg(*yymsp[-2].minor.yy0.s, yymsp[0].minor.yy70.a); }
+      case 44: /* send ::= send DOT ID arg_list RP */
+#line 95 "vm/parser.lm"
+{ yygotominor.yy88.a = S->call_args(yymsp[-4].minor.yy88.a, *yymsp[-2].minor.yy0.s); }
 #line 1001 "vm/parser.c.inc"
         break;
-      case 48: /* send ::= send DOT ID kw_arg_list RP */
-#line 105 "vm/parser.lm"
+      case 45: /* kw_arg ::= ID EQUAL send */
+#line 99 "vm/parser.lm"
+{ S->add_kw_arg(*yymsp[-2].minor.yy0.s, yymsp[0].minor.yy88.a); }
+#line 1006 "vm/parser.c.inc"
+        break;
+      case 49: /* send ::= send DOT ID kw_arg_list RP */
+#line 106 "vm/parser.lm"
 {
-              yygotominor.yy70.a = S->call_kw_args(yymsp[-4].minor.yy70.a, *yymsp[-2].minor.yy0.s);
+              yygotominor.yy88.a = S->call_kw_args(yymsp[-4].minor.yy88.a, *yymsp[-2].minor.yy0.s);
             }
-#line 1008 "vm/parser.c.inc"
+#line 1013 "vm/parser.c.inc"
         break;
-      case 49: /* message_seq ::= message_seq fin ID */
-      case 50: /* message_seq ::= ID */ yytestcase(yyruleno==50);
-#line 111 "vm/parser.lm"
+      case 50: /* message_seq ::= message_seq fin ID */
+      case 51: /* message_seq ::= ID */ yytestcase(yyruleno==51);
+#line 112 "vm/parser.lm"
 { S->cascade(*yymsp[0].minor.yy0.s); }
-#line 1014 "vm/parser.c.inc"
-        break;
-      case 51: /* cascade_start ::= send CASCADE */
-#line 114 "vm/parser.lm"
-{ S->start_cascade(yymsp[-1].minor.yy70.a); }
 #line 1019 "vm/parser.c.inc"
         break;
-      case 52: /* cascade ::= cascade_start message_seq RB */
+      case 52: /* cascade_start ::= send CASCADE */
 #line 115 "vm/parser.lm"
-{ yygotominor.yy70.a = S->end_cascade(); }
+{ S->start_cascade(yymsp[-1].minor.yy88.a); }
 #line 1024 "vm/parser.c.inc"
         break;
-      case 56: /* stmt ::= IF send fin seq fin END */
-#line 127 "vm/parser.lm"
-{ yygotominor.yy70.a = S->if_cond(yymsp[-4].minor.yy70.a, yymsp[-2].minor.yy70.a); }
+      case 53: /* cascade ::= cascade_start message_seq RB */
+#line 116 "vm/parser.lm"
+{ yygotominor.yy88.a = S->end_cascade(); }
 #line 1029 "vm/parser.c.inc"
         break;
-      case 57: /* stmt ::= IMPORT ID */
-#line 131 "vm/parser.lm"
-{ yygotominor.yy70.a = S->import(*yymsp[0].minor.yy0.s); }
+      case 57: /* stmt ::= IF send fin seq fin END */
+#line 128 "vm/parser.lm"
+{ yygotominor.yy88.a = S->if_cond(yymsp[-4].minor.yy88.a, yymsp[-2].minor.yy88.a); }
 #line 1034 "vm/parser.c.inc"
         break;
-      case 58: /* stmt ::= TRY fin seq fin RESCUE fin seq fin END */
-#line 133 "vm/parser.lm"
-{
-              yygotominor.yy70.a = S->ast_try(yymsp[-6].minor.yy70.a, yymsp[-2].minor.yy70.a);
-            }
-#line 1041 "vm/parser.c.inc"
+      case 58: /* stmt ::= IMPORT ID */
+#line 132 "vm/parser.lm"
+{ yygotominor.yy88.a = S->import(*yymsp[0].minor.yy0.s); }
+#line 1039 "vm/parser.c.inc"
         break;
-      case 59: /* stmt ::= ID EQUAL expr */
-#line 137 "vm/parser.lm"
-{ yygotominor.yy70.a = S->assign(*yymsp[-2].minor.yy0.s, yymsp[0].minor.yy70.a); }
+      case 59: /* stmt ::= TRY fin seq fin RESCUE fin seq fin END */
+#line 134 "vm/parser.lm"
+{
+              yygotominor.yy88.a = S->ast_try(yymsp[-6].minor.yy88.a, yymsp[-2].minor.yy88.a);
+            }
 #line 1046 "vm/parser.c.inc"
         break;
-      case 60: /* stmt ::= IVAR EQUAL expr */
+      case 60: /* stmt ::= ID EQUAL expr */
 #line 138 "vm/parser.lm"
-{ yygotominor.yy70.a = S->ivar_assign(*yymsp[-2].minor.yy0.s, yymsp[0].minor.yy70.a); }
+{ yygotominor.yy88.a = S->assign(*yymsp[-2].minor.yy0.s, yymsp[0].minor.yy88.a); }
 #line 1051 "vm/parser.c.inc"
+        break;
+      case 61: /* stmt ::= IVAR EQUAL expr */
+#line 139 "vm/parser.lm"
+{ yygotominor.yy88.a = S->ivar_assign(*yymsp[-2].minor.yy0.s, yymsp[0].minor.yy88.a); }
+#line 1056 "vm/parser.c.inc"
         break;
       default:
       /* (6) opt_fin ::= */ yytestcase(yyruleno==6);
@@ -1058,12 +1063,12 @@ static void yy_reduce(
       /* (11) fin ::= FIN */ yytestcase(yyruleno==11);
       /* (21) def_args ::= */ yytestcase(yyruleno==21);
       /* (22) def_args ::= LP id_list RP */ yytestcase(yyruleno==22);
-      /* (39) opt_kw_arg_list ::= */ yytestcase(yyruleno==39);
-      /* (40) opt_kw_arg_list ::= COMMA kw_arg_list_elems */ yytestcase(yyruleno==40);
-      /* (41) arg_list ::= arg_list_start arg_list_elems opt_kw_arg_list */ yytestcase(yyruleno==41);
-      /* (45) kw_arg_list_elems ::= kw_arg_list_elems COMMA kw_arg */ yytestcase(yyruleno==45);
-      /* (46) kw_arg_list_elems ::= kw_arg */ yytestcase(yyruleno==46);
-      /* (47) kw_arg_list ::= arg_list_start kw_arg_list_elems */ yytestcase(yyruleno==47);
+      /* (40) opt_kw_arg_list ::= */ yytestcase(yyruleno==40);
+      /* (41) opt_kw_arg_list ::= COMMA kw_arg_list_elems */ yytestcase(yyruleno==41);
+      /* (42) arg_list ::= arg_list_start arg_list_elems opt_kw_arg_list */ yytestcase(yyruleno==42);
+      /* (46) kw_arg_list_elems ::= kw_arg_list_elems COMMA kw_arg */ yytestcase(yyruleno==46);
+      /* (47) kw_arg_list_elems ::= kw_arg */ yytestcase(yyruleno==47);
+      /* (48) kw_arg_list ::= arg_list_start kw_arg_list_elems */ yytestcase(yyruleno==48);
         break;
   };
   yygoto = yyRuleInfo[yyruleno].lhs;
@@ -1129,7 +1134,7 @@ static void yy_syntax_error(
 
   std::cout << "Syntax error at line " << S->line()
             << ", column " << S->column() << std::endl;
-#line 1133 "vm/parser.c.inc"
+#line 1138 "vm/parser.c.inc"
   mariusParserARG_STORE; /* Suppress warning about unused %extra_argument variable */
 }
 
