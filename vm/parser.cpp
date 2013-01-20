@@ -149,10 +149,7 @@ again:
           return TK_DCOLON;
         }
 
-        printf("Unknown token at line %d, column %d: '%c'\n",
-               line_, column_, c);
-
-        return -1;
+        return TK_COLON;
 
       case '#':
         while(next_c() != '\n') advance(1);

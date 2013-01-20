@@ -75,6 +75,7 @@ sexpr(A) ::= TRUE.                     { A.a = S->ast_true();  }
 sexpr(A) ::= FALSE.                    { A.a = S->ast_false(); }
 sexpr(A) ::= ID(B).                    { A.a = S->named(*B.s); }
 sexpr(A) ::= IVAR(B).                  { A.a = S->ivar_read(*B.s); }
+sexpr(A) ::= COLON ID(B).              { A.a = S->lit_str(*B.s); }
 
 send(A) ::= sexpr(B). { A.a = B.a; }
 send(A) ::= send(B) DOT ID(C). { A.a = S->call(B.a, *C.s); }
