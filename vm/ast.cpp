@@ -132,15 +132,22 @@ namespace ast {
     S.push(t);
     S.push(S.string(String::internalize("Class")));
 
+    int si = S.string(name_);
+
     S.push(LOADS);
     S.push(t+1);
-    S.push(S.string(name_));
+    S.push(si);
 
     S.push(CALL);
     S.push(t);
     S.push(S.string(String::internalize("new")));
     S.push(t);
     S.push(1);
+
+    S.push(IVA);
+    S.push(t);
+    S.push(si);
+    S.push(t);
 
     ArgMap locals;
     ArgMap args;
