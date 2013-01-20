@@ -60,6 +60,13 @@ namespace marius {
     return new ast::Call(n, recv, ast::Nodes());
   }
 
+  ast::Node* ParserState::dcolon(ast::Node* recv, String& n, String& a) {
+    ast::Nodes args;
+    args.push_back(new ast::LiteralString(a));
+
+    return new ast::Call(n, recv, args);
+  }
+
   ast::Node* ParserState::attr(ast::Node* r, String& n) {
     return new ast::LoadAttr(r, n);
   }

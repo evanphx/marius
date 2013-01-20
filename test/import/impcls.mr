@@ -1,0 +1,5 @@
+class Blah
+  def print
+    io.puts(7)
+  end
+end

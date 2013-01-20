@@ -160,6 +160,8 @@ namespace marius {
     ast::Node* call_args(ast::Node* n, String& id);
     ast::Node* call_kw_args(ast::Node* n, String& id);
 
+    ast::Node* dcolon(ast::Node* r, String& id, String& arg);
+
     // AST
     ast::Node* named(String& s);
     ast::Node* number(int a);

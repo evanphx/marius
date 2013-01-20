@@ -329,4 +329,12 @@ namespace ast {
 
     return t;
   }
+
+  int LiteralString::drive(State& S, int t) {
+    S.push(LOADS);
+    S.push(t);
+    S.push(S.string(str_));
+
+    return t;
+  }
 }}

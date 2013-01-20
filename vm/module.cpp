@@ -17,11 +17,20 @@ namespace marius {
 
       return recv;
     }
+
+    Handle module_access(State& S, Handle recv, Arguments& args) {
+      assert(args.count() == 1);
+
+      String& name = args[0]->as_string();
+
+      return handle(S, recv->attribute(name, 0));
+    }
   }
 
   Class* Module::init(Environment& env) {
     Class* mod = env.lookup("Module").as_class();
     mod->add_method("add_method", module_add);
+    mod->add_method("::", module_access);
     return mod;
   }
 

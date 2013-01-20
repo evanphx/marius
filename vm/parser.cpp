@@ -140,6 +140,20 @@ again:
         advance(1);
         return id_match(TK_IVAR);
 
+      case ':':
+        advance(1);
+
+        if(next_c() == ':') {
+          advance(1);
+          value_.s = &String::internalize("::");
+          return TK_DCOLON;
+        }
+
+        printf("Unknown token at line %d, column %d: '%c'\n",
+               line_, column_, c);
+
+        return -1;
+
       case '#':
         while(next_c() != '\n') advance(1);
 
@@ -156,6 +170,7 @@ again:
           if(t != -1) return t;
 
           if(isalpha(c)) return id_match(TK_ID);
+
           printf("Unknown token at line %d, column %d: '%c'\n",
                  line_, column_, c);
         }

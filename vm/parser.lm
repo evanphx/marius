@@ -79,6 +79,7 @@ sexpr(A) ::= IVAR(B).                  { A.a = S->ivar_read(*B.s); }
 send(A) ::= sexpr(B). { A.a = B.a; }
 send(A) ::= send(B) DOT ID(C). { A.a = S->call(B.a, *C.s); }
 send(A) ::= send(B) ATTR ID(C). { A.a = S->attr(B.a, *C.s); }
+send(A) ::= send(B) DCOLON(C) ID(D). { A.a = S->dcolon(B.a, *C.s, *D.s); }
 
 /* Positional args */
 

@@ -354,6 +354,17 @@ namespace marius {
 
       int drive(State& S, int t);
     };
+
+    class LiteralString : public Node {
+      String& str_;
+
+    public:
+      LiteralString(String& n)
+        : str_(n)
+      {}
+
+      int drive(State& S, int t);
+    };
   }
 }
 

@@ -1,0 +1,3 @@
+import attr_sub
+
+io.puts(attr_sub.@value)
