@@ -151,6 +151,10 @@ again:
 
         return TK_COLON;
 
+      case '"':
+        advance(1);
+        return str_match();
+
       case '#':
         while(next_c() != '\n') advance(1);
 
@@ -290,6 +294,25 @@ again:
 
     value_.s = &String::internalize(strndup(start, buf.c_buf() - start));
     return tk;
+  }
+
+  int Parser::str_match() {
+    char* start = pos_;
+    char* p = start;
+
+    while(p < end_) {
+      if(*p == '"') {
+        int len = p - start;
+        value_.s = &String::internalize(strndup(start, len));
+        advance(len+1);
+        return TK_LITSTR;
+      }
+
+      p++;
+    }
+
+    printf("Wasn't able to detect end of quoted string.\n");
+    return -1;
   }
 
   bool Parser::parse(bool debug) {

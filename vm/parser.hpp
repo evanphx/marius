@@ -102,6 +102,7 @@ namespace marius {
     int next_token();
     int id_match(int tk);
     int keyword_match();
+    int str_match();
   };
 }
 
