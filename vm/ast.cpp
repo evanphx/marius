@@ -265,6 +265,10 @@ namespace ast {
     S.push(t);
     S.push(1);
 
+    S.push(MOVR);
+    S.push(reg_);
+    S.push(t);
+
     return t;
   }
 

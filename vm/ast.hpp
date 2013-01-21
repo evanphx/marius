@@ -281,10 +281,12 @@ namespace marius {
 
     class Import : public Node {
       String& name_;
+      int reg_;
 
     public:
-      Import(String& n)
+      Import(String& n, int reg)
         : name_(n)
+        , reg_(reg)
       {}
 
       int drive(State& S, int t);

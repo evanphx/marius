@@ -68,8 +68,6 @@ namespace marius {
       OOP* fp = args.frame() + 1;
       fp[0] = m;
 
-      S.env().bind(name, m);
-
       S.vm().run(S, *compiler.code(), fp + 1);
 
       return handle(S, m);
