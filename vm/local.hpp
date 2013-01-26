@@ -18,6 +18,8 @@ namespace marius {
     Local* owned_;
     int depth_;
 
+    Local* extra_;
+
   public:
 
     Local()
@@ -25,7 +27,16 @@ namespace marius {
       , idx_(0)
       , owned_(0)
       , depth_(0)
+      , extra_(0)
     {}
+
+    Local* extra() {
+      return extra_;
+    }
+
+    void set_extra(Local* l) {
+      extra_ = l;
+    }
 
     void make_closure() {
       type_ = eClosureOwn;

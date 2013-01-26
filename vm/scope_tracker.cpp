@@ -24,14 +24,25 @@ namespace marius {
     {}
 
     void visit(Import* imp) {
-      scope_->insert(LocalScope::value_type(imp->name(), locals_.add(imp)));
+      int depth = stack_.size();
+
+      ArgMap::iterator i = globals_.find(String::internalize("Importer"));
+
+      assert(i != globals_.end());
+      Local* l = new Local;
+      l->make_global(i->second, depth);
+
+      Local* lv = locals_.add(imp);
+      lv->set_extra(l);
+
+      scope_->insert(LocalScope::value_type(imp->name(), lv));
     }
 
     void before_visit(Class* cls) {
       int depth = stack_.size();
 
       ArgMap::iterator i = globals_.find(String::internalize("Class"));
-      
+
       assert(i != globals_.end());
       Local* l = locals_.add(cls);
       l->make_global(i->second, depth);

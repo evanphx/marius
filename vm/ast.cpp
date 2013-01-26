@@ -362,9 +362,11 @@ namespace ast {
   }
 
   int Import::drive(State& S, int t) {
-    S.push(LOADN);
-    S.push(t);
-    S.push(S.string(String::internalize("Importer")));
+    Local* l = S.lm().get(this);
+    assert(l);
+
+    S.get_local(l->extra(), t);
+
     S.push(CALL);
     S.push(t);
     S.push(S.string("current"));
@@ -380,9 +382,6 @@ namespace ast {
     S.push(S.string("import"));
     S.push(t);
     S.push(1);
-
-    Local* l = S.lm().get(this);
-    assert(l);
 
     S.set_local(l, t);
 
