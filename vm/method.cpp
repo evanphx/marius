@@ -1,17 +1,40 @@
 #include "method.hpp"
 #include "vm.hpp"
 #include "state.hpp"
+#include "closure.hpp"
 
 namespace marius {
-  Method::Method(SimpleFunc func)
+  Method::Method(SimpleFunc func, Closure* closure)
     : func_(func)
     , code_(0)
+    , closed_over_(0)
+    , closure_(closure)
   {}
 
-  Method::Method(Code& code)
+  Method::Method(Code& code, Closure* closure)
     : func_(0)
     , code_(&code)
-  {}
+    , closure_(closure)
+  {
+    if(code.closed_over_vars() == 0) {
+      closed_over_ = 0;
+    } else {
+      closed_over_ = new OOP[code.closed_over_vars()];
+    }
+  }
+
+  Method* Method::wrap(Code& code, Method* meth) {
+    Closure* c = new Closure(code.closed_over_vars(), meth->closure_);
+    return new Method(code, c);
+  }
+
+  OOP Method::closed_over_variable(int depth, int idx) {
+    return closure_->get_at_depth(idx, depth);
+  }
+
+  void Method::set_closed_over_variable(int depth, int idx, OOP val) {
+    closure_->set_at_depth(idx, depth, val);
+  }
 
   OOP Method::run(State& S, OOP recv, Arguments& args) {
     if(func_) {
@@ -19,7 +42,7 @@ namespace marius {
 
       return *func_(S, handle(S, recv), args);
     } else if(code_) {
-      return S.vm().run(S, *code_, args.frame());
+      return S.vm().run(S, this, args.frame());
     }
 
     return OOP::nil();

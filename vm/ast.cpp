@@ -1,4 +1,5 @@
 #include "ast.hpp"
+#include <assert.h>
 
 namespace marius {
 namespace ast {
@@ -25,15 +26,39 @@ namespace ast {
     return -1;
   }
 
+  bool State::find_local_at_depth(String& name, int* depth, int* idx) {
+    return false;
+
+    ArgMap::iterator i = args_.find(name);
+    if(i != args_.end()) return i->second;
+
+    i = locals_.find(name);
+    if(i != locals_.end()) return i->second;
+
+    return -1;
+  }
+
   int Seq::drive(State& S, int t) {
     parent_->drive(S, t);
     return child_->drive(S, t);
+  }
+  
+  void Seq::accept(Visitor* V) {
+    parent_->accept(V);
+    child_->accept(V);
+    V->visit(this);
   }
 
   int Scope::drive(State& S, int t) {
     body_->drive(S, t);
 
     return t;
+  }
+
+  void Scope::accept(Visitor* V) {
+    V->before_visit(this);
+    body_->accept(V);
+    V->visit(this);
   }
 
   int Call::drive(State& S, int t) {
@@ -54,6 +79,18 @@ namespace ast {
     S.push(args_.size());
 
     return t;
+  }
+
+  void Call::accept(Visitor* V) {
+    recv_->accept(V);
+
+    for(Nodes::iterator i = args_.begin();
+        i != args_.end();
+        ++i) {
+      (*i)->accept(V);
+    }
+
+    V->visit(this);
   }
 
   int CallWithKeywords::drive(State& S, int t) {
@@ -77,6 +114,18 @@ namespace ast {
     return t;
   }
 
+  void CallWithKeywords::accept(Visitor* V) {
+    recv_->accept(V);
+
+    for(Nodes::iterator i = args_.begin();
+        i != args_.end();
+        ++i) {
+      (*i)->accept(V);
+    }
+
+    V->visit(this);
+  }
+
   int Number::drive(State& S, int t) {
     S.push(MOVI8);
     S.push(t);
@@ -85,12 +134,24 @@ namespace ast {
     return t;
   }
 
+  void Number::accept(Visitor* V) {
+    V->visit(this);
+  }
+
   int Named::drive(State& S, int t) {
-    int reg = S.find_local(name_);
-    if(reg >= 0) {
-      S.push(MOVR);
-      S.push(t);
-      S.push(reg);
+    Local* l = S.lm().get(this);
+
+    if(l) {
+      if(l->reg_p()) {
+        S.push(MOVR);
+        S.push(t);
+        S.push(l->idx());
+      } else {
+        S.push(LVAR);
+        S.push(t);
+        S.push(l->depth());
+        S.push(l->idx());
+      }
     } else {
       S.push(LOADN);
       S.push(t);
@@ -98,6 +159,32 @@ namespace ast {
     }
 
     return t;
+
+    int reg = S.find_local(name_);
+    if(reg >= 0) {
+      S.push(MOVR);
+      S.push(t);
+      S.push(reg);
+    } else {
+      int depth;
+
+      if(S.find_local_at_depth(name_, &depth, &reg)) {
+        S.push(LVAR);
+        S.push(t);
+        S.push(depth);
+        S.push(reg);
+      } else {
+        S.push(LOADN);
+        S.push(t);
+        S.push(S.string(name_));
+      }
+    }
+
+    return t;
+  }
+
+  void Named::accept(Visitor* V) {
+    V->visit(this);
   }
 
   int Def::drive(State& S, int t) {
@@ -108,7 +195,7 @@ namespace ast {
     S.push(t+1);
     S.push(S.string(name_));
 
-    ast::State subS(args_, body_->locals());
+    ast::State subS(args_, body_->locals(), S.lm());
 
     int r = body_->drive(subS, args_.size() + body_->locals().size());
     subS.push(RET);
@@ -125,6 +212,11 @@ namespace ast {
     S.push(2);
 
     return t;
+  }
+
+  void Def::accept(Visitor* V) {
+    body_->accept(V);
+    V->visit(this);
   }
 
   int Class::drive(State& S, int t) {
@@ -149,10 +241,17 @@ namespace ast {
     S.push(si);
     S.push(t);
 
+    int reg = S.find_local(name_);
+    assert(reg >= 0);
+
+    S.push(MOVR);
+    S.push(reg);
+    S.push(t);
+
     ArgMap locals;
     ArgMap args;
 
-    ast::State subS(args, body_->locals());
+    ast::State subS(args, body_->locals(), S.lm());
     int r = body_->drive(subS, body_->locals().size());
     subS.push(RET);
     subS.push(r);
@@ -174,6 +273,12 @@ namespace ast {
     return t;
   }
 
+  void Class::accept(Visitor* V) {
+    V->before_visit(this);
+    body_->accept(V);
+    V->visit(this);
+  }
+
   int Return::drive(State& S, int t) {
     val_->drive(S, t);
 
@@ -181,6 +286,11 @@ namespace ast {
     S.push(t);
 
     return t;
+  }
+
+  void Return::accept(Visitor* V) {
+    val_->accept(V);
+    V->visit(this);
   }
 
   int Cascade::drive(State& S, int t) {
@@ -199,6 +309,18 @@ namespace ast {
     return t;
   }
 
+  void Cascade::accept(Visitor* V) {
+    recv_->accept(V);
+
+    for(ast::Nodes::iterator i = messages_.begin();
+        i != messages_.end();
+        ++i) {
+      (*i)->accept(V);
+    }
+
+    V->visit(this);
+  }
+
   int CascadeCall::drive(State& S, int t) {
     S.push(CALL);
     S.push(t+1);
@@ -208,7 +330,11 @@ namespace ast {
 
     return t;
   }
-  
+
+  void CascadeCall::accept(Visitor* V) {
+    V->visit(this);
+  }
+
   int IfCond::drive(State& S, int t) {
     recv_->drive(S, t);
     S.push(JMPIF);
@@ -224,11 +350,22 @@ namespace ast {
     return t;
   }
 
+  void IfCond::accept(Visitor* V) {
+    recv_->accept(V);
+    body_->accept(V);
+
+    V->visit(this);
+  }
+
   int Nil::drive(State& S, int t) {
     S.push(MOVN);
     S.push(t);
 
     return t;
+  }
+
+  void Nil::accept(Visitor* V) {
+    V->visit(this);
   }
 
   int True::drive(State& S, int t) {
@@ -238,11 +375,19 @@ namespace ast {
     return t;
   }
 
+  void True::accept(Visitor* V) {
+    V->visit(this);
+  }
+
   int False::drive(State& S, int t) {
     S.push(MOVF);
     S.push(t);
 
     return t;
+  }
+
+  void False::accept(Visitor* V) {
+    V->visit(this);
   }
 
   int Import::drive(State& S, int t) {
@@ -272,6 +417,10 @@ namespace ast {
     return t;
   }
 
+  void Import::accept(Visitor* V) {
+    V->visit(this);
+  }
+
   int Try::drive(State& S, int t) {
     S.push(REGE);
     S.push(t);
@@ -297,13 +446,37 @@ namespace ast {
     return t;
   }
 
+  void Try::accept(Visitor* V) {
+    body_->accept(V);
+    handler_->accept(V);
+
+    V->visit(this);
+  }
+
   int Assign::drive(State& S, int t) {
     value_->drive(S, t);
-    S.push(MOVR);
-    S.push(reg_);
-    S.push(t);
+
+    Local* l = S.lm().get(this);
+    assert(l);
+
+    if(l->reg_p()) {
+      S.push(MOVR);
+      S.push(l->idx());
+      S.push(t);
+    } else {
+      S.push(SVAR);
+      S.push(l->depth());
+      S.push(l->idx());
+      S.push(t);
+    }
 
     return t;
+  }
+
+  void Assign::accept(Visitor* V) {
+    value_->accept(V);
+
+    V->visit(this);
   }
 
   int LoadAttr::drive(State& S, int t) {
@@ -316,6 +489,11 @@ namespace ast {
     return t;
   }
 
+  void LoadAttr::accept(Visitor* V) {
+    recv_->accept(V);
+    V->visit(this);
+  }
+
   int IvarAssign::drive(State& S, int t) {
     value_->drive(S, t);
     S.push(IVA);
@@ -326,12 +504,21 @@ namespace ast {
     return t;
   }
 
+  void IvarAssign::accept(Visitor* V) {
+    value_->accept(V);
+    V->visit(this);
+  }
+
   int IvarRead::drive(State& S, int t) {
     S.push(IVR);
     S.push(t);
     S.push(S.string(name_));
 
     return t;
+  }
+
+  void IvarRead::accept(Visitor* V) {
+    V->visit(this);
   }
 
   int LiteralString::drive(State& S, int t) {
@@ -341,4 +528,9 @@ namespace ast {
 
     return t;
   }
+
+  void LiteralString::accept(Visitor* V) {
+    V->visit(this);
+  }
+
 }}

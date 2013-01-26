@@ -2,6 +2,9 @@
 #include "parser.hpp"
 #include "ast.hpp"
 
+#include "scope_tracker.hpp"
+#include "local.hpp"
+
 namespace marius {
   bool Compiler::compile(FILE* f) {
     Parser parser(f);
@@ -12,9 +15,17 @@ namespace marius {
 
     if(!top) return false;
 
+    ArgMap globals;
+
+    globals[String::internalize("io")] = 0;
+
+    LocalMap locals;
+
+    calculate_locals(top, globals, locals);
+
     ArgMap args;
 
-    ast::State S(args, top->locals());
+    ast::State S(args, top->locals(), locals);
 
     top->drive(S, top->locals().size());
 

@@ -33,6 +33,8 @@ namespace marius {
     JMPIF,
     REGE,
     POPE,
+    LVAR,
+    SVAR,
     TotalInstructions
   };
 
@@ -49,19 +51,22 @@ namespace marius {
     std::vector<Code*> codes_;
     ArgMap args_;
     std::vector<ArgMap> keywords_;
+    int closed_over_vars_;
 
   public:
     Code(Instruction* buf, int size,
          std::vector<String*> strings,
          std::vector<Code*> codes,
          ArgMap args,
-         std::vector<ArgMap> keywords)
+         std::vector<ArgMap> keywords,
+         int cov=0)
       : code_(buf)
       , size_(size)
       , strings_(strings)
       , codes_(codes)
       , args_(args)
       , keywords_(keywords)
+      , closed_over_vars_(cov)
     {}
 
     Instruction* code() {
@@ -90,6 +95,10 @@ namespace marius {
 
     ArgMap& keywords(int i) {
       return keywords_.at(i);
+    }
+
+    int closed_over_vars() {
+      return closed_over_vars_;
     }
 
     void print();

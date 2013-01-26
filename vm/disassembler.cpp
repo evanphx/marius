@@ -141,6 +141,14 @@ namespace marius {
       printf("R(E).pop\n");
       return 1;
 
+    case LVAR:
+      printf("R(%d) = R(vars)[%d][%d]\n", seq[1], seq[2], seq[3]);
+      return 4;
+
+    case SVAR:
+      printf("R(vars)[%d][%d] = R(%d)\n", seq[1], seq[2], seq[3]);
+      return 4;
+
     default:
       assert(0);
     }

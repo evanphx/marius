@@ -5,6 +5,7 @@
 
 #include "code.hpp"
 #include "string.hpp"
+#include "local.hpp"
 
 namespace marius {
   class String;
@@ -32,15 +33,21 @@ namespace marius {
 
       ArgMap args_;
       ArgMap locals_;
+      LocalMap& lm_;
 
       int next_reg;
 
     public:
-      State(ArgMap args, ArgMap locals)
+      State(ArgMap args, ArgMap locals, LocalMap& lm)
         : args_(args)
         , locals_(locals)
+        , lm_(lm)
         , next_reg(args.size())
       {}
+
+      LocalMap& lm() {
+        return lm_;
+      }
 
       int new_reg() {
         return next_reg++;
@@ -94,12 +101,17 @@ namespace marius {
 
       Code* to_code();
       int find_local(String& name);
+      bool find_local_at_depth(String& name, int* depth, int* idx);
 
     };
+
+    class Visitor;
 
     class Node {
     public:
       virtual int drive(State& S, int t) = 0;
+
+      virtual void accept(Visitor* V) = 0;
     };
 
     class Seq : public Node {
@@ -113,10 +125,13 @@ namespace marius {
       {}
 
       int drive(State& S, int t);
+      void accept(Visitor* V);
     };
 
     class Scope : public Node {
       ArgMap locals_;
+      ArgMap closed_locals_;
+      ArgMap arguments_;
       Node* body_;
 
     public:
@@ -125,11 +140,30 @@ namespace marius {
         , body_(body)
       {}
 
+      Scope(ast::Node* body, ArgMap& locals, ArgMap args)
+        : locals_(locals)
+        , arguments_(args)
+        , body_(body)
+      {}
+
       ArgMap& locals() {
         return locals_;
       }
 
+      ArgMap& arguments() {
+        return arguments_;
+      }
+
       int drive(State& S, int t);
+      void accept(Visitor* V);
+
+      void add_local(String& n, int reg) {
+        locals_[n] = reg;
+      }
+
+      void add_closed_local(String& n, int loc) {
+        closed_locals_[n] = loc;
+      }
     };
 
     typedef std::vector<Node*> Nodes;
@@ -148,6 +182,7 @@ namespace marius {
       {}
 
       int drive(State& S, int t);
+      void accept(Visitor* V);
     };
 
     class CallWithKeywords : public Call {
@@ -160,6 +195,7 @@ namespace marius {
       {}
 
       int drive(State& S, int t);
+      void accept(Visitor* V);
     };
 
     class Number : public Node {
@@ -171,6 +207,7 @@ namespace marius {
       {}
 
       int drive(State& S, int t);
+      void accept(Visitor* V);
     };
 
     class Named : public Node {
@@ -181,7 +218,12 @@ namespace marius {
         : name_(n)
       {}
 
+      String& name() {
+        return name_;
+      }
+
       int drive(State& S, int t);
+      void accept(Visitor* V);
     };
 
     class Return : public Node {
@@ -193,6 +235,7 @@ namespace marius {
       {}
 
       int drive(State& S, int t);
+      void accept(Visitor* V);
     };
 
     class Class : public Node {
@@ -205,7 +248,12 @@ namespace marius {
         , body_(b)
       {}
 
+      String& name() {
+        return name_;
+      }
+
       int drive(State& S, int t);
+      void accept(Visitor* V);
     };
 
     class Def : public Node {
@@ -221,6 +269,7 @@ namespace marius {
       {}
 
       int drive(State& S, int t);
+      void accept(Visitor* V);
     };
 
     class CascadeCall : public Node {
@@ -233,6 +282,7 @@ namespace marius {
       {}
 
       int drive(State& S, int t);
+      void accept(Visitor* V);
     };
 
     class Cascade : public Node {
@@ -249,6 +299,7 @@ namespace marius {
       }
 
       int drive(State& S, int t);
+      void accept(Visitor* V);
     };
 
     class IfCond : public Node {
@@ -262,21 +313,25 @@ namespace marius {
       {}
 
       int drive(State& S, int t);
+      void accept(Visitor* V);
     };
 
     class Nil : public Node {
     public:
       int drive(State& S, int t);
+      void accept(Visitor* V);
     };
 
     class False : public Node {
     public:
       int drive(State& S, int t);
+      void accept(Visitor* V);
     };
 
     class True : public Node {
     public:
       int drive(State& S, int t);
+      void accept(Visitor* V);
     };
 
     class Import : public Node {
@@ -289,7 +344,12 @@ namespace marius {
         , reg_(reg)
       {}
 
+      String& name() {
+        return name_;
+      }
+
       int drive(State& S, int t);
+      void accept(Visitor* V);
     };
 
     class Try : public Node {
@@ -303,6 +363,7 @@ namespace marius {
       {}
 
       int drive(State& S, int t);
+      void accept(Visitor* V);
     };
 
     class Assign : public Node {
@@ -317,7 +378,12 @@ namespace marius {
         , value_(v)
       {}
 
+      String& name() {
+        return name_;
+      }
+
       int drive(State& S, int t);
+      void accept(Visitor* V);
     };
 
     class LoadAttr : public Node {
@@ -331,6 +397,7 @@ namespace marius {
       {}
 
       int drive(State& S, int t);
+      void accept(Visitor* V);
     };
 
     class IvarAssign : public Node {
@@ -344,6 +411,7 @@ namespace marius {
       {}
 
       int drive(State& S, int t);
+      void accept(Visitor* V);
     };
 
     class IvarRead : public Node {
@@ -355,6 +423,7 @@ namespace marius {
       {}
 
       int drive(State& S, int t);
+      void accept(Visitor* V);
     };
 
     class LiteralString : public Node {
@@ -366,7 +435,38 @@ namespace marius {
       {}
 
       int drive(State& S, int t);
+      void accept(Visitor* V);
     };
+
+    class Visitor {
+    public:
+      virtual void before_visit(Scope* n) { };
+      virtual void before_visit(Class* n) { };
+
+      virtual void visit(Seq* n) { };
+      virtual void visit(Scope* n) { };
+      virtual void visit(Call* n) { };
+      virtual void visit(CallWithKeywords* n) { };
+      virtual void visit(Number* n) { };
+      virtual void visit(Named* n) { };
+      virtual void visit(Def* n) { };
+      virtual void visit(Class* n) { };
+      virtual void visit(Return* n) { };
+      virtual void visit(Cascade* n) { };
+      virtual void visit(CascadeCall* n) { };
+      virtual void visit(IfCond* n) { };
+      virtual void visit(Nil* n) { };
+      virtual void visit(True* n) { };
+      virtual void visit(False* n) { };
+      virtual void visit(Import* n) { };
+      virtual void visit(Try* n) { };
+      virtual void visit(Assign* n) { };
+      virtual void visit(LoadAttr* n) { };
+      virtual void visit(IvarAssign* n) { };
+      virtual void visit(IvarRead* n) { };
+      virtual void visit(LiteralString* n) { };
+    };
+
   }
 }
 

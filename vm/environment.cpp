@@ -6,6 +6,8 @@
 #include "vm.hpp"
 #include "module.hpp"
 #include "user.hpp"
+#include "method.hpp"
+#include "closure.hpp"
 
 #include <iostream>
 
@@ -53,9 +55,10 @@ namespace marius {
     assert(args.count() == 2);
 
     String& name = args[0]->as_string();
-    Code& code = args[1]->as_code();
 
-    recv->as_class()->add_native_method(name.c_str(), code);
+    Method* m = args[1]->as_method();
+
+    recv->as_class()->add_native_method(name.c_str(), m);
 
     return handle(S, OOP::nil());
   }
@@ -67,9 +70,9 @@ namespace marius {
   }
 
   static Handle run_code(State& S, Handle recv, Arguments& args) {
-    Code& code = recv->as_code();
+    Method* m = recv->as_method();
 
-    return handle(S, S.vm().run(S, code, args.frame() + 1));
+    return handle(S, S.vm().run(S, m, args.frame() + 1));
   }
 
   static Handle io_puts(State& S, Handle recv, Arguments& args) {
@@ -111,8 +114,9 @@ namespace marius {
 
     Class* s = new_class("String");
 
+    Class* mc = new_class("Method");
     Class* d = new_class("Code");
-    d->add_method("eval", run_code);
+    mc->add_method("eval", run_code);
 
     Class* t = new_class("TrueClass");
     Class* f = new_class("FalseClass");
@@ -128,6 +132,7 @@ namespace marius {
     tbl[OOP::eTrue] = t;
     tbl[OOP::eFalse] = f;
     tbl[OOP::eUnwind] = new_class("Unwind");
+    tbl[OOP::eMethod] = mc;
 
     Class::init_base(tbl);
 
@@ -141,5 +146,8 @@ namespace marius {
     bind(io_n, io);
 
     init_import(S);
+  
+    globals_ = new Closure(1);
+    globals_->set(0, io);
   }
 }

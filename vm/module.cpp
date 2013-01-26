@@ -9,11 +9,11 @@ namespace marius {
       assert(args.count() == 2);
 
       String& name = args[0]->as_string();
-      Code& code = args[1]->as_code();
+      Method* m = args[1]->as_method();
 
       Module* mod = recv->as_module();
 
-      mod->add_native_method(name.c_str(), code);
+      mod->add_native_method(name.c_str(), m);
 
       return recv;
     }
@@ -46,8 +46,8 @@ namespace marius {
     klass()->add_method(name, func);
   }
 
-  void Module::add_native_method(const char* name, Code& code) {
-    klass()->add_native_method(name, code);
+  void Module::add_native_method(const char* name, Method* m) {
+    klass()->add_native_method(name, m);
   }
 
 }

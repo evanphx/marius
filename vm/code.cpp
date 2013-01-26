@@ -24,7 +24,9 @@ namespace marius {
       "JMPIT",
       "JMPIF",
       "REGE",
-      "POPE"
+      "POPE",
+      "LVAR",
+      "SVAR"
     };
 
   void Code::print() {

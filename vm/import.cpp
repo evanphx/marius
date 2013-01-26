@@ -9,6 +9,8 @@
 #include "module.hpp"
 #include "settings.hpp"
 #include "state.hpp"
+#include "method.hpp"
+#include "closure.hpp"
 
 #include "unwind.hpp"
 
@@ -68,7 +70,14 @@ namespace marius {
       OOP* fp = args.frame() + 1;
       fp[0] = m;
 
-      S.vm().run(S, *compiler.code(), fp + 1);
+      Code& code = *compiler.code();
+
+      Closure* script = new Closure(code.closed_over_vars(),
+                                    S.env().globals());
+
+      Method* top = new Method(code, script);
+
+      S.vm().run(S, top, fp + 1);
 
       return handle(S, m);
     }

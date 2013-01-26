@@ -24,8 +24,8 @@ namespace marius {
   public:
     VM(bool debug=false);
 
-    OOP run(State& S, Code& code);
-    OOP run(State& S, Code& code, OOP* fp);
+    OOP run(State& S, Method* meth);
+    OOP run(State& S, Method* meth, OOP* fp);
     OOP run_method(State& S, OOP recv,
                            String& name, int argc, OOP* argv);
 

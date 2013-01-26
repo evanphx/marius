@@ -31,7 +31,7 @@ namespace marius {
 
     Method* lookup(String& name);
     void add_method(const char* name, SimpleFunc func);
-    void add_native_method(const char* name, Code& code);
+    void add_native_method(const char* name, Method* meth);
 
     void add_class_method(const char* name, SimpleFunc func);
   };

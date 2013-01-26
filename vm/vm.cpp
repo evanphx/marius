@@ -18,8 +18,8 @@ namespace marius {
     stack_ = new OOP[cInitialStack];
   }
 
-  OOP VM::run(State& S, Code& code) {
-    return run(S, code, stack_);
+  OOP VM::run(State& S, Method* meth) {
+    return run(S, meth, stack_);
   }
 
   struct Exception {
@@ -32,7 +32,9 @@ namespace marius {
     {}
   };
 
-  OOP VM::run(State& S, Code& code, OOP* fp) {
+  OOP VM::run(State& S, Method* meth, OOP* fp) {
+    Code& code = *meth->code();
+
     Instruction* seq = code.code();
     Instruction* end = seq + code.size();
 
@@ -174,7 +176,7 @@ namespace marius {
         break;
 
       case LOADC:
-        fp[seq[0]] = OOP(code.code(seq[1]));
+        fp[seq[0]] = OOP(Method::wrap(code.code(seq[1]), meth));
 
         seq += 2;
         break;
@@ -222,6 +224,17 @@ namespace marius {
 
       case POPE:
         es.pop_back();
+        break;
+
+      case LVAR:
+        fp[seq[0]] = meth->closed_over_variable(seq[1], seq[2]);
+        seq += 3;
+
+        break;
+      case SVAR:
+        meth->set_closed_over_variable(seq[0], seq[1], fp[seq[2]]);
+        seq += 3;
+
         break;
       default:
         printf("UNKNOWN INSTRUCTION: %d\n", seq[-1]);

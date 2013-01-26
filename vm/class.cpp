@@ -39,9 +39,7 @@ namespace marius {
     method_table_.add(s, meth);
   }
 
-  void Class::add_native_method(const char* name, Code& code) {
-    Method* meth = new Method(code);
-
+  void Class::add_native_method(const char* name, Method* meth) {
     String& s = String::internalize(name);
 
     method_table_.add(s, meth);

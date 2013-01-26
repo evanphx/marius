@@ -42,7 +42,7 @@ namespace marius {
 
   ast::Node* ParserState::ast_def(String& name, ast::Node* b) {
     ast::Node* n = new ast::Def(name, 
-                     new ast::Scope(b, context_->local_names),
+                     new ast::Scope(b, context_->local_names, context_->args),
                      context_->args);
     delete context_;
 

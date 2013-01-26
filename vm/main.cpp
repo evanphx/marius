@@ -9,8 +9,10 @@
 #include "settings.hpp"
 #include "unwind.hpp"
 #include "user.hpp"
+#include "method.hpp"
 
 #include "handle.hpp"
+#include "closure.hpp"
 
 #include <vector>
 #include <iostream>
@@ -84,7 +86,13 @@ int main(int argc, char** argv) {
 
   if(!compiler.compile(file)) return 1;
 
-  OOP ret = vm.run(state, *compiler.code());
+  Code& code = *compiler.code();
+
+  Closure* script = new Closure(code.closed_over_vars(), env.globals());
+
+  Method* top = new Method(code, script);
+
+  OOP ret = vm.run(state, top);
 
   if(ret.unwind_p()) {
     std::cout << "Unwind error at toplevel: "

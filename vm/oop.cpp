@@ -48,6 +48,9 @@ namespace marius {
     case eCode:
       printf("<Code:%p>\n", user_);
       return;
+    case eMethod:
+      printf("<Method:%p>\n", method_);
+      return;
     case eTrue:
       printf("true\n");
       return;

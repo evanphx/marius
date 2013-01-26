@@ -17,12 +17,13 @@ namespace marius {
   class Unwind;
   class User;
   class Attributes;
+  class Method;
 
   class OOP {
   public:
     enum Type {
       // Value object types
-      eNil, eTrue, eFalse, eInteger, eString, eUnwind, eCode,
+      eNil, eTrue, eFalse, eInteger, eString, eUnwind, eCode, eMethod,
 
       // Mutable object types
       eClass, eUser, eModule,
@@ -39,6 +40,7 @@ namespace marius {
       String* string_;
       Code* code_;
       Unwind* unwind_;
+      Method* method_;
 
       Class* class_;
       Module* module_;
@@ -83,6 +85,11 @@ namespace marius {
     OOP(Unwind* u)
       : type_(eUnwind)
       , unwind_(u)
+    {}
+
+    OOP(Method* m)
+      : type_(eMethod)
+      , method_(m)
     {}
 
     Type type() {
@@ -130,6 +137,11 @@ namespace marius {
     Code& as_code() {
       assert(type_ == eCode);
       return *code_;
+    }
+
+    Method* as_method() {
+      assert(type_ == eMethod);
+      return method_;
     }
 
     Module* as_module() {
