@@ -42,6 +42,7 @@ test: marius
 	test `./marius -I test/import test/imported_class.mr` = 7
 	test `./marius test/symbol.mr` = '"blah"'
 	test `./marius test/litstr.mr` = '"blah"'
+	test `./marius -I test/import test/import2.mr` = 7
 
 .PHONY: test
 

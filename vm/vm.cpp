@@ -5,6 +5,7 @@
 #include "environment.hpp"
 #include "state.hpp"
 #include "disassembler.hpp"
+#include "closure.hpp"
 
 #include <stdio.h>
 
@@ -34,6 +35,8 @@ namespace marius {
 
   OOP VM::run(State& S, Method* meth, OOP* fp) {
     Code& code = *meth->code();
+
+    Closure* clos = new Closure(code.closed_over_vars(), meth->closure());
 
     Instruction* seq = code.code();
     Instruction* end = seq + code.size();
@@ -176,7 +179,7 @@ namespace marius {
         break;
 
       case LOADC:
-        fp[seq[0]] = OOP(Method::wrap(code.code(seq[1]), meth));
+        fp[seq[0]] = OOP(new Method(code.code(seq[1]), clos));
 
         seq += 2;
         break;
@@ -227,12 +230,12 @@ namespace marius {
         break;
 
       case LVAR:
-        fp[seq[0]] = meth->closed_over_variable(seq[1], seq[2]);
+        fp[seq[0]] = clos->get_at_depth(seq[1], seq[2]);
         seq += 3;
 
         break;
       case SVAR:
-        meth->set_closed_over_variable(seq[0], seq[1], fp[seq[2]]);
+        clos->set_at_depth(seq[0], seq[1], fp[seq[2]]);
         seq += 3;
 
         break;

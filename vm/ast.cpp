@@ -4,7 +4,7 @@
 namespace marius {
 namespace ast {
 
-  Code* State::to_code() {
+  Code* State::to_code(int cov) {
     size_t sz = buffer.size();
     Instruction* seq = new Instruction[sz];
 
@@ -13,7 +13,7 @@ namespace ast {
     }
 
     return new Code(seq, buffer.size(), strings, codes,
-                    args_, keywords);
+                    args_, keywords, cov);
   }
 
   int State::find_local(String& name) {
@@ -203,7 +203,7 @@ namespace ast {
 
     S.push(LOADC);
     S.push(t+2);
-    S.push(S.code(subS.to_code()));
+    S.push(S.code(subS.to_code(body_->cov())));
 
     S.push(CALL);
     S.push(t);
@@ -262,7 +262,7 @@ namespace ast {
 
     S.push(LOADC);
     S.push(t);
-    S.push(S.code(subS.to_code()));
+    S.push(S.code(subS.to_code(body_->cov())));
 
     S.push(CALL);
     S.push(t);
@@ -410,9 +410,19 @@ namespace ast {
     S.push(t);
     S.push(1);
 
-    S.push(MOVR);
-    S.push(reg_);
-    S.push(t);
+    Local* l = S.lm().get(this);
+    assert(l);
+
+    if(l->reg_p()) {
+      S.push(MOVR);
+      S.push(l->idx());
+      S.push(t);
+    } else {
+      S.push(SVAR);
+      S.push(l->depth());
+      S.push(l->idx());
+      S.push(t);
+    }
 
     return t;
   }

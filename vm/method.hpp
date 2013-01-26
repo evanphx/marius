@@ -27,6 +27,10 @@ namespace marius {
       return code_;
     }
 
+    Closure* closure() {
+      return closure_;
+    }
+
     OOP closed_over_variable(int depth, int idx);
     void set_closed_over_variable(int depth, int idx, OOP val);
 

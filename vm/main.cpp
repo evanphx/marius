@@ -88,9 +88,7 @@ int main(int argc, char** argv) {
 
   Code& code = *compiler.code();
 
-  Closure* script = new Closure(code.closed_over_vars(), env.globals());
-
-  Method* top = new Method(code, script);
+  Method* top = new Method(code, env.globals());
 
   OOP ret = vm.run(state, top);
 

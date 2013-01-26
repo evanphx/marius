@@ -72,10 +72,7 @@ namespace marius {
 
       Code& code = *compiler.code();
 
-      Closure* script = new Closure(code.closed_over_vars(),
-                                    S.env().globals());
-
-      Method* top = new Method(code, script);
+      Method* top = new Method(code, S.env().globals());
 
       S.vm().run(S, top, fp + 1);
 

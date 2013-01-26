@@ -29,11 +29,11 @@ namespace marius {
   }
 
   OOP Method::closed_over_variable(int depth, int idx) {
-    return closure_->get_at_depth(idx, depth);
+    return closure_->get_at_depth(depth, idx);
   }
 
   void Method::set_closed_over_variable(int depth, int idx, OOP val) {
-    closure_->set_at_depth(idx, depth, val);
+    closure_->set_at_depth(depth, idx, val);
   }
 
   OOP Method::run(State& S, OOP recv, Arguments& args) {

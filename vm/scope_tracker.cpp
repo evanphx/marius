@@ -103,7 +103,7 @@ namespace marius {
         return;
       }
 
-      int depth = 0;
+      int depth = 1;
 
       for(std::list<LocalScope*>::iterator i = stack_.begin();
           i != stack_.end();
@@ -121,7 +121,7 @@ namespace marius {
       ArgMap::iterator i = globals_.find(n->name());
       if(i != globals_.end()) {
         Local* l = locals_.add(n);
-        l->make_global(i->second, depth);
+        l->make_global(i->second, depth-1);
       }
     }
   };

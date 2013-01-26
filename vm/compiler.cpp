@@ -29,7 +29,7 @@ namespace marius {
 
     top->drive(S, top->locals().size());
 
-    code_ = S.to_code();
+    code_ = S.to_code(top->cov());
 
     if(debug_) code_->print();
 

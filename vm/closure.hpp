@@ -17,11 +17,12 @@ namespace marius {
     {}
 
     OOP get(unsigned int idx) {
-      if(idx >= size_) return OOP::nil();
+      assert(idx < size_);
+
       return values_[idx];
     }
 
-    OOP get_at_depth(unsigned int idx, unsigned int dep) {
+    OOP get_at_depth(unsigned int dep, unsigned int idx) {
       Closure* c = this;
 
       while(dep-- > 0) {
@@ -33,12 +34,12 @@ namespace marius {
     }
 
     void set(unsigned int idx, OOP val) {
-      if(idx >= size_) return;
+      assert(idx < size_);
 
       values_[idx] = val;
     }
 
-    void set_at_depth(unsigned int idx, unsigned int dep, OOP val) {
+    void set_at_depth(unsigned int dep, unsigned int idx, OOP val) {
       Closure* c = this;
 
       while(dep-- > 0) {

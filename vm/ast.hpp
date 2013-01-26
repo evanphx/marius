@@ -99,7 +99,7 @@ namespace marius {
         buffer[l.idx_] = buffer.size();
       }
 
-      Code* to_code();
+      Code* to_code(int cov);
       int find_local(String& name);
       bool find_local_at_depth(String& name, int* depth, int* idx);
 
@@ -152,6 +152,10 @@ namespace marius {
 
       ArgMap& arguments() {
         return arguments_;
+      }
+
+      int cov() {
+        return closed_locals_.size();
       }
 
       int drive(State& S, int t);
