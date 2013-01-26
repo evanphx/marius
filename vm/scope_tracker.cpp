@@ -28,7 +28,16 @@ namespace marius {
     }
 
     void before_visit(Class* cls) {
-      scope_->insert(LocalScope::value_type(cls->name(), locals_.add(cls)));
+      int depth = stack_.size();
+
+      ArgMap::iterator i = globals_.find(String::internalize("Class"));
+      
+      assert(i != globals_.end());
+      Local* l = locals_.add(cls);
+      l->make_global(i->second, depth);
+
+      scope_->insert(LocalScope::value_type(cls->name(),
+                                            locals_.add(cls->body())));
     }
 
     virtual void before_visit(Scope* s) {

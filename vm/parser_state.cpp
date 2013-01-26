@@ -179,9 +179,7 @@ namespace marius {
   }
 
   ast::Node* ParserState::import(String& name) {
-    int r = new_local();
-    context_->local_names[name] = r;
-    return new ast::Import(name, r);
+    return new ast::Import(name);
   }
 
   ast::Node* ParserState::ast_try(ast::Node* b, ast::Node* h) {
@@ -189,9 +187,7 @@ namespace marius {
   }
 
   ast::Node* ParserState::assign(String& name, ast::Node* n) {
-    int r = new_local();
-    context_->local_names[name] = r;
-    return new ast::Assign(name, r, n);
+    return new ast::Assign(name, n);
   }
 
   ast::Node* ParserState::ivar_assign(String& name, ast::Node* v) {

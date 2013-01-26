@@ -4,7 +4,7 @@
 namespace marius {
 namespace ast {
 
-  Code* State::to_code(int cov) {
+  Code* State::to_code(ArgMap& args, int cov) {
     size_t sz = buffer.size();
     Instruction* seq = new Instruction[sz];
 
@@ -13,29 +13,33 @@ namespace ast {
     }
 
     return new Code(seq, buffer.size(), strings, codes,
-                    args_, keywords, cov);
+                    args, keywords, cov);
   }
 
-  int State::find_local(String& name) {
-    ArgMap::iterator i = args_.find(name);
-    if(i != args_.end()) return i->second;
-
-    i = locals_.find(name);
-    if(i != locals_.end()) return i->second;
-
-    return -1;
+  void State::set_local(Local* l, int t) {
+    if(l->reg_p()) {
+      push(MOVR);
+      push(l->idx());
+      push(t);
+    } else {
+      push(SVAR);
+      push(l->depth());
+      push(l->idx());
+      push(t);
+    }
   }
 
-  bool State::find_local_at_depth(String& name, int* depth, int* idx) {
-    return false;
-
-    ArgMap::iterator i = args_.find(name);
-    if(i != args_.end()) return i->second;
-
-    i = locals_.find(name);
-    if(i != locals_.end()) return i->second;
-
-    return -1;
+  void State::get_local(Local* l, int t) {
+    if(l->reg_p()) {
+      push(MOVR);
+      push(t);
+      push(l->idx());
+    } else {
+      push(LVAR);
+      push(t);
+      push(l->depth());
+      push(l->idx());
+    }
   }
 
   int Seq::drive(State& S, int t) {
@@ -142,42 +146,11 @@ namespace ast {
     Local* l = S.lm().get(this);
 
     if(l) {
-      if(l->reg_p()) {
-        S.push(MOVR);
-        S.push(t);
-        S.push(l->idx());
-      } else {
-        S.push(LVAR);
-        S.push(t);
-        S.push(l->depth());
-        S.push(l->idx());
-      }
+      S.get_local(l, t);
     } else {
       S.push(LOADN);
       S.push(t);
       S.push(S.string(name_));
-    }
-
-    return t;
-
-    int reg = S.find_local(name_);
-    if(reg >= 0) {
-      S.push(MOVR);
-      S.push(t);
-      S.push(reg);
-    } else {
-      int depth;
-
-      if(S.find_local_at_depth(name_, &depth, &reg)) {
-        S.push(LVAR);
-        S.push(t);
-        S.push(depth);
-        S.push(reg);
-      } else {
-        S.push(LOADN);
-        S.push(t);
-        S.push(S.string(name_));
-      }
     }
 
     return t;
@@ -195,7 +168,7 @@ namespace ast {
     S.push(t+1);
     S.push(S.string(name_));
 
-    ast::State subS(args_, body_->locals(), S.lm());
+    ast::State subS(S.lm());
 
     int r = body_->drive(subS, args_.size() + body_->locals().size());
     subS.push(RET);
@@ -203,7 +176,7 @@ namespace ast {
 
     S.push(LOADC);
     S.push(t+2);
-    S.push(S.code(subS.to_code(body_->cov())));
+    S.push(S.code(subS.to_code(args_, body_->cov())));
 
     S.push(CALL);
     S.push(t);
@@ -220,9 +193,10 @@ namespace ast {
   }
 
   int Class::drive(State& S, int t) {
-    S.push(LOADN);
-    S.push(t);
-    S.push(S.string(String::internalize("Class")));
+    Local* l = S.lm().get(this);
+    assert(l);
+
+    S.get_local(l, t);
 
     int si = S.string(name_);
 
@@ -241,17 +215,12 @@ namespace ast {
     S.push(si);
     S.push(t);
 
-    int reg = S.find_local(name_);
-    assert(reg >= 0);
+    l = S.lm().get(body_);
+    assert(l);
 
-    S.push(MOVR);
-    S.push(reg);
-    S.push(t);
+    S.set_local(l, t);
 
-    ArgMap locals;
-    ArgMap args;
-
-    ast::State subS(args, body_->locals(), S.lm());
+    ast::State subS(S.lm());
     int r = body_->drive(subS, body_->locals().size());
     subS.push(RET);
     subS.push(r);
@@ -260,9 +229,11 @@ namespace ast {
     S.push(t+1);
     S.push(t);
 
+    ArgMap args;
+
     S.push(LOADC);
     S.push(t);
-    S.push(S.code(subS.to_code(body_->cov())));
+    S.push(S.code(subS.to_code(args, body_->cov())));
 
     S.push(CALL);
     S.push(t);
@@ -413,16 +384,7 @@ namespace ast {
     Local* l = S.lm().get(this);
     assert(l);
 
-    if(l->reg_p()) {
-      S.push(MOVR);
-      S.push(l->idx());
-      S.push(t);
-    } else {
-      S.push(SVAR);
-      S.push(l->depth());
-      S.push(l->idx());
-      S.push(t);
-    }
+    S.set_local(l, t);
 
     return t;
   }
@@ -469,16 +431,7 @@ namespace ast {
     Local* l = S.lm().get(this);
     assert(l);
 
-    if(l->reg_p()) {
-      S.push(MOVR);
-      S.push(l->idx());
-      S.push(t);
-    } else {
-      S.push(SVAR);
-      S.push(l->depth());
-      S.push(l->idx());
-      S.push(t);
-    }
+    S.set_local(l, t);
 
     return t;
   }

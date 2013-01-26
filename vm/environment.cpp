@@ -81,7 +81,7 @@ namespace marius {
     return handle(S, OOP::nil());
   }
 
-  void init_import(State& S);
+  Class* init_import(State& S);
 
   void Environment::init_ontology(State& S) {
     assert(!top_);
@@ -145,9 +145,11 @@ namespace marius {
 
     bind(io_n, io);
 
-    init_import(S);
+    Class* importer = init_import(S);
   
-    globals_ = new Closure(1);
+    globals_ = new Closure(3);
     globals_->set(0, io);
+    globals_->set(1, c);
+    globals_->set(2, importer);
   }
 }

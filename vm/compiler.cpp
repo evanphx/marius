@@ -18,18 +18,20 @@ namespace marius {
     ArgMap globals;
 
     globals[String::internalize("io")] = 0;
+    globals[String::internalize("Class")] = 1;
+    globals[String::internalize("Importer")] = 2;
 
     LocalMap locals;
 
     calculate_locals(top, globals, locals);
 
-    ArgMap args;
-
-    ast::State S(args, top->locals(), locals);
+    ast::State S(locals);
 
     top->drive(S, top->locals().size());
 
-    code_ = S.to_code(top->cov());
+    ArgMap args;
+
+    code_ = S.to_code(args, top->cov());
 
     if(debug_) code_->print();
 

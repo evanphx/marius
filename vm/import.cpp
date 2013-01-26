@@ -84,9 +84,11 @@ namespace marius {
     }
   }
 
-  void init_import(State& S) {
+  Class* init_import(State& S) {
     Class* x = S.env().new_class("Importer");
     x->add_method("import", import);
     x->add_class_method("current", current);
+
+    return x;
   }
 }

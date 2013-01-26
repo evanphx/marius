@@ -31,34 +31,15 @@ namespace marius {
       std::vector<Code*> codes;
       std::vector<ArgMap> keywords;
 
-      ArgMap args_;
-      ArgMap locals_;
       LocalMap& lm_;
 
-      int next_reg;
-
     public:
-      State(ArgMap args, ArgMap locals, LocalMap& lm)
-        : args_(args)
-        , locals_(locals)
-        , lm_(lm)
-        , next_reg(args.size())
+      State(LocalMap& lm)
+        : lm_(lm)
       {}
 
       LocalMap& lm() {
         return lm_;
-      }
-
-      int new_reg() {
-        return next_reg++;
-      }
-
-      void recycle(int p) {
-        next_reg = p;
-      }
-
-      void reserve(int c) {
-        next_reg = c;
       }
 
       void push(Instruction op) {
@@ -99,9 +80,10 @@ namespace marius {
         buffer[l.idx_] = buffer.size();
       }
 
-      Code* to_code(int cov);
-      int find_local(String& name);
-      bool find_local_at_depth(String& name, int* depth, int* idx);
+      void set_local(Local* l, int t);
+      void get_local(Local* l, int t);
+
+      Code* to_code(ArgMap& args, int cov);
 
     };
 
@@ -256,6 +238,10 @@ namespace marius {
         return name_;
       }
 
+      Scope* body() {
+        return body_;
+      }
+
       int drive(State& S, int t);
       void accept(Visitor* V);
     };
@@ -340,12 +326,10 @@ namespace marius {
 
     class Import : public Node {
       String& name_;
-      int reg_;
 
     public:
-      Import(String& n, int reg)
+      Import(String& n)
         : name_(n)
-        , reg_(reg)
       {}
 
       String& name() {
@@ -372,13 +356,11 @@ namespace marius {
 
     class Assign : public Node {
       String& name_;
-      int reg_;
       Node* value_;
 
     public:
-      Assign(String& n, int r, Node* v)
+      Assign(String& n, Node* v)
         : name_(n)
-        , reg_(r)
         , value_(v)
       {}
 
