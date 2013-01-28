@@ -35,6 +35,7 @@ namespace marius {
     POPE,
     LVAR,
     SVAR,
+    LAMBDA,
     TotalInstructions
   };
 

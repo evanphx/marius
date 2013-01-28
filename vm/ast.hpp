@@ -110,10 +110,37 @@ namespace marius {
       void accept(Visitor* V);
     };
 
+    class Argument : public Node {
+      String& name_;
+      int position_;
+
+    public:
+      Argument(String& n, int p)
+        : name_(n)
+        , position_(p)
+      {}
+
+      String& name() {
+        return name_;
+      }
+
+      int position() {
+        return position_;
+      }
+
+      int drive(State& S, int t);
+      void accept(Visitor* V);
+    };
+
+    typedef std::vector<Argument*> Arguments;
+
     class Scope : public Node {
       ArgMap locals_;
       ArgMap closed_locals_;
       ArgMap arguments_;
+
+      Arguments arg_objs_;
+
       Node* body_;
 
     public:
@@ -122,9 +149,10 @@ namespace marius {
         , body_(body)
       {}
 
-      Scope(ast::Node* body, ArgMap& locals, ArgMap args)
+      Scope(ast::Node* body, ArgMap& locals, ArgMap args, Arguments& ao)
         : locals_(locals)
         , arguments_(args)
+        , arg_objs_(ao)
         , body_(body)
       {}
 
@@ -134,6 +162,10 @@ namespace marius {
 
       ArgMap& arguments() {
         return arguments_;
+      }
+
+      Arguments& arg_objs() {
+        return arg_objs_;
       }
 
       int cov() {
@@ -424,6 +456,18 @@ namespace marius {
       void accept(Visitor* V);
     };
 
+    class Lambda : public Node {
+      Scope* body_;
+
+    public:
+      Lambda(Scope* b)
+        : body_(b)
+      {}
+
+      int drive(State& S, int t);
+      void accept(Visitor* V);
+    };
+
     class Visitor {
     public:
       virtual void before_visit(Scope* n) { };
@@ -451,6 +495,8 @@ namespace marius {
       virtual void visit(IvarAssign* n) { };
       virtual void visit(IvarRead* n) { };
       virtual void visit(LiteralString* n) { };
+      virtual void visit(Lambda* l) { };
+      virtual void visit(Argument* a) {}
     };
 
   }

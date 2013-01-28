@@ -115,6 +115,10 @@ again:
         advance(1);
         return TK_RB;
 
+      case '{':
+        advance(1);
+        return TK_LB;
+
       case '(':
         advance(1);
         return TK_LP;

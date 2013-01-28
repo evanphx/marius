@@ -75,6 +75,14 @@ namespace marius {
     return handle(S, S.vm().run(S, m, args.frame() + 1));
   }
 
+  static Handle method_call(State& S, Handle recv, Arguments& args) {
+    Method* m = recv->as_method();
+
+    OOP* fp = args.frame();
+
+    return handle(S, S.vm().run(S, m, fp));
+  }
+
   static Handle io_puts(State& S, Handle recv, Arguments& args) {
     assert(args.count() == 1);
     args[0]->print();
@@ -117,6 +125,7 @@ namespace marius {
     Class* mc = new_class("Method");
     Class* d = new_class("Code");
     mc->add_method("eval", run_code);
+    mc->add_method("call", method_call);
 
     Class* t = new_class("TrueClass");
     Class* f = new_class("FalseClass");

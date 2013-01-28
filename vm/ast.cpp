@@ -54,6 +54,13 @@ namespace ast {
   }
 
   int Scope::drive(State& S, int t) {
+    for(Arguments::iterator i = arg_objs_.begin();
+        i != arg_objs_.end();
+        ++i) {
+      Argument* a = *i;
+      a->drive(S, t);
+    }
+
     body_->drive(S, t);
 
     return t;
@@ -158,6 +165,21 @@ namespace ast {
 
   void Named::accept(Visitor* V) {
     V->visit(this);
+  }
+
+  void Argument::accept(Visitor* V) {
+    V->visit(this);
+  }
+
+  int Argument::drive(State& S, int t) {
+    Local* l = S.lm().get(this);
+
+    // We don't have to do anything, it's there already.
+    if(l->reg_p()) return t;
+
+    S.set_local(l, position_);
+
+    return t;
   }
 
   int Def::drive(State& S, int t) {
@@ -492,6 +514,28 @@ namespace ast {
   }
 
   void LiteralString::accept(Visitor* V) {
+    V->visit(this);
+  }
+
+  int Lambda::drive(State& S, int t) {
+    ast::State subS(S.lm());
+
+    int r = body_->drive(subS, body_->locals().size());
+
+    subS.push(RET);
+    subS.push(r);
+
+    ArgMap args;
+
+    S.push(LOADC);
+    S.push(t);
+    S.push(S.code(subS.to_code(args, body_->cov())));
+
+    return t;
+  }
+
+  void Lambda::accept(Visitor* V) {
+    body_->accept(V);
     V->visit(this);
   }
 

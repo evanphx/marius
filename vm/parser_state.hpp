@@ -23,6 +23,8 @@ namespace marius {
       ArgMap args; 
       ArgMap local_names;
 
+      ast::Arguments arg_objs;
+
       int next_reg;
 
       int locals;
@@ -180,6 +182,9 @@ namespace marius {
     ast::Node* assign(String& name, ast::Node* n);
     ast::Node* ivar_assign(String& name, ast::Node* n);
     ast::Node* ivar_read(String& name);
+
+    void start_lambda();
+    ast::Node* lambda(ast::Node* b);
   };
 }
 

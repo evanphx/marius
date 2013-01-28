@@ -42,7 +42,8 @@ namespace marius {
 
   ast::Node* ParserState::ast_def(String& name, ast::Node* b) {
     ast::Node* n = new ast::Def(name, 
-                     new ast::Scope(b, context_->local_names, context_->args),
+                     new ast::Scope(b, context_->local_names,
+                        context_->args, context_->arg_objs),
                      context_->args);
     delete context_;
 
@@ -53,7 +54,10 @@ namespace marius {
   }
 
   void ParserState::def_arg(String& name) {
+    int num = context_->args.size();
+
     context_->args[name] = context_->args.size();
+    context_->arg_objs.push_back(new ast::Argument(name, num));
   }
 
   ast::Node* ParserState::call(ast::Node* recv, String& n) {
@@ -196,6 +200,24 @@ namespace marius {
 
   ast::Node* ParserState::ivar_read(String& name) {
     return new ast::IvarRead(name);
+  }
+
+  void ParserState::start_lambda() {
+    stack_.push_back(context_);
+
+    context_ = new Context();
+  }
+
+  ast::Node* ParserState::lambda(ast::Node* b) {
+    ast::Node* n = new ast::Lambda(new ast::Scope(b,
+                                     context_->local_names));
+
+    delete context_;
+
+    context_ = stack_.back();
+    stack_.pop_back();
+
+    return n;
   }
 
   /*

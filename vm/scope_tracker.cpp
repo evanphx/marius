@@ -51,20 +51,25 @@ namespace marius {
                                             locals_.add(cls->body())));
     }
 
-    virtual void before_visit(Scope* s) {
+    void before_visit(Scope* s) {
       stack_.push_back(scope_);
       scope_ = new LocalScope;
 
-      ArgMap& args = s->arguments();
+      // ArgMap& args = s->arguments();
 
-      for(ArgMap::iterator i = args.begin();
+      Arguments& args = s->arg_objs();
+
+      for(Arguments::iterator i = args.begin();
           i != args.end();
           ++i)
       {
+        Argument* a = *i;
         Local* l = new Local;
-        l->make_arg(i->second);
+        l->make_arg(a->position());
 
-        scope_->insert(LocalScope::value_type(i->first, l));
+        locals_.add(a, l);
+
+        scope_->insert(LocalScope::value_type(a->name(), l));
       }
     }
 
@@ -99,8 +104,8 @@ namespace marius {
       if(j != scope_->end()) return;
 
       int d = 0;
-      for(std::list<LocalScope*>::iterator i = stack_.begin();
-          i != stack_.end();
+      for(std::list<LocalScope*>::reverse_iterator i = stack_.rbegin();
+          i != stack_.rend();
           ++i, d++)
       {
         LocalScope* s = *i;
@@ -125,8 +130,8 @@ namespace marius {
 
       int depth = 1;
 
-      for(std::list<LocalScope*>::iterator i = stack_.begin();
-          i != stack_.end();
+      for(std::list<LocalScope*>::reverse_iterator i = stack_.rbegin();
+          i != stack_.rend();
           ++i, depth++) {
         LocalScope* s = *i;
 
@@ -135,6 +140,7 @@ namespace marius {
           j->second->make_closure();
           Local* l = locals_.add(n);
           l->make_closure_access(j->second, depth);
+          return;
         }
       }
 

@@ -24,7 +24,8 @@
 #define TK_EQUAL                          24
 #define TK_CASCADE                        25
 #define TK_RB                             26
-#define TK_IF                             27
-#define TK_IMPORT                         28
-#define TK_TRY                            29
-#define TK_RESCUE                         30
+#define TK_LB                             27
+#define TK_IF                             28
+#define TK_IMPORT                         29
+#define TK_TRY                            30
+#define TK_RESCUE                         31
