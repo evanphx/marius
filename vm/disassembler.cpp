@@ -25,15 +25,15 @@ namespace marius {
       return 3;
 
     case MOVN:
-      printf("R(%d) := nil", seq[1]);
+      printf("R(%d) := nil\n", seq[1]);
       return 2;
 
     case MOVT:
-      printf("R(%d) := true", seq[1]);
+      printf("R(%d) := true\n", seq[1]);
       return 2;
 
     case MOVF:
-      printf("R(%d) := false", seq[1]);
+      printf("R(%d) := false\n", seq[1]);
       return 2;
 
     case MOVI8:
@@ -146,7 +146,7 @@ namespace marius {
       return 4;
 
     case SVAR:
-      printf("R(vars)[%d][%d] = R(%d)\n", seq[1], seq[2], seq[3]);
+      printf("R(vars)[%d][%d] = R(%d)\n", seq[1], seq[2], (char)seq[3]);
       return 4;
 
     default:

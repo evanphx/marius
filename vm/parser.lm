@@ -65,14 +65,16 @@ def(A) ::= def_start ID(B) def_args fin def_body(C). {
               A.a = S->ast_def(*B.s, C.a);
             }
 
-sexpr(A) ::= sexpr(B) MINUS  sexpr(C). { A.a = S->ast_binop("-", B.a, C.a); }
-sexpr(A) ::= sexpr(B) PLUS   sexpr(C). { A.a = S->ast_binop("+", B.a, C.a); }
-sexpr(A) ::= sexpr(B) TIMES  sexpr(C). { A.a = S->ast_binop("*", B.a, C.a); }
-sexpr(A) ::= sexpr(B) DIVIDE sexpr(C). { A.a = S->ast_binop("/", B.a, C.a); }
+expr(A) ::= expr(B) MINUS  expr(C). { A.a = S->ast_binop("-", B.a, C.a); }
+expr(A) ::= expr(B) PLUS   expr(C). { A.a = S->ast_binop("+", B.a, C.a); }
+expr(A) ::= expr(B) TIMES  expr(C). { A.a = S->ast_binop("*", B.a, C.a); }
+expr(A) ::= expr(B) DIVIDE expr(C). { A.a = S->ast_binop("/", B.a, C.a); }
+
 sexpr(A) ::= NUM(B).                   { A.a = S->number(B.i); }
 sexpr(A) ::= NIL.                      { A.a = S->ast_nil();  }
 sexpr(A) ::= TRUE.                     { A.a = S->ast_true();  }
 sexpr(A) ::= FALSE.                    { A.a = S->ast_false(); }
+sexpr(A) ::= SELF.                     { A.a = S->self(); }
 sexpr(A) ::= ID(B).                    { A.a = S->named(*B.s); }
 sexpr(A) ::= IVAR(B).                  { A.a = S->ivar_read(*B.s); }
 sexpr(A) ::= COLON ID(B).              { A.a = S->lit_str(*B.s); }
@@ -86,8 +88,8 @@ send(A) ::= send(B) DCOLON(C) ID(D). { A.a = S->dcolon(B.a, *C.s, *D.s); }
 /* Positional args */
 
 arg_list_start ::= LP. { S->start_arg_list(); }
-arg_list_elems ::= arg_list_elems COMMA send(A). { S->add_arg(A.a); }
-arg_list_elems ::= send(A). { S->add_arg(A.a); }
+arg_list_elems ::= arg_list_elems COMMA expr(A). { S->add_arg(A.a); }
+arg_list_elems ::= expr(A). { S->add_arg(A.a); }
 
 opt_kw_arg_list ::= .
 opt_kw_arg_list ::= COMMA kw_arg_list_elems.

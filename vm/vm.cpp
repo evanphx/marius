@@ -235,7 +235,7 @@ namespace marius {
 
         break;
       case SVAR:
-        clos->set_at_depth(seq[0], seq[1], fp[seq[2]]);
+        clos->set_at_depth(seq[0], seq[1], fp[(int)(char)seq[2]]);
         seq += 3;
 
         break;

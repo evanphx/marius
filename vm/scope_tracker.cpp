@@ -71,6 +71,15 @@ namespace marius {
 
         scope_->insert(LocalScope::value_type(a->name(), l));
       }
+
+      Argument* a = s->self();
+      if(a) {
+        Local* l = new Local;
+        l->make_arg(a->position());
+
+        locals_.add(a, l);
+        scope_->insert(LocalScope::value_type(a->name(), l));
+      }
     }
 
     void visit(Scope* s) {
@@ -121,8 +130,8 @@ namespace marius {
       scope_->insert(LocalScope::value_type(a->name(), locals_.add(a)));
     }
 
-    void visit(Named* n) {
-      LocalScope::iterator j = scope_->find(n->name());
+    void find_scoped(Node* n, String& name) {
+      LocalScope::iterator j = scope_->find(name);
       if(j != scope_->end()) {
         locals_.add(n, j->second);
         return;
@@ -135,7 +144,7 @@ namespace marius {
           ++i, depth++) {
         LocalScope* s = *i;
 
-        LocalScope::iterator j = s->find(n->name());
+        LocalScope::iterator j = s->find(name);
         if(j != s->end()) {
           j->second->make_closure();
           Local* l = locals_.add(n);
@@ -144,11 +153,19 @@ namespace marius {
         }
       }
 
-      ArgMap::iterator i = globals_.find(n->name());
+      ArgMap::iterator i = globals_.find(name);
       if(i != globals_.end()) {
         Local* l = locals_.add(n);
         l->make_global(i->second, depth-1);
       }
+    }
+
+    void visit(Named* n) {
+      find_scoped(n, n->name());
+    }
+
+    void visit(Self* s) {
+      find_scoped(s, String::internalize("self"));
     }
   };
 

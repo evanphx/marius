@@ -1,0 +1,9 @@
+import blah
+
+class T
+  def x
+    blah.show()
+  end
+end
+
+T.new.x

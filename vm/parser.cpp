@@ -244,6 +244,11 @@ again:
     cKeywords[(int)'r'] = k;
 
     k = new Keyword[2];
+    k[0] = Keyword("self", TK_SELF);
+
+    cKeywords[(int)'s'] = k;
+
+    k = new Keyword[2];
     k[0] = Keyword("true", TK_TRUE);
     k[1] = Keyword("try", TK_TRY);
 

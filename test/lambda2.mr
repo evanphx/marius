@@ -1,0 +1,11 @@
+class Blah
+  def three
+    3
+  end
+
+  def b(a)
+    { io.puts(a + self.three()) }
+  end
+end
+
+Blah.new.b(4).call

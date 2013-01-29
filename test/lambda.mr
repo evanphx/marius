@@ -1,0 +1,7 @@
+class Blah
+  def b(a)
+    { io.puts(a) }
+  end
+end
+
+Blah.new.b(7).call

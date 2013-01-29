@@ -141,18 +141,23 @@ namespace marius {
 
       Arguments arg_objs_;
 
+      Argument* self_;
+
       Node* body_;
 
     public:
-      Scope(ast::Node* body, ArgMap& locals)
+      Scope(ast::Node* body, ArgMap& locals, ast::Argument* self)
         : locals_(locals)
+        , self_(self)
         , body_(body)
       {}
 
-      Scope(ast::Node* body, ArgMap& locals, ArgMap args, Arguments& ao)
+      Scope(ast::Node* body, ArgMap& locals, ArgMap args, Arguments& ao,
+            ast::Argument* self=0)
         : locals_(locals)
         , arguments_(args)
         , arg_objs_(ao)
+        , self_(self ? self : new Argument(String::internalize("self"), -1))
         , body_(body)
       {}
 
@@ -166,6 +171,10 @@ namespace marius {
 
       Arguments& arg_objs() {
         return arg_objs_;
+      }
+
+      ast::Argument* self() {
+        return self_;
       }
 
       int cov() {
@@ -356,6 +365,12 @@ namespace marius {
       void accept(Visitor* V);
     };
 
+    class Self : public Node {
+    public:
+      int drive(State& S, int t);
+      void accept(Visitor* V);
+    };
+
     class Import : public Node {
       String& name_;
 
@@ -497,6 +512,7 @@ namespace marius {
       virtual void visit(LiteralString* n) { };
       virtual void visit(Lambda* l) { };
       virtual void visit(Argument* a) {}
+      virtual void visit(Self* s) {}
     };
 
   }

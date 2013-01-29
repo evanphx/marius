@@ -175,6 +175,7 @@ namespace marius {
     ast::Node* ast_nil();
     ast::Node* ast_true();
     ast::Node* ast_false();
+    ast::Node* self();
 
     ast::Node* import(String& name);
 

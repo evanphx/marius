@@ -15,7 +15,9 @@ namespace marius {
   }
 
   void ParserState::set_top(ast::Node* b) {
-    top_ = new ast::Scope(b, context_->local_names);
+    ast::Argument* a = new ast::Argument(String::internalize("self"), -1);
+
+    top_ = new ast::Scope(b, context_->local_names, a);
   }
 
   ast::Node* ParserState::seq(ast::Node* l, ast::Node* r) {
@@ -23,8 +25,10 @@ namespace marius {
   }
 
   ast::Node* ParserState::ast_class(String& name, ast::Node* body) {
+    ast::Argument* a = new ast::Argument(String::internalize("self"), -1);
+
     ast::Node* n = new ast::Class(name,
-                     new ast::Scope(body, context_->local_names));
+                     new ast::Scope(body, context_->local_names, a));
 
     delete context_;
 
@@ -41,9 +45,11 @@ namespace marius {
   }
 
   ast::Node* ParserState::ast_def(String& name, ast::Node* b) {
+    ast::Argument* a = new ast::Argument(String::internalize("self"), -1);
+
     ast::Node* n = new ast::Def(name, 
                      new ast::Scope(b, context_->local_names,
-                        context_->args, context_->arg_objs),
+                        context_->args, context_->arg_objs, a),
                      context_->args);
     delete context_;
 
@@ -182,6 +188,10 @@ namespace marius {
     return new ast::False();
   }
 
+  ast::Node* ParserState::self() {
+    return new ast::Self();
+  }
+
   ast::Node* ParserState::import(String& name) {
     return new ast::Import(name);
   }
@@ -210,7 +220,7 @@ namespace marius {
 
   ast::Node* ParserState::lambda(ast::Node* b) {
     ast::Node* n = new ast::Lambda(new ast::Scope(b,
-                                     context_->local_names));
+                                     context_->local_names, 0));
 
     delete context_;
 

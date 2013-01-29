@@ -54,6 +54,8 @@ namespace ast {
   }
 
   int Scope::drive(State& S, int t) {
+    if(self_) self_->drive(S, t);
+
     for(Arguments::iterator i = arg_objs_.begin();
         i != arg_objs_.end();
         ++i) {
@@ -380,6 +382,20 @@ namespace ast {
   }
 
   void False::accept(Visitor* V) {
+    V->visit(this);
+  }
+
+  int Self::drive(State& S, int t) {
+    Local* l = S.lm().get(this);
+
+    assert(l);
+
+    S.get_local(l, t);
+
+    return t;
+  }
+
+  void Self::accept(Visitor* V) {
     V->visit(this);
   }
 
