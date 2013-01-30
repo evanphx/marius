@@ -1,4 +1,6 @@
 #include <stdint.h>
+#include <string.h>
+
 #include "utf8.hpp"
 
 namespace marius {
@@ -12,6 +14,38 @@ namespace marius {
       0x4000000,  /* 6 */
       0x80000000, /* 7 */
     };
+
+  size_t utf8_charlen(const char* d, size_t bytelen) {
+    uint8_t* c = (uint8_t*)d;
+
+    size_t count = 0;
+
+    if(bytelen == 0) bytelen = strlen(d);
+    uint8_t* fin = c + bytelen;
+
+    while(c < fin) {
+      uint32_t uv = *c;
+      if(!(uv & 0x40)) { return bytelen; }
+
+      int w;
+
+           if(!(uv & 0x80)) { w = 1; }
+      else if(!(uv & 0x20)) { w = 2; }
+      else if(!(uv & 0x10)) { w = 3; }
+      else if(!(uv & 0x08)) { w = 4; }
+      else if(!(uv & 0x04)) { w = 5; }
+      else if(!(uv & 0x02)) { w = 6; }
+      else { return bytelen; }
+
+      if(c + w > fin) return bytelen;
+
+      count++;
+      c += w;
+    }
+
+    return count;
+
+  }
 
   int decode_utf8(Buffer buf, uint32_t* uv) {
     uint8_t* p = buf.buf;

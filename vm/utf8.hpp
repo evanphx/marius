@@ -5,6 +5,7 @@
 
 namespace marius {
   int decode_utf8(Buffer buf, uint32_t* uv);
+  size_t utf8_charlen(const char* data, size_t bytelen=0);
 }
 
 #endif

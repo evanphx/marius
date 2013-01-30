@@ -1,4 +1,8 @@
 #include "string.hpp"
+#include "handle.hpp"
+#include "arguments.hpp"
+#include "environment.hpp"
+#include "class.hpp"
 
 #include <map>
 #include <string>
@@ -17,5 +21,24 @@ namespace marius {
     String& s = mapping_.at(str);
 
     return s;
+  }
+
+  namespace {
+    Handle byte_size(State& S, Handle recv, Arguments& args) {
+      String& s = recv->as_string();
+      return handle(S, OOP::integer(s.bytelen()));
+    }
+
+    Handle char_size(State& S, Handle recv, Arguments& args) {
+      String& s = recv->as_string();
+      return handle(S, OOP::integer(s.charlen()));
+    }
+  }
+
+  void String::init(State& S) {
+    Class* str = S.env().lookup("String").as_class();
+
+    str->add_method("bytesize", byte_size);
+    str->add_method("size", char_size);
   }
 }
