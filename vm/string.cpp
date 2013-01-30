@@ -38,7 +38,7 @@ namespace marius {
   void String::init(State& S) {
     Class* str = S.env().lookup("String").as_class();
 
-    str->add_method("bytesize", byte_size);
-    str->add_method("size", char_size);
+    str->add_method("bytesize", byte_size, 0);
+    str->add_method("size", char_size, 0);
   }
 }

@@ -1,0 +1,3 @@
+l = { |t| io.puts(t) }
+
+l.call(7)

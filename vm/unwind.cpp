@@ -1,6 +1,8 @@
 #include "unwind.hpp"
 #include "string.hpp"
 
+#include <sstream>
+
 namespace marius {
   OOP Unwind::import_error(String& name) {
     Unwind* u = new Unwind;
@@ -9,5 +11,17 @@ namespace marius {
     u->message_ += "'";
 
     return u;
+  }
+
+  OOP Unwind::arg_error(int expected, int actual) {
+    Unwind* u = new Unwind;
+
+    std::stringstream ss;
+    ss << "Argument Error: expected " << expected << ", actual " << actual;
+
+    u->message_ += ss.str();
+
+    return u;
+
   }
 }

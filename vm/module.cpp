@@ -6,8 +6,6 @@
 namespace marius {
   namespace {
     Handle module_add(State& S, Handle recv, Arguments& args) {
-      assert(args.count() == 2);
-
       String& name = args[0]->as_string();
       Method* m = args[1]->as_method();
 
@@ -19,8 +17,6 @@ namespace marius {
     }
 
     Handle module_access(State& S, Handle recv, Arguments& args) {
-      assert(args.count() == 1);
-
       String& name = args[0]->as_string();
 
       return handle(S, recv->attribute(name, 0));
@@ -29,8 +25,8 @@ namespace marius {
 
   Class* Module::init(Environment& env) {
     Class* mod = env.lookup("Module").as_class();
-    mod->add_method("add_method", module_add);
-    mod->add_method("::", module_access);
+    mod->add_method("add_method", module_add, 2);
+    mod->add_method("::", module_access, 1);
     return mod;
   }
 
@@ -42,8 +38,8 @@ namespace marius {
     return klass()->lookup(name);
   }
 
-  void Module::add_method(const char* name, SimpleFunc func) {
-    klass()->add_method(name, func);
+  void Module::add_method(const char* name, SimpleFunc func, int arity) {
+    klass()->add_method(name, func, arity);
   }
 
   void Module::add_native_method(const char* name, Method* m) {

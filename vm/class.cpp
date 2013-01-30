@@ -31,8 +31,8 @@ namespace marius {
     return 0;
   }
 
-  void Class::add_method(const char* name, SimpleFunc func) {
-    Method* meth = new Method(func);
+  void Class::add_method(const char* name, SimpleFunc func, int arity) {
+    Method* meth = new Method(func, arity);
 
     String& s = String::internalize(name);
 
@@ -45,8 +45,8 @@ namespace marius {
     method_table_.add(s, meth);
   }
 
-  void Class::add_class_method(const char* name, SimpleFunc func) {
-    klass()->add_method(name, func);
+  void Class::add_class_method(const char* name, SimpleFunc func, int arity) {
+    klass()->add_method(name, func, arity);
   }
 
   static Class** base_classes_;

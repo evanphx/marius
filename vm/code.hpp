@@ -94,6 +94,10 @@ namespace marius {
       return args_;
     }
 
+    int arity() {
+      return args_.size();
+    }
+
     ArgMap& keywords(int i) {
       return keywords_.at(i);
     }

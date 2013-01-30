@@ -44,16 +44,12 @@ namespace marius {
   }
 
   static Handle class_new(State& S, Handle recv, Arguments& args) {
-    assert(args.count() == 1);
-
     String& name = args[0]->as_string();
 
     return handle(S, OOP(S.env().new_class(name.c_str())));
   }
 
   static Handle add_method(State& S, Handle recv, Arguments& args) {
-    assert(args.count() == 2);
-
     String& name = args[0]->as_string();
 
     Method* m = args[1]->as_method();
@@ -84,7 +80,6 @@ namespace marius {
   }
 
   static Handle io_puts(State& S, Handle recv, Arguments& args) {
-    assert(args.count() == 1);
     args[0]->print();
     return handle(S, OOP::nil());
   }
@@ -110,13 +105,13 @@ namespace marius {
     bind(mn, m);
     bind(String::internalize("Module"), mod);
 
-    m->add_method("new", class_new);
+    m->add_method("new", class_new, 1);
 
-    c->add_method("add_method", add_method);
-    c->add_method("new", new_instance);
+    c->add_method("add_method", add_method, 2);
+    c->add_method("new", new_instance, 0);
 
     Class* i = new_class("Integer");
-    i->add_method("+", int_plus);
+    i->add_method("+", int_plus, 1);
 
     Class* n = new_class("NilClass");
 
@@ -124,8 +119,8 @@ namespace marius {
 
     Class* mc = new_class("Method");
     Class* d = new_class("Code");
-    mc->add_method("eval", run_code);
-    mc->add_method("call", method_call);
+    mc->add_method("eval", run_code, -1);
+    mc->add_method("call", method_call, -1);
 
     Class* t = new_class("TrueClass");
     Class* f = new_class("FalseClass");
@@ -150,7 +145,7 @@ namespace marius {
     String& io_n = String::internalize("io");
 
     Module* io = new Module(c, mod, io_n);
-    io->add_method("puts", io_puts);
+    io->add_method("puts", io_puts, 1);
 
     bind(io_n, io);
 

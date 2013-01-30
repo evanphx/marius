@@ -40,8 +40,6 @@ namespace marius {
     }
 
     Handle import(State& S, Handle recv, Arguments& args) {
-      assert(args.count() == 1);
-
       String& name = args[0]->as_string();
 
       const char* path = find_path(S, name);
@@ -86,8 +84,8 @@ namespace marius {
 
   Class* init_import(State& S) {
     Class* x = S.env().new_class("Importer");
-    x->add_method("import", import);
-    x->add_class_method("current", current);
+    x->add_method("import", import, 1);
+    x->add_class_method("current", current, 0);
 
     return x;
   }

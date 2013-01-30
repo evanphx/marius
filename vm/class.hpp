@@ -30,10 +30,10 @@ namespace marius {
     static Class* base_class(int idx);
 
     Method* lookup(String& name);
-    void add_method(const char* name, SimpleFunc func);
+    void add_method(const char* name, SimpleFunc func, int arity);
     void add_native_method(const char* name, Method* meth);
 
-    void add_class_method(const char* name, SimpleFunc func);
+    void add_class_method(const char* name, SimpleFunc func, int arity);
   };
 }
 

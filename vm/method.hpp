@@ -14,11 +14,12 @@ namespace marius {
   class Method {
     SimpleFunc func_;
     Code* code_;
+    int arity_;
     OOP* closed_over_;
     Closure* closure_;
 
   public:
-    Method(SimpleFunc func, Closure* closure=0);
+    Method(SimpleFunc func, int arity, Closure* closure=0);
     Method(Code& code, Closure* closure=0);
 
     static Method* wrap(Code& code, Method* meth);
