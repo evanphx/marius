@@ -153,11 +153,11 @@ namespace marius {
       {}
 
       Scope(ast::Node* body, ArgMap& locals, ArgMap args, Arguments& ao,
-            ast::Argument* self=0)
+            ast::Argument* self)
         : locals_(locals)
         , arguments_(args)
         , arg_objs_(ao)
-        , self_(self ? self : new Argument(String::internalize("self"), -1))
+        , self_(self)
         , body_(body)
       {}
 

@@ -26,7 +26,8 @@
 #define TK_CASCADE                        26
 #define TK_RB                             27
 #define TK_LB                             28
-#define TK_IF                             29
-#define TK_IMPORT                         30
-#define TK_TRY                            31
-#define TK_RESCUE                         32
+#define TK_PIPE                           29
+#define TK_IF                             30
+#define TK_IMPORT                         31
+#define TK_TRY                            32
+#define TK_RESCUE                         33

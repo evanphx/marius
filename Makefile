@@ -45,6 +45,7 @@ test: marius
 	test `./marius -I test/import test/import2.mr` = 7
 	test `./marius test/lambda.mr` = 7
 	test `./marius test/lambda2.mr` = 7
+	test `./marius test/lambda_arg.mr` = 7
 
 .PHONY: test
 

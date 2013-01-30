@@ -219,8 +219,10 @@ namespace marius {
   }
 
   ast::Node* ParserState::lambda(ast::Node* b) {
-    ast::Node* n = new ast::Lambda(new ast::Scope(b,
-                                     context_->local_names, 0));
+    ast::Scope* sc = new ast::Scope(b, context_->local_names,
+                        context_->args, context_->arg_objs, 0);
+
+    ast::Node* n = new ast::Lambda(sc);
 
     delete context_;
 

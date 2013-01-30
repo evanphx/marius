@@ -128,7 +128,10 @@ expr(A) ::= cascade(B). { A.a = B.a; }
 
 lambda_start ::= LB. { S->start_lambda(); }
 
-expr(A) ::= lambda_start seq(B) RB. { A.a = S->lambda(B.a); }
+lambda_args ::= PIPE ID(B) PIPE. { S->def_arg(*B.s); }
+lambda_args ::= .
+
+expr(A) ::= lambda_start lambda_args seq(B) RB. { A.a = S->lambda(B.a); }
 
 /* "Statements" */
 

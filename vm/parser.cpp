@@ -111,6 +111,10 @@ again:
         advance(1);
         return TK_COMMA;
 
+      case '|':
+        advance(1);
+        return TK_PIPE;
+
       case '}':
         advance(1);
         return TK_RB;

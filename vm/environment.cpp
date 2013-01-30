@@ -155,6 +155,8 @@ namespace marius {
     bind(io_n, io);
 
     Class* importer = init_import(S);
+
+    String::init(S);
   
     globals_ = new Closure(3);
     globals_->set(0, io);
