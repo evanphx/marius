@@ -124,6 +124,8 @@ cascade(A) ::= send(B). { A.a = B.a; }
 
 expr(A) ::= cascade(B). { A.a = B.a; }
 
+/* Lambda */
+
 lambda_start ::= LB. { S->start_lambda(); }
 
 expr(A) ::= lambda_start seq(B) RB. { A.a = S->lambda(B.a); }

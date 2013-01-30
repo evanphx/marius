@@ -235,7 +235,6 @@ namespace ast {
     S.push(1);
 
     S.push(IVA);
-    S.push(t);
     S.push(si);
     S.push(t);
 
@@ -497,7 +496,6 @@ namespace ast {
   int IvarAssign::drive(State& S, int t) {
     value_->drive(S, t);
     S.push(IVA);
-    S.push(t);
     S.push(S.string(name_));
     S.push(t);
 

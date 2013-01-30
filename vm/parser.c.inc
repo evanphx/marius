@@ -1085,39 +1085,39 @@ static void yy_reduce(
 #line 1086 "vm/parser.c.inc"
         break;
       case 60: /* lambda_start ::= LB */
-#line 127 "vm/parser.lm"
+#line 129 "vm/parser.lm"
 { S->start_lambda(); }
 #line 1091 "vm/parser.c.inc"
         break;
       case 61: /* expr ::= lambda_start seq RB */
-#line 129 "vm/parser.lm"
+#line 131 "vm/parser.lm"
 { yygotominor.yy128.a = S->lambda(yymsp[-1].minor.yy128.a); }
 #line 1096 "vm/parser.c.inc"
         break;
       case 63: /* stmt ::= IF send fin seq fin END */
-#line 137 "vm/parser.lm"
+#line 139 "vm/parser.lm"
 { yygotominor.yy128.a = S->if_cond(yymsp[-4].minor.yy128.a, yymsp[-2].minor.yy128.a); }
 #line 1101 "vm/parser.c.inc"
         break;
       case 64: /* stmt ::= IMPORT ID */
-#line 141 "vm/parser.lm"
+#line 143 "vm/parser.lm"
 { yygotominor.yy128.a = S->import(*yymsp[0].minor.yy0.s); }
 #line 1106 "vm/parser.c.inc"
         break;
       case 65: /* stmt ::= TRY fin seq fin RESCUE fin seq fin END */
-#line 143 "vm/parser.lm"
+#line 145 "vm/parser.lm"
 {
               yygotominor.yy128.a = S->ast_try(yymsp[-6].minor.yy128.a, yymsp[-2].minor.yy128.a);
             }
 #line 1113 "vm/parser.c.inc"
         break;
       case 66: /* stmt ::= ID EQUAL expr */
-#line 147 "vm/parser.lm"
+#line 149 "vm/parser.lm"
 { yygotominor.yy128.a = S->assign(*yymsp[-2].minor.yy0.s, yymsp[0].minor.yy128.a); }
 #line 1118 "vm/parser.c.inc"
         break;
       case 67: /* stmt ::= IVAR EQUAL expr */
-#line 148 "vm/parser.lm"
+#line 150 "vm/parser.lm"
 { yygotominor.yy128.a = S->ivar_assign(*yymsp[-2].minor.yy0.s, yymsp[0].minor.yy128.a); }
 #line 1123 "vm/parser.c.inc"
         break;

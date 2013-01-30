@@ -163,8 +163,8 @@ namespace marius {
         break;
 
       case IVA:
-        fp[seq[0]] = fp[-1].set_attribute(code.string(seq[1]), fp[seq[2]]);
-        seq += 3;
+        fp[-1].set_attribute(code.string(seq[0]), fp[seq[1]]);
+        seq += 2;
         break;
 
       case IVR:
