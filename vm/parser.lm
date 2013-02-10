@@ -49,7 +49,11 @@ class_start ::= CLASS. { S->start_class(); }
 class_body(A) ::= l1(B) fin END. { A.a = B.a; }
 
 class(A) ::= class_start ID(B) fin class_body(C). {
-               A.a = S->ast_class(*B.s, C.a);
+               A.a = S->ast_class(*B.s, 0, C.a);
+             }
+
+class(A) ::= class_start ID(B) LT expr(C) fin class_body(D). {
+               A.a = S->ast_class(*B.s, C.a, D.a);
              }
 
 def_start ::= DEF. { S->start_def(); }

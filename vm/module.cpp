@@ -30,8 +30,8 @@ namespace marius {
     return mod;
   }
 
-  Module::Module(Class* cls, Class* mod, String& name)
-    : MemoryObject(new Class(cls, mod, name))
+  Module::Module(Class* mod, String& name)
+    : MemoryObject(new Class(Class::Boot, mod->klass()->klass(), mod, name))
   {}
 
   Method* Module::lookup(String& name) {

@@ -62,7 +62,6 @@ namespace marius {
       }
 
       Module* m = new Module(
-          S.env().lookup("Class").as_class(),
           S.env().lookup("Module").as_class(), name);
 
       OOP* fp = args.frame() + 1;

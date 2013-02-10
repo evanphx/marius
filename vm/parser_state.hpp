@@ -140,7 +140,7 @@ namespace marius {
     ast::Node* ret(ast::Node* n);
 
     ast::Node* seq(ast::Node* parent, ast::Node* child);
-    ast::Node* ast_class(String& name, ast::Node* body);
+    ast::Node* ast_class(String& name, ast::Node* super, ast::Node* body);
 
     void start_class();
     int new_class(String& s);

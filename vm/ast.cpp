@@ -217,10 +217,7 @@ namespace ast {
   }
 
   int Class::drive(State& S, int t) {
-    Local* l = S.lm().get(this);
-    assert(l);
-
-    S.get_local(l, t);
+    super_->drive(S, t);
 
     int si = S.string(name_);
 
@@ -230,7 +227,7 @@ namespace ast {
 
     S.push(CALL);
     S.push(t);
-    S.push(S.string(String::internalize("new")));
+    S.push(S.string(String::internalize("new_subclass")));
     S.push(t);
     S.push(1);
 
@@ -238,7 +235,7 @@ namespace ast {
     S.push(si);
     S.push(t);
 
-    l = S.lm().get(body_);
+    Local* l = S.lm().get(body_);
     assert(l);
 
     S.set_local(l, t);
@@ -269,6 +266,7 @@ namespace ast {
 
   void Class::accept(Visitor* V) {
     V->before_visit(this);
+    if(super_) super_->accept(V);
     body_->accept(V);
     V->visit(this);
   }

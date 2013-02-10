@@ -135,6 +135,10 @@ again:
         advance(1);
         return TK_EQUAL;
 
+      case '<':
+        advance(1);
+        return TK_LT;
+
       case '\n':
         column_ = 0;
         line_++;

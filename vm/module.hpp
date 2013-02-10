@@ -12,7 +12,7 @@ namespace marius {
     Bindings attributes_;
 
   public:
-    Module(Class* cls, Class* mod, String& name);
+    Module(Class* mod, String& name);
 
     Method* lookup(String& name);
     void add_method(const char* name, SimpleFunc func, int arity);

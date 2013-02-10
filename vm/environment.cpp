@@ -20,12 +20,14 @@ namespace marius {
     return lookup(String::internalize(name));
   }
 
-  Class* Environment::new_class(const char* name) {
+  Class* Environment::new_class(const char* name, Class* sup) {
     String& s = String::internalize(name);
 
-    Class* obj = lookup("Class").as_class();
+    if(!sup) {
+      sup = lookup("Class").as_class();
+    }
 
-    Class* cls = new Class(obj, s);
+    Class* cls = new Class(sup, s);
 
     bind(s, cls);
 
@@ -43,10 +45,10 @@ namespace marius {
     return handle(S, OOP::integer(val));
   }
 
-  static Handle class_new(State& S, Handle recv, Arguments& args) {
+  static Handle class_new_subclass(State& S, Handle recv, Arguments& args) {
     String& name = args[0]->as_string();
 
-    return handle(S, OOP(S.env().new_class(name.c_str())));
+    return handle(S, OOP(S.env().new_class(name.c_str(), recv->as_class())));
   }
 
   static Handle add_method(State& S, Handle recv, Arguments& args) {
@@ -89,23 +91,33 @@ namespace marius {
   void Environment::init_ontology(State& S) {
     assert(!top_);
 
-    String& mn = String::internalize("MetaClass");
+    String& on = String::internalize("Object");
+    Class* o = new Class(Class::Boot, 0, 0, on);
+
     String& cn = String::internalize("Class");
+    Class* c = new Class(Class::Boot, 0, o, cn);
 
-    Class* m = new Class(0, mn);
+    String& mn = String::internalize("MetaClass");
+    Class* m = new Class(Class::Boot, 0, 0, mn);
 
-    Class* c = new Class(m, cn);
-    m->klass_ = c;
+    Class* mco = new Class(Class::Boot, m, c, Class::metaclass_name(on));
+    o->klass_ = mco;
 
-    Class* mod = new Class(c, String::internalize("Module"));
+    Class* mcc = new Class(Class::Boot, m, mco, Class::metaclass_name(cn));
+    c->klass_ = mcc;
 
-    top_ = new Module(c, mod, String::internalize("lang"));
+    Class* mcm = new Class(Class::Boot, m, mco, Class::metaclass_name(mn));
+    m->klass_ = mcm;
+
+    Class* mod = new Class(o, String::internalize("Module"));
+
+    top_ = new Module(mod, String::internalize("lang"));
 
     bind(cn, c);
     bind(mn, m);
     bind(String::internalize("Module"), mod);
 
-    m->add_method("new", class_new, 1);
+    c->add_method("new_subclass", class_new_subclass, 1);
 
     c->add_method("add_method", add_method, 2);
     c->add_method("new", new_instance, 0);
@@ -144,7 +156,7 @@ namespace marius {
 
     String& io_n = String::internalize("io");
 
-    Module* io = new Module(c, mod, io_n);
+    Module* io = new Module(mod, io_n);
     io->add_method("puts", io_puts, 1);
 
     bind(io_n, io);
@@ -153,9 +165,10 @@ namespace marius {
 
     String::init(S);
   
-    globals_ = new Closure(3);
-    globals_->set(0, io);
-    globals_->set(1, c);
-    globals_->set(2, importer);
+    globals_ = new Closure(4);
+    globals_->set(0, o);
+    globals_->set(1, io);
+    globals_->set(2, c);
+    globals_->set(3, importer);
   }
 }

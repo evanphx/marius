@@ -24,10 +24,16 @@ namespace marius {
     return new ast::Seq(l, r);
   }
 
-  ast::Node* ParserState::ast_class(String& name, ast::Node* body) {
+  ast::Node* ParserState::ast_class(String& name, ast::Node* super,
+                                    ast::Node* body)
+  {
     ast::Argument* a = new ast::Argument(String::internalize("self"), -1);
 
-    ast::Node* n = new ast::Class(name,
+    if(!super) {
+      super = named(String::internalize("Object"));
+    }
+
+    ast::Node* n = new ast::Class(name, super,
                      new ast::Scope(body, context_->local_names, a));
 
     delete context_;

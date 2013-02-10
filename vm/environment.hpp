@@ -30,7 +30,7 @@ namespace marius {
     OOP lookup(String& name);
     OOP lookup(const char* str);
 
-    Class* new_class(const char* name);
+    Class* new_class(const char* name, Class* sup=0);
 
     void init_ontology(State& S);
 

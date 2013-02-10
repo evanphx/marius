@@ -267,16 +267,22 @@ namespace marius {
 
     class Class : public Node {
       String& name_;
+      Node* super_;
       Scope* body_;
 
     public:
-      Class(String& n, Scope* b)
+      Class(String& n, Node* sup, Scope* b)
         : name_(n)
+        , super_(sup)
         , body_(b)
       {}
 
       String& name() {
         return name_;
+      }
+
+      Node* super() {
+        return super_;
       }
 
       Scope* body() {

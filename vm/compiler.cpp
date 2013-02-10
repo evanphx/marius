@@ -17,9 +17,10 @@ namespace marius {
 
     ArgMap globals;
 
-    globals[String::internalize("io")] = 0;
-    globals[String::internalize("Class")] = 1;
-    globals[String::internalize("Importer")] = 2;
+    globals[String::internalize("Object")] = 0;
+    globals[String::internalize("io")] = 1;
+    globals[String::internalize("Class")] = 2;
+    globals[String::internalize("Importer")] = 3;
 
     LocalMap locals;
 

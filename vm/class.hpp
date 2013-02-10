@@ -18,8 +18,9 @@ namespace marius {
     MethodTable method_table_;
 
   public:
-    Class(Class* cls, String& name);
-    Class(Class* cls, Class* sup, String& name);
+    enum Boot { Boot };
+    Class(Class* sup, String& name);
+    Class(enum Boot, Class* cls, Class* sup, String& name);
 
     String& name() {
       return name_;
@@ -28,6 +29,8 @@ namespace marius {
     static void init_base(Class** tbl);
 
     static Class* base_class(int idx);
+
+    static String& metaclass_name(String& name);
 
     Method* lookup(String& name);
     void add_method(const char* name, SimpleFunc func, int arity);

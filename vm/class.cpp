@@ -4,17 +4,23 @@
 #include "string.hpp"
 
 namespace marius {
-  Class::Class(Class* cls, String& name)
-    : MemoryObject(cls)
-    , name_(name)
-    , superclass_(0)
-  {}
-
-  Class::Class(Class* cls, Class* sup, String& name)
+  Class::Class(enum Boot, Class* cls, Class* sup, String& name)
     : MemoryObject(cls)
     , name_(name)
     , superclass_(sup)
   {}
+
+  Class::Class(Class* sup, String& name)
+    : MemoryObject(new Class(Class::Boot,
+                          sup->klass()->klass(),  sup->klass(),
+                          Class::metaclass_name(name)))
+    , name_(name)
+    , superclass_(sup)
+  {}
+
+  String& Class::metaclass_name(String& name) {
+    return String::internalize(std::string("<MetaClass:") + name.c_str() + ">");
+  }
 
   Method* Class::lookup(String& name) {
     Method* meth;
@@ -25,7 +31,7 @@ namespace marius {
       meth = cls->method_table_.lookup(name);
       if(meth) return meth;
       if(!superclass_) break;
-      cls = superclass_;
+      cls = cls->superclass_;
     }
 
     return 0;
