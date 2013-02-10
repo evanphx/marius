@@ -307,6 +307,16 @@ again:
       buf.trim(l);
     }
 
+    if(!buf.empty_p()) {
+      uint8_t c = buf.peek1();
+      switch(c) {
+      case '?':
+      case '!':
+        buf.trim(1);
+        break;
+      }
+    }
+
     advance(buf.c_buf() - pos_);
 
     value_.s = &String::internalize(strndup(start, buf.c_buf() - start));

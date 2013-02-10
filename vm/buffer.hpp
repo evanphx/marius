@@ -30,6 +30,10 @@ namespace marius {
       return c;
     }
 
+    uint8_t peek1() {
+      return *buf;
+    }
+
     bool empty_p() {
       return len == 0;
     }
