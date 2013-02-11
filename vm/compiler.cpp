@@ -32,7 +32,7 @@ namespace marius {
 
     ArgMap args;
 
-    code_ = S.to_code(args, top->cov());
+    code_ = S.to_code(String::internalize("__main__"), args, top->cov());
 
     if(debug_) code_->print();
 

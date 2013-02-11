@@ -6,6 +6,7 @@
 #include "state.hpp"
 #include "disassembler.hpp"
 #include "closure.hpp"
+#include "stack_frame.hpp"
 
 #include <stdio.h>
 
@@ -17,6 +18,8 @@ namespace marius {
     : debug_(debug)
   {
     stack_ = new OOP[cInitialStack];
+    frames_ = new StackFrame[cInitialStack];
+    top_frame_ = frames_ - 1;
   }
 
   OOP VM::run(State& S, Method* meth) {
@@ -33,7 +36,25 @@ namespace marius {
     {}
   };
 
+  class FrameTracker {
+    VM* vm_;
+
+  public:
+    FrameTracker(VM* vm)
+      : vm_(vm)
+    {
+      vm_->top_frame_++;
+    }
+
+    ~FrameTracker() {
+      vm_->top_frame_--;
+    }
+  };
+
   OOP VM::run(State& S, Method* meth, OOP* fp) {
+    FrameTracker ft(this);
+    top_frame_->method = meth;
+
     Code& code = *meth->code();
 
     Closure* clos = new Closure(code.closed_over_vars(), meth->closure());
@@ -179,7 +200,7 @@ namespace marius {
         break;
 
       case LOADC:
-        fp[seq[0]] = OOP(new Method(code.code(seq[1]), clos));
+        fp[seq[0]] = OOP(new Method(meth->scope(), code.code(seq[1]), clos));
 
         seq += 2;
         break;
@@ -255,6 +276,7 @@ namespace marius {
 
     if(!meth) {
       printf("NO METHOD :%s\n", name.c_str());
+      print_call_stack();
       return OOP::nil();
     }
 
@@ -299,6 +321,7 @@ namespace marius {
 
     if(!meth) {
       printf("NO METHOD :%s\n", name.c_str());
+      print_call_stack();
       return OOP::nil();
     }
 
@@ -319,5 +342,17 @@ namespace marius {
     if(found) return val;
 
     return OOP::nil();
+  }
+
+  void VM::print_call_stack() {
+    int i = 0;
+
+    StackFrame* sf = top_frame_;
+
+    while(sf >= frames_) {
+      printf("%02d: %s#%s\n", i++, sf->method->scope().c_str(),
+                              sf->method->name().c_str());
+      sf--;
+    }
   }
 }

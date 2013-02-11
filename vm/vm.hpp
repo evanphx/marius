@@ -16,9 +16,13 @@ namespace marius {
   class Environment;
   class State;
   class Method;
+  struct StackFrame;
+  class FrameTracker;
 
   class VM {
     OOP* stack_;
+    StackFrame* frames_;
+    StackFrame* top_frame_;
     bool debug_;
 
   public:
@@ -35,6 +39,10 @@ namespace marius {
                               ArgMap& keywords);
     OOP load_named(State& S, String& name);
     OOP load_attr(State& S, String& name, OOP recv, OOP* fp);
+
+    void print_call_stack();
+
+    friend class FrameTracker;
   };
 }
 

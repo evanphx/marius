@@ -4,7 +4,7 @@
 namespace marius {
 namespace ast {
 
-  Code* State::to_code(ArgMap& args, int cov) {
+  Code* State::to_code(String& name, ArgMap& args, int cov) {
     size_t sz = buffer.size();
     Instruction* seq = new Instruction[sz];
 
@@ -12,7 +12,7 @@ namespace ast {
       seq[i] = buffer[i];
     }
 
-    return new Code(seq, buffer.size(), strings, codes,
+    return new Code(name, seq, buffer.size(), strings, codes,
                     args, keywords, cov);
   }
 
@@ -200,7 +200,7 @@ namespace ast {
 
     S.push(LOADC);
     S.push(t+2);
-    S.push(S.code(subS.to_code(args_, body_->cov())));
+    S.push(S.code(subS.to_code(name_, args_, body_->cov())));
 
     S.push(CALL);
     S.push(t);
@@ -245,19 +245,16 @@ namespace ast {
     subS.push(RET);
     subS.push(r);
 
-    S.push(MOVR);
-    S.push(t+1);
-    S.push(t);
-
     ArgMap args;
 
     S.push(LOADC);
-    S.push(t);
-    S.push(S.code(subS.to_code(args, body_->cov())));
+    S.push(t+1);
+    S.push(S.code(subS.to_code(String::internalize("__body__"),
+                               args, body_->cov())));
 
     S.push(CALL);
     S.push(t);
-    S.push(S.string(String::internalize("eval")));
+    S.push(S.string(String::internalize("run_body")));
     S.push(t);
     S.push(1);
 
@@ -541,7 +538,8 @@ namespace ast {
 
     S.push(LOADC);
     S.push(t);
-    S.push(S.code(subS.to_code(args, body_->cov())));
+    S.push(S.code(subS.to_code(String::internalize("__lambda__"),
+                               args, body_->cov())));
 
     return t;
   }

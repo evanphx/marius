@@ -69,7 +69,7 @@ namespace marius {
 
       Code& code = *compiler.code();
 
-      Method* top = new Method(code, S.env().globals());
+      Method* top = new Method(name, code, S.env().globals());
 
       S.vm().run(S, top, fp + 1);
 

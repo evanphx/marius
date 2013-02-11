@@ -73,6 +73,19 @@ namespace marius {
     return handle(S, S.vm().run(S, m, args.frame() + 1));
   }
 
+  static Handle run_class_body(State& S, Handle recv, Arguments& args) {
+    Class* cls = recv->as_class();
+    Method* m =  args[0]->as_method();
+
+    std::string n = m->scope().c_str();
+
+    m = new Method(
+                  String::internalize(n + "." + cls->name().c_str()),
+                  *m->code(), m->closure());
+
+    return handle(S, S.vm().run(S, m, args.frame()));
+  }
+
   static Handle method_call(State& S, Handle recv, Arguments& args) {
     Method* m = recv->as_method();
 
@@ -118,6 +131,7 @@ namespace marius {
     bind(String::internalize("Module"), mod);
 
     c->add_method("new_subclass", class_new_subclass, 1);
+    c->add_method("run_body", run_class_body, 1);
 
     c->add_method("add_method", add_method, 2);
     c->add_method("new", new_instance, 0);

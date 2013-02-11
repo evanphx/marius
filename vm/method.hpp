@@ -12,25 +12,33 @@ namespace marius {
   class Closure;
 
   class Method {
+    String& scope_;
     SimpleFunc func_;
     Code* code_;
     int arity_;
-    OOP* closed_over_;
     Closure* closure_;
 
   public:
-    Method(SimpleFunc func, int arity, Closure* closure=0);
-    Method(Code& code, Closure* closure=0);
-
-    static Method* wrap(Code& code, Method* meth);
+    Method(String& scope, SimpleFunc func, int arity, Closure* closure=0);
+    Method(String& scope, Code& code, Closure* closure=0);
 
     Code* code() {
       return code_;
     }
 
+    int arity() {
+      return arity_;
+    }
+
     Closure* closure() {
       return closure_;
     }
+
+    String& scope() {
+      return scope_;
+    }
+
+    String& name();
 
     OOP closed_over_variable(int depth, int idx);
     void set_closed_over_variable(int depth, int idx, OOP val);

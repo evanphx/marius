@@ -5,30 +5,28 @@
 #include "unwind.hpp"
 
 namespace marius {
-  Method::Method(SimpleFunc func, int arity, Closure* closure)
-    : func_(func)
+  Method::Method(String& scope, SimpleFunc func, int arity, Closure* closure)
+    : scope_(scope)
+    , func_(func)
     , code_(0)
     , arity_(arity)
-    , closed_over_(0)
     , closure_(closure)
   {}
 
-  Method::Method(Code& code, Closure* closure)
-    : func_(0)
+  Method::Method(String& scope, Code& code, Closure* closure)
+    : scope_(scope)
+    , func_(0)
     , code_(&code)
     , arity_(code.arity())
     , closure_(closure)
-  {
-    if(code.closed_over_vars() == 0) {
-      closed_over_ = 0;
-    } else {
-      closed_over_ = new OOP[code.closed_over_vars()];
-    }
-  }
+  {}
 
-  Method* Method::wrap(Code& code, Method* meth) {
-    Closure* c = new Closure(code.closed_over_vars(), meth->closure_);
-    return new Method(code, c);
+  String& Method::name() {
+    if(code_) {
+      return code_->name();
+    } else {
+      return String::internalize("__internal__");
+    }
   }
 
   OOP Method::closed_over_variable(int depth, int idx) {

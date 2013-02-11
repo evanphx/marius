@@ -30,17 +30,17 @@ namespace marius {
     while(true) {
       meth = cls->method_table_.lookup(name);
       if(meth) return meth;
-      if(!superclass_) break;
       cls = cls->superclass_;
+      if(!cls) break;
     }
 
     return 0;
   }
 
   void Class::add_method(const char* name, SimpleFunc func, int arity) {
-    Method* meth = new Method(func, arity);
-
     String& s = String::internalize(name);
+
+    Method* meth = new Method(name_, func, arity);
 
     method_table_.add(s, meth);
   }

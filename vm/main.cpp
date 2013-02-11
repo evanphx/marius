@@ -88,7 +88,7 @@ int main(int argc, char** argv) {
 
   Code& code = *compiler.code();
 
-  Method* top = new Method(code, env.globals());
+  Method* top = new Method(String::internalize("__main__"), code, env.globals());
 
   OOP ret = vm.run(state, top);
 

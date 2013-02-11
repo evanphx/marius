@@ -83,7 +83,7 @@ namespace marius {
       void set_local(Local* l, int t);
       void get_local(Local* l, int t);
 
-      Code* to_code(ArgMap& args, int cov);
+      Code* to_code(String& name, ArgMap& args, int cov);
 
     };
 
