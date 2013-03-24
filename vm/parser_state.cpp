@@ -246,6 +246,10 @@ namespace marius {
     return n;
   }
 
+  ast::Node* ParserState::cast(ast::Node* e, ast::Node* type) {
+    return new ast::Cast(e, type);
+  }
+
   /*
   int ParserState::start_cond(int c) {
     push(GOTO_IF_FALSE);

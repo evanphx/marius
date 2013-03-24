@@ -520,6 +520,20 @@ namespace marius {
       void accept(Visitor* V);
     };
 
+    class Cast : public Node {
+      Node* value_;
+      Node* type_;
+
+    public:
+      Cast(Node* v, Node* t)
+        : value_(v)
+        , type_(t)
+      {}
+
+      int drive(State& S, int t);
+      void accept(Visitor* V);
+    };
+
     class Visitor {
     public:
       virtual void before_visit(Scope* n) { };
@@ -552,6 +566,7 @@ namespace marius {
       virtual void visit(Lambda* l) { };
       virtual void visit(Argument* a) {}
       virtual void visit(Self* s) {}
+      virtual void visit(Cast* s) {}
     };
 
   }

@@ -49,6 +49,7 @@ test: marius
 	test `./marius test/arg_error.mr` = 7
 	test `./marius -p test/send.mr` = 7
 	test `./marius test/subclass.mr` = 7
+	test `./marius test/cast.mr` = 7
 
 .PHONY: test
 

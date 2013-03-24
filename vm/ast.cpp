@@ -113,6 +113,26 @@ namespace ast {
     V->visit(this);
   }
 
+  int Cast::drive(State& S, int t) {
+    type_->drive(S, t);
+    value_->drive(S, t+1);
+
+    S.push(CALL);
+    S.push(t);
+    S.push(S.string(String::internalize("cast")));
+    S.push(t);
+    S.push(1);
+
+    return t;
+  }
+
+  void Cast::accept(Visitor* V) {
+    type_->accept(V);
+    value_->accept(V);
+
+    V->visit(this);
+  }
+
   int Call::drive(State& S, int t) {
     recv_->drive(S, t);
 

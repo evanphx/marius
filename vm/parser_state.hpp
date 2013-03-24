@@ -189,6 +189,8 @@ namespace marius {
 
     void start_lambda();
     ast::Node* lambda(ast::Node* b);
+
+    ast::Node* cast(ast::Node* e, ast::Node* type);
   };
 }
 

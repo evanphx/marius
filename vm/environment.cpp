@@ -39,6 +39,22 @@ namespace marius {
     top_->set_attribute(name, val);
   }
 
+  static Handle int_cast(State& S, Handle recv, Arguments& args) {
+    Handle obj = args[0];
+
+    if(obj->type() == OOP::eInteger) return obj;
+
+    Method* meth = obj->find_method(String::internalize("to_s"));
+    check(meth);
+
+    Arguments out_args(S, 0, S.last_fp);
+    OOP ret = meth->run(S, *obj, out_args);
+
+    check(ret.type() == OOP::eInteger);
+
+    return handle(S, ret);
+  }
+
   static Handle int_plus(State& S, Handle recv, Arguments& args) {
     if(args.count() == 0) return handle(S, OOP::nil());
 
@@ -207,6 +223,7 @@ namespace marius {
     o->add_method("methods", object_methods, 0);
 
     Class* i = new_class("Integer");
+    i->add_class_method("cast", int_cast, 1);
     i->add_method("+", int_plus, 1);
     i->add_method("to_s", int_to_s, 0);
 
