@@ -64,4 +64,8 @@ namespace marius {
   Class* Class::base_class(int idx) {
     return base_classes_[idx];
   }
+
+  OOP Class::methods() {
+    return method_table_.methods();
+  }
 }

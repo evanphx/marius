@@ -22,6 +22,16 @@ namespace marius {
     u->message_ += ss.str();
 
     return u;
+  }
 
+  OOP Unwind::name_error(String& name) {
+    Unwind* u = new Unwind;
+
+    std::stringstream ss;
+    ss << "Name Error: Unable to find " << name.c_str();
+
+    u->message_ += ss.str();
+
+    return u;
   }
 }

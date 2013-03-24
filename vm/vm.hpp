@@ -40,6 +40,7 @@ namespace marius {
     OOP load_named(State& S, String& name);
     OOP load_attr(State& S, String& name, OOP recv, OOP* fp);
 
+    String& as_string(OOP val);
     void print_call_stack();
 
     friend class FrameTracker;

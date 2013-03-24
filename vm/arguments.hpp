@@ -31,7 +31,7 @@ namespace marius {
     }
 
     Handle operator[](int idx) {
-      assert(idx < argc_);
+      check(idx < argc_);
       return handle(S_, fp_[idx]);
     }
   };

@@ -4,6 +4,7 @@
 #include <string>
 #include <string.h>
 
+#include "oop.hpp"
 #include "utf8.hpp"
 
 namespace marius {
@@ -35,6 +36,8 @@ namespace marius {
 
     static void init(State& S);
     static String& internalize(std::string str);
+
+    static String& convert(State& S, OOP obj);
   };
 }
 

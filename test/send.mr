@@ -1,0 +1,10 @@
+class Blah
+  def foo
+    3 + 4
+  end
+end
+
+m = :foo
+
+Blah.new.$m
+

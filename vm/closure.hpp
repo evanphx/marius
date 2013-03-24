@@ -17,7 +17,7 @@ namespace marius {
     {}
 
     OOP get(unsigned int idx) {
-      assert(idx < size_);
+      check(idx < size_);
 
       return values_[idx];
     }
@@ -34,7 +34,7 @@ namespace marius {
     }
 
     void set(unsigned int idx, OOP val) {
-      assert(idx < size_);
+      check(idx < size_);
 
       values_[idx] = val;
     }

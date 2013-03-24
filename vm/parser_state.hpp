@@ -149,6 +149,8 @@ namespace marius {
     void def_arg(String& s);
     ast::Node* ast_def(String& name, ast::Node* b);
 
+    ast::Node* send_indirect(ast::Node* recv, ast::Node* n);
+
     ast::Node* call(ast::Node* recv, String& id);
     ast::Node* attr(ast::Node* recv, String& id);
 
@@ -171,6 +173,7 @@ namespace marius {
     ast::Call* ast_call(String& name, ast::Node* r, ast::Nodes args);
     ast::Call* ast_binop(const char* s, ast::Node* a, ast::Node* b);
     ast::Node* if_cond(ast::Node* cond, ast::Node* body);
+    ast::Node* unless(ast::Node* cond, ast::Node* body);
 
     ast::Node* ast_nil();
     ast::Node* ast_true();

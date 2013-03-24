@@ -2,7 +2,8 @@
 #define OOP_HPP
 
 #include <stdint.h>
-#include <assert.h>
+
+#include "bug.hpp"
 
 namespace marius {
 
@@ -18,12 +19,14 @@ namespace marius {
   class User;
   class Attributes;
   class Method;
+  class Tuple;
 
   class OOP {
   public:
     enum Type {
       // Value object types
       eNil, eTrue, eFalse, eInteger, eString, eUnwind, eCode, eMethod,
+      eTuple,
 
       // Mutable object types
       eClass, eUser, eModule,
@@ -33,6 +36,8 @@ namespace marius {
     const static int cMutableObjects = eClass;
 
   private:
+    enum IntConstruct { IntConstruct };
+
     Type type_;
 
     union {
@@ -41,6 +46,7 @@ namespace marius {
       Code* code_;
       Unwind* unwind_;
       Method* method_;
+      Tuple* tuple_;
 
       Class* class_;
       Module* module_;
@@ -62,9 +68,13 @@ namespace marius {
       , module_(mod)
     {}
 
-    OOP(int val)
+    OOP(enum IntConstruct _, int val)
       : type_(eInteger)
       , int_(val)
+    {}
+
+    OOP(bool v)
+      : type_(v ? eTrue : eFalse)
     {}
 
     OOP(String& str)
@@ -92,6 +102,11 @@ namespace marius {
       , method_(m)
     {}
 
+    OOP(Tuple* t)
+      : type_(eTuple)
+      , tuple_(t)
+    {}
+
     Type type() {
       return type_;
     }
@@ -108,8 +123,16 @@ namespace marius {
       return OOP();
     }
 
+    static OOP true_() {
+      return OOP(true);
+    }
+
+    static OOP false_() {
+      return OOP(false);
+    }
+
     static OOP integer(int val) {
-      return OOP(val);
+      return OOP(IntConstruct, val);
     }
 
     static OOP wrap_klass(Class* cls) {
@@ -121,37 +144,43 @@ namespace marius {
     }
 
     int int_value() {
-      assert(type_ == eInteger);
+      check(type_ == eInteger);
       return int_;
     }
 
     String& as_string() {
+      check(type_ == eString);
       return *string_;
     }
 
     Class* as_class() {
-      assert(type_ == eClass);
+      check(type_ == eClass);
       return class_;
     }
 
     Code& as_code() {
-      assert(type_ == eCode);
+      check(type_ == eCode);
       return *code_;
     }
 
     Method* as_method() {
-      assert(type_ == eMethod);
+      check(type_ == eMethod);
       return method_;
     }
 
     Module* as_module() {
-      assert(type_ == eModule);
+      check(type_ == eModule);
       return module_;
     }
 
     User* as_obj() {
-      assert(type_ == eUser);
+      check(type_ == eUser);
       return user_;
+    }
+
+    Tuple* as_tuple() {
+      check(type_ == eTuple);
+      return tuple_;
     }
 
     Attributes* as_attributes();
@@ -165,21 +194,21 @@ namespace marius {
     }
 
     Unwind* unwind_value() {
-      assert(type_ == eUnwind);
+      check(type_ == eUnwind);
       return unwind_;
     }
 
     // template <typename T>
       // class Caster {
         // static T cast(OOP val) {
-          // assert(false);
+          // check(false);
         // }
       // };
 
     // template <>
       // class Caster<int> {
         // static int cast(OOP val) {
-          // assert(val.type_ == eInteger);
+          // check(val.type_ == eInteger);
           // return val.int_;
         // }
       // }
@@ -191,7 +220,7 @@ namespace marius {
 
     template <typename T>
       T as() {
-        assert(false);
+        check(false);
       }
 
     Class* klass();
@@ -203,7 +232,7 @@ namespace marius {
     void print();
   };
 
-#define SPEC(T, E, V) template <> inline T OOP::as<T>() { assert(type_ == E); return V; }
+#define SPEC(T, E, V) template <> inline T OOP::as<T>() { check(type_ == E); return V; }
 
   SPEC(Class*, eClass, class_);
   SPEC(Module*, eModule, module_);

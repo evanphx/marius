@@ -14,6 +14,7 @@
 
 %left PLUS MINUS.
 %left DIVIDE TIMES.
+%left DEQUAL.
 
 %extra_argument { marius::ParserState* S }
 
@@ -73,6 +74,7 @@ expr(A) ::= expr(B) MINUS  expr(C). { A.a = S->ast_binop("-", B.a, C.a); }
 expr(A) ::= expr(B) PLUS   expr(C). { A.a = S->ast_binop("+", B.a, C.a); }
 expr(A) ::= expr(B) TIMES  expr(C). { A.a = S->ast_binop("*", B.a, C.a); }
 expr(A) ::= expr(B) DIVIDE expr(C). { A.a = S->ast_binop("/", B.a, C.a); }
+expr(A) ::= expr(B) DEQUAL expr(C). { A.a = S->ast_binop("==", B.a, C.a); }
 
 sexpr(A) ::= NUM(B).                   { A.a = S->number(B.i); }
 sexpr(A) ::= NIL.                      { A.a = S->ast_nil();  }
@@ -99,6 +101,8 @@ opt_kw_arg_list ::= .
 opt_kw_arg_list ::= COMMA kw_arg_list_elems.
 
 arg_list ::= arg_list_start arg_list_elems opt_kw_arg_list.
+
+send(A) ::= send(B) DOT DOLLAR sexpr(C). { A.a = S->send_indirect(B.a, C.a); }
 
 send(A) ::= send(B) DOT ID(C) LP RP. { A.a = S->call(B.a, *C.s); }
 send(A) ::= send(B) DOT ID(C) arg_list RP. { A.a = S->call_args(B.a, *C.s); }
@@ -144,6 +148,7 @@ stmt(A) ::= expr(B). { A.a = B.a; }
 /* Conditions */
 
 stmt(A) ::= IF send(B) fin seq(C) fin END. { A.a = S->if_cond(B.a, C.a); }
+stmt(A) ::= UNLESS send(B) fin seq(C) fin END. { A.a = S->unless(B.a, C.a); }
 
 /* Import */
 

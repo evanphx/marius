@@ -62,8 +62,12 @@ namespace marius {
       return;
     case eUnwind:
       printf("<Unwind:%p>\n", unwind_);
+      return;
+    case eTuple:
+      printf("<Tuple>\n");
+      return;
     case TotalTypes:
-      assert(false);
+      check(false);
     }
   }
 

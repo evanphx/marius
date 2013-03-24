@@ -17,8 +17,9 @@ namespace marius {
     User* importer_;
     HandleScope* handles_;
     HandleSets handle_sets_;
-
   public:
+
+    OOP* last_fp;
 
     State(VM& vm, Environment& env, Settings& set)
       : vm_(vm)
@@ -26,6 +27,7 @@ namespace marius {
       , settings_(set)
       , importer_(0)
       , handles_(0)
+      , last_fp(0)
     {}
 
     VM& vm() {

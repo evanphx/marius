@@ -1,0 +1,9 @@
+import testunit
+
+class StringTest < testunit::TestCase
+  def test_bytesize
+    self.assert_equal("blah".bytesize, 4)
+  end
+end
+
+StringTest.new.run

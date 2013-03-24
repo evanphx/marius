@@ -31,9 +31,14 @@ namespace ast {
 
   void State::get_local(Local* l, int t) {
     if(l->reg_p()) {
-      push(MOVR);
-      push(t);
-      push(l->idx());
+      if(l->idx() == -1) {
+        push(SELF);
+        push(t);
+      } else {
+        push(MOVR);
+        push(t);
+        push(l->idx());
+      }
     } else {
       push(LVAR);
       push(t);
@@ -71,6 +76,40 @@ namespace ast {
   void Scope::accept(Visitor* V) {
     V->before_visit(this);
     body_->accept(V);
+    V->visit(this);
+  }
+
+  int SendIndirect::drive(State& S, int t) {
+    name_->drive(S, t);
+    recv_->drive(S, t+1);
+
+    int j = t+2;
+
+    for(Nodes::iterator i = args_.begin();
+        i != args_.end();
+        ++i) {
+      (*i)->drive(S,j++);
+    }
+
+    S.push(SENDI);
+    S.push(t);
+    S.push(t);
+    S.push(t+1);
+    S.push(args_.size());
+
+    return t;
+  }
+
+  void SendIndirect::accept(Visitor* V) {
+    recv_->accept(V);
+    name_->accept(V);
+
+    for(Nodes::iterator i = args_.begin();
+        i != args_.end();
+        ++i) {
+      (*i)->accept(V);
+    }
+
     V->visit(this);
   }
 
@@ -340,6 +379,28 @@ namespace ast {
   }
 
   void IfCond::accept(Visitor* V) {
+    recv_->accept(V);
+    body_->accept(V);
+
+    V->visit(this);
+  }
+
+  int Unless::drive(State& S, int t) {
+    recv_->drive(S, t);
+    S.push(JMPIT);
+    S.push(t);
+
+    Label l = S.label();
+    S.push(0);
+
+    body_->drive(S, t);
+
+    S.set_label(l);
+
+    return t;
+  }
+
+  void Unless::accept(Visitor* V) {
     recv_->accept(V);
     body_->accept(V);
 

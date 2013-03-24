@@ -195,6 +195,23 @@ namespace marius {
 
     typedef std::vector<Node*> Nodes;
 
+    class SendIndirect : public Node {
+    protected:
+      Node* name_;
+      Node* recv_;
+      Nodes args_;
+
+    public:
+      SendIndirect(Node* name, Node* recv, Nodes args)
+        : name_(name)
+        , recv_(recv)
+        , args_(args)
+      {}
+
+      int drive(State& S, int t);
+      void accept(Visitor* V);
+    };
+
     class Call : public Node {
     protected:
       String& name_;
@@ -353,6 +370,20 @@ namespace marius {
       void accept(Visitor* V);
     };
 
+    class Unless : public Node {
+      ast::Node* recv_;
+      ast::Node* body_;
+
+    public:
+      Unless(ast::Node* r, ast::Node* b)
+        : recv_(r)
+        , body_(b)
+      {}
+
+      int drive(State& S, int t);
+      void accept(Visitor* V);
+    };
+
     class Nil : public Node {
     public:
       int drive(State& S, int t);
@@ -496,6 +527,7 @@ namespace marius {
 
       virtual void visit(Seq* n) { };
       virtual void visit(Scope* n) { };
+      virtual void visit(SendIndirect* i) { };
       virtual void visit(Call* n) { };
       virtual void visit(CallWithKeywords* n) { };
       virtual void visit(Number* n) { };
@@ -506,6 +538,7 @@ namespace marius {
       virtual void visit(Cascade* n) { };
       virtual void visit(CascadeCall* n) { };
       virtual void visit(IfCond* n) { };
+      virtual void visit(Unless* n) { };
       virtual void visit(Nil* n) { };
       virtual void visit(True* n) { };
       virtual void visit(False* n) { };

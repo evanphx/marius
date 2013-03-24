@@ -40,13 +40,15 @@ test: marius
 	test `./marius test/ivar.mr` = 7
 	test `./marius -I test/import test/attr.mr` = 7
 	test `./marius -I test/import test/imported_class.mr` = 7
-	test `./marius test/symbol.mr` = '"blah"'
-	test `./marius test/litstr.mr` = '"blah"'
+	test `./marius test/symbol.mr` = 'blah'
+	test `./marius test/litstr.mr` = 'blah'
 	test `./marius -I test/import test/import2.mr` = 7
 	test `./marius test/lambda.mr` = 7
 	test `./marius test/lambda2.mr` = 7
 	test `./marius test/lambda_arg.mr` = 7
 	test `./marius test/arg_error.mr` = 7
+	test `./marius -p test/send.mr` = 7
+	test `./marius test/subclass.mr` = 7
 
 .PHONY: test
 

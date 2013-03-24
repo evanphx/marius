@@ -1,0 +1,21 @@
+class TestCase
+  def assert_equal(a,b)
+    if a + b
+      self.raise("not equal")
+    end
+  end
+
+  def run
+    tests = self.methods().find_all({ |t| t.prefix?("test") })
+    tests.each({ |t| self.run_test(t) })
+  end
+
+  def run_test(name)
+    io.print(name)
+    io.print(": ")
+
+    self.$name
+
+    io.puts("pass")
+  end
+end

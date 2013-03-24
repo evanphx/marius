@@ -1,0 +1,13 @@
+class A
+  def a
+    io.puts(7)
+  end
+end
+
+class B < A
+  def b
+    self.a()
+  end
+end
+
+B.new.b

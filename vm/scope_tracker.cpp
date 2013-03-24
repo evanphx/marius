@@ -38,7 +38,7 @@ namespace marius {
       scope_->insert(LocalScope::value_type(imp->name(), lv));
     }
 
-    void before_visit(Class* cls) {
+    void before_visit(ast::Class* cls) {
       scope_->insert(LocalScope::value_type(cls->name(),
                                             locals_.add(cls->body())));
     }
@@ -83,8 +83,15 @@ namespace marius {
           ++i) {
         Local* l = i->second;
         if(l->reg_p()) {
-          int r = regs++;
-          i->second->set_reg(r);
+          int r;
+
+          if(l->needs_reg_p()) {
+            r = regs++;
+            i->second->set_reg(r);
+          } else {
+            r = i->second->reg();
+          }
+
           s->add_local(i->first, r);
         } else {
           int c = closed++;

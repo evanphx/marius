@@ -4,6 +4,7 @@
 #include <map>
 
 #include "string_map.hpp"
+#include "oop.hpp"
 
 namespace marius {
   class String;
@@ -23,6 +24,7 @@ namespace marius {
     }
 
     void print();
+    OOP methods();
   };
 }
 

@@ -7,6 +7,7 @@
 #include "disassembler.hpp"
 #include "closure.hpp"
 #include "stack_frame.hpp"
+#include "unwind.hpp"
 
 #include <stdio.h>
 
@@ -106,6 +107,25 @@ namespace marius {
         seq += 1;
         break;
 
+      case SENDI:
+        t = run_method(S,
+                       fp[seq[2]], as_string(fp[seq[1]]),
+                       seq[3],     fp + (seq[2] + 1));
+
+        if(t.unwind_p()) {
+          if(es.size() == 0) return t;
+          te = es.back();
+          es.pop_back();
+
+          fp[te.reg] = t.unwind_value();
+
+          seq = code.code() + te.ip;
+        } else {
+          fp[seq[0]] = t;
+          seq += 4;
+        }
+
+        break;
       case CALL:
         t = run_method(S,
                        fp[seq[2]], code.string(seq[1]),
@@ -262,7 +282,7 @@ namespace marius {
         break;
       default:
         printf("UNKNOWN INSTRUCTION: %d\n", seq[-1]);
-        assert(false);
+        check(false);
       }
     }
 
@@ -275,10 +295,13 @@ namespace marius {
     Method* meth = recv.find_method(name);
 
     if(!meth) {
-      printf("NO METHOD :%s\n", name.c_str());
+      printf("NO METHOD :%s on ", name.c_str());
+      recv.print();
       print_call_stack();
-      return OOP::nil();
+      return Unwind::name_error(name);
     }
+
+    S.last_fp = fp;
 
     Arguments args(S, argc, fp);
 
@@ -287,7 +310,7 @@ namespace marius {
 
   void VM::reorg_args(OOP* fp, Method* meth, ArgMap& keywords) {
     Code* code = meth->code();
-    assert(code);
+    check(code);
 
     ArgMap& args = code->args();
 
@@ -322,10 +345,12 @@ namespace marius {
     if(!meth) {
       printf("NO METHOD :%s\n", name.c_str());
       print_call_stack();
-      return OOP::nil();
+      return Unwind::name_error(name);
     }
 
     reorg_args(fp, meth, keywords);
+
+    S.last_fp = fp;
 
     Arguments args(S, argc, fp);
 
@@ -342,6 +367,10 @@ namespace marius {
     if(found) return val;
 
     return OOP::nil();
+  }
+
+  String& VM::as_string(OOP val) {
+    return val.as_string();
   }
 
   void VM::print_call_stack() {

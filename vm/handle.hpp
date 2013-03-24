@@ -52,7 +52,7 @@ namespace marius {
       if(!loc) {
         set_ = S_.pull_set();
         loc = set_->add(oop);
-        assert(loc);
+        check(loc);
       }
 
       return loc;

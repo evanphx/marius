@@ -48,6 +48,26 @@ namespace marius {
       printf("R(%d) := %d\n", seq[1], (*(int*)(&seq[2])));
       return 6;
 
+    case SENDI:
+      switch(seq[4]) {
+      case 0:
+        printf("R(%d) := R(%d).$R(%d)\n",
+                seq[1], seq[3],
+                seq[2]);
+        break;
+
+      case 1:
+        printf("R(%d) := R(%d).$R(%d) R(%d)\n",
+                seq[1], seq[3], seq[2],
+                seq[3] + 1);
+
+        break;
+      default:
+        printf("R(%d) := R(%d).$R(%d) R(%d)..R(%d)\n",
+                seq[1], seq[3], seq[2],
+                seq[3] + 1, seq[3] + seq[4]);
+      }
+      return 5;
     case CALL:
       switch(seq[4]) {
       case 0:

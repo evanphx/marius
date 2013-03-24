@@ -76,6 +76,10 @@ namespace marius {
     return new ast::Call(n, recv, ast::Nodes());
   }
 
+  ast::Node* ParserState::send_indirect(ast::Node* recv, ast::Node* n) {
+    return new ast::SendIndirect(n, recv, ast::Nodes());
+  }
+
   ast::Node* ParserState::dcolon(ast::Node* recv, String& n, String& a) {
     ast::Nodes args;
     args.push_back(new ast::LiteralString(a));
@@ -180,6 +184,10 @@ namespace marius {
 
   ast::Node* ParserState::if_cond(ast::Node* cond, ast::Node* body) {
     return new ast::IfCond(cond, body);
+  }
+
+  ast::Node* ParserState::unless(ast::Node* cond, ast::Node* body) {
+    return new ast::Unless(cond, body);
   }
 
   ast::Node* ParserState::ast_nil() {

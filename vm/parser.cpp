@@ -93,6 +93,10 @@ again:
         advance(1);
         return TK_PLUS;
 
+      case '$':
+        advance(1);
+        return TK_DOLLAR;
+
       case '.':
         advance(1);
         if(next_c() == '{') {
@@ -133,6 +137,12 @@ again:
 
       case '=':
         advance(1);
+
+        if(next_c() == '=') {
+          advance(1);
+          return TK_DEQUAL;
+        }
+
         return TK_EQUAL;
 
       case '<':

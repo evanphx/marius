@@ -37,6 +37,8 @@ namespace marius {
     void add_native_method(const char* name, Method* meth);
 
     void add_class_method(const char* name, SimpleFunc func, int arity);
+
+    OOP methods();
   };
 }
 
