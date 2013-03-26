@@ -125,6 +125,10 @@ send(A) ::= send(B) DOT ID(C) kw_arg_list RP. {
               A.a = S->call_kw_args(B.a, *C.s);
             }
 
+send(A) ::= ID(C) kw_arg_list RP. {
+              A.a = S->call_kw_args(S->self(), *C.s);
+            }
+
 /* Cascade args */
 
 message_seq ::= message_seq fin ID(C). { S->cascade(*C.s); }
