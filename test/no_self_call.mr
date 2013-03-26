@@ -1,0 +1,11 @@
+class Blah
+  def foo
+    b()
+  end
+
+  def b
+    7
+  end
+end
+
+Blah.new.foo()

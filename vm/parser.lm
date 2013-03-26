@@ -110,6 +110,8 @@ send(A) ::= send(B) DOT DOLLAR sexpr(C). { A.a = S->send_indirect(B.a, C.a); }
 send(A) ::= send(B) DOT ID(C) LP RP. { A.a = S->call(B.a, *C.s); }
 send(A) ::= send(B) DOT ID(C) arg_list RP. { A.a = S->call_args(B.a, *C.s); }
 
+send(A) ::= ID(C) LP RP. { A.a = S->call(S->self(), *C.s); }
+
 /* Keyword args */
 
 kw_arg ::= ID(A) EQUAL send(B). { S->add_kw_arg(*A.s, B.a); }

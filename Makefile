@@ -50,6 +50,7 @@ test: marius
 	test `./marius -p test/send.mr` = 7
 	test `./marius test/subclass.mr` = 7
 	test `./marius test/cast.mr` = 7
+	test `./marius -p test/no_self_call.mr` = 7
 
 .PHONY: test
 
