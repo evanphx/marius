@@ -14,7 +14,7 @@
 
 %left PLUS MINUS.
 %left DIVIDE TIMES.
-%left DEQUAL.
+%left DEQUAL NEQUAL NOT.
 
 %extra_argument { marius::ParserState* S }
 
@@ -75,6 +75,8 @@ expr(A) ::= expr(B) PLUS   expr(C). { A.a = S->ast_binop("+", B.a, C.a); }
 expr(A) ::= expr(B) TIMES  expr(C). { A.a = S->ast_binop("*", B.a, C.a); }
 expr(A) ::= expr(B) DIVIDE expr(C). { A.a = S->ast_binop("/", B.a, C.a); }
 expr(A) ::= expr(B) DEQUAL expr(C). { A.a = S->ast_binop("==", B.a, C.a); }
+expr(A) ::= expr(B) NEQUAL expr(C). { A.a = S->not_(S->ast_binop("==", B.a, C.a)); }
+expr(A) ::= NOT expr(B). { A.a = S->not_(B.a); }
 
 sexpr(A) ::= NUM(B).                   { A.a = S->number(B.i); }
 sexpr(A) ::= NIL.                      { A.a = S->ast_nil();  }
@@ -148,7 +150,7 @@ stmt(A) ::= expr(B). { A.a = B.a; }
 
 /* Conditions */
 
-stmt(A) ::= IF send(B) fin seq(C) fin END. { A.a = S->if_cond(B.a, C.a); }
+stmt(A) ::= IF expr(B) fin seq(C) fin END. { A.a = S->if_cond(B.a, C.a); }
 stmt(A) ::= UNLESS send(B) fin seq(C) fin END. { A.a = S->unless(B.a, C.a); }
 
 /* Import */
@@ -161,3 +163,4 @@ stmt(A) ::= TRY fin seq(C) fin RESCUE fin seq(D) fin END. {
 
 stmt(A) ::= ID(B) EQUAL expr(C). { A.a = S->assign(*B.s, C.a); }
 stmt(A) ::= IVAR(B) EQUAL expr(C). { A.a = S->ivar_assign(*B.s, C.a); }
+stmt(A) ::= RAISE expr(B). { A.a = S->raise(B.a); }

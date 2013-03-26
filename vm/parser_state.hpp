@@ -191,6 +191,9 @@ namespace marius {
     ast::Node* lambda(ast::Node* b);
 
     ast::Node* cast(ast::Node* e, ast::Node* type);
+    ast::Node* raise(ast::Node* v);
+
+    ast::Node* not_(ast::Node* v);
   };
 }
 

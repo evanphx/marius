@@ -280,6 +280,21 @@ namespace marius {
         seq += 3;
 
         break;
+      case RAISE:
+        print_call_stack();
+        return Unwind::generic_error(fp[seq[0]].as_string());
+
+      case NOT:
+        if(fp[seq[1]].true_condition_p()) {
+          fp[seq[0]] = OOP::false_();
+        } else {
+          fp[seq[0]] = OOP::true_();
+        }
+
+        seq += 2;
+
+        break;
+
       default:
         printf("UNKNOWN INSTRUCTION: %d\n", seq[-1]);
         check(false);

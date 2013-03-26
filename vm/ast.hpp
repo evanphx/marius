@@ -534,6 +534,30 @@ namespace marius {
       void accept(Visitor* V);
     };
 
+    class Raise : public Node {
+      Node* value_;
+
+    public:
+      Raise(Node* v)
+        : value_(v)
+      {}
+
+      int drive(State& S, int t);
+      void accept(Visitor* V);
+    };
+
+    class Not : public Node {
+      Node* value_;
+
+    public:
+      Not(Node* v)
+        : value_(v)
+      {}
+
+      int drive(State& S, int t);
+      void accept(Visitor* V);
+    };
+
     class Visitor {
     public:
       virtual void before_visit(Scope* n) { };
@@ -567,6 +591,8 @@ namespace marius {
       virtual void visit(Argument* a) {}
       virtual void visit(Self* s) {}
       virtual void visit(Cast* s) {}
+      virtual void visit(Raise* r) {}
+      virtual void visit(Not* r) {}
     };
 
   }

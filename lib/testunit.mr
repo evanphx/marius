@@ -1,7 +1,8 @@
 class TestCase
   def assert_equal(a,b)
-    if a + b
-      self.raise("not equal")
+    if a != b
+      io.puts("here")
+      raise "not equal"
     end
   end
 

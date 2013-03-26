@@ -69,6 +69,11 @@ namespace marius {
     return handle(S, String::internalize(buf));
   }
 
+  static Handle int_equal(State& S, Handle recv, Arguments& args) {
+    bool q = recv->int_value() == args[0]->int_value();
+    return handle(S, q ? OOP::true_() : OOP::false_());
+  }
+
   static Handle class_new_subclass(State& S, Handle recv, Arguments& args) {
     String& name = args[0]->as_string();
 
@@ -226,6 +231,7 @@ namespace marius {
     i->add_class_method("cast", int_cast, 1);
     i->add_method("+", int_plus, 1);
     i->add_method("to_s", int_to_s, 0);
+    i->add_method("==", int_equal, 1);
 
     Class* n = new_class("NilClass");
 

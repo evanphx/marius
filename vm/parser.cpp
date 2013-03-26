@@ -145,6 +145,15 @@ again:
 
         return TK_EQUAL;
 
+      case '!':
+        advance(1);
+
+        if(next_c() == '=') {
+          advance(1);
+          return TK_NEQUAL;
+        }
+
+        return TK_NOT;
       case '<':
         advance(1);
         return TK_LT;
@@ -256,8 +265,9 @@ again:
 
     cKeywords[(int)'n'] = k;
 
-    k = new Keyword[2];
+    k = new Keyword[3];
     k[0] = Keyword("rescue", TK_RESCUE);
+    k[1] = Keyword("raise", TK_RAISE);
 
     cKeywords[(int)'r'] = k;
 

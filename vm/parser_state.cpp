@@ -250,6 +250,14 @@ namespace marius {
     return new ast::Cast(e, type);
   }
 
+  ast::Node* ParserState::raise(ast::Node* v) {
+    return new ast::Raise(v);
+  }
+
+  ast::Node* ParserState::not_(ast::Node* v) {
+    return new ast::Not(v);
+  }
+
   /*
   int ParserState::start_cond(int c) {
     push(GOTO_IF_FALSE);

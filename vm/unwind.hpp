@@ -19,6 +19,7 @@ namespace marius {
     static OOP import_error(String& n);
     static OOP arg_error(int expected, int actual);
     static OOP name_error(String& name);
+    static OOP generic_error(String& str);
   };
 }
 

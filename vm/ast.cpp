@@ -630,4 +630,30 @@ namespace ast {
     V->visit(this);
   }
 
+  int Raise::drive(State& S, int t) {
+    value_->drive(S, t);
+    S.push(RAISE);
+    S.push(t);
+
+    return t;
+  }
+
+  void Raise::accept(Visitor* V) {
+    value_->accept(V);
+    V->visit(this);
+  }
+
+  int Not::drive(State& S, int t) {
+    value_->drive(S, t);
+    S.push(NOT);
+    S.push(t);
+    S.push(t);
+
+    return t;
+  }
+
+  void Not::accept(Visitor* V) {
+    value_->accept(V);
+    V->visit(this);
+  }
 }}

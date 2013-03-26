@@ -28,7 +28,9 @@ namespace marius {
       "LVAR",
       "SVAR",
       "LAMBDA",
-      "SENDI"
+      "SENDI",
+      "RAISE",
+      "NOT"
     };
 
   void Code::print() {

@@ -37,6 +37,8 @@ namespace marius {
     SVAR,
     LAMBDA,
     SENDI,
+    RAISE,
+    NOT,
     TotalInstructions
   };
 

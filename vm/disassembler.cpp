@@ -168,6 +168,14 @@ namespace marius {
       printf("R(vars)[%d][%d] = R(%d)\n", seq[1], seq[2], (char)seq[3]);
       return 4;
 
+    case RAISE:
+      printf("raise R(%d)\n", seq[1]);
+      return 2;
+
+    case NOT:
+      printf("R(%d) := !R(%d)\n", seq[1], seq[2]);
+      return 3;
+
     default:
       assert(0);
     }

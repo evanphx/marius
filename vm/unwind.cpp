@@ -34,4 +34,15 @@ namespace marius {
 
     return u;
   }
+
+  OOP Unwind::generic_error(String& str) {
+    Unwind* u = new Unwind;
+
+    std::stringstream ss;
+    ss << "Error: " << str.c_str();
+
+    u->message_ += ss.str();
+
+    return u;
+  }
 }
