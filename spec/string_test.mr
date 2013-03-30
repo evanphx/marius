@@ -19,6 +19,7 @@ class StringTest < testunit::TestCase
 
   def test_prefix?
     assert "blah".prefix?("b")
+    refute "blah".prefix?("l")
   end
 end
 

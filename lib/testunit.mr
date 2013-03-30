@@ -17,6 +17,13 @@ class TestCase
     end
   end
 
+  def refute(value)
+    if value
+      io.puts "failed: value was true"
+      raise "failed"
+    end
+  end
+
   def run
     tests = methods().find_all { |t| t.prefix?("test") }
     tests.each { |t| run_test(t) }
