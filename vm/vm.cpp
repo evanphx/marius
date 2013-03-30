@@ -126,6 +126,28 @@ namespace marius {
         }
 
         break;
+
+      case SENDI_KW:
+        t = run_kw_method(S,
+                          fp[seq[2]], as_string(fp[seq[1]]),
+                          seq[3],     fp + (seq[2] + 1),
+                          code.keywords(seq[4]));
+
+        if(t.unwind_p()) {
+          if(es.size() == 0) return t;
+          te = es.back();
+          es.pop_back();
+
+          fp[te.reg] = t.unwind_value();
+
+          seq = code.code() + te.ip;
+        } else {
+          fp[seq[0]] = t;
+          seq += 5;
+        }
+
+        break;
+
       case CALL:
         t = run_method(S,
                        fp[seq[2]], code.string(seq[1]),

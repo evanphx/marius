@@ -19,7 +19,9 @@ namespace marius {
   int Disassembler::print_one(Instruction* seq) {
     printf("%8s | ", InstructionNames[seq[0]]);
 
-    switch(seq[0]) {
+    InstructionTypes op = (InstructionTypes)seq[0];
+
+    switch(op) {
     case MOVR:
       printf("R(%d) := R(%d)\n", seq[1], seq[2]);
       return 3;
@@ -68,6 +70,15 @@ namespace marius {
                 seq[3] + 1, seq[3] + seq[4]);
       }
       return 5;
+
+    case SENDI_KW:
+      printf("R(%d) := R(%d).$R(%d) ",
+              seq[1], seq[3], seq[2]);
+
+      print_keywords(code_.keywords(seq[5]), seq[3]+1);
+      printf("\n");
+      return 6;
+
     case CALL:
       switch(seq[4]) {
       case 0:
@@ -176,7 +187,7 @@ namespace marius {
       printf("R(%d) := !R(%d)\n", seq[1], seq[2]);
       return 3;
 
-    default:
+    case TotalInstructions:
       assert(0);
     }
 

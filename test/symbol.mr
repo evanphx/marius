@@ -1,2 +1,2 @@
-io.puts(:blah)
+io.puts(%blah)
 

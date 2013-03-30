@@ -35,8 +35,8 @@ namespace marius {
     POPE,
     LVAR,
     SVAR,
-    LAMBDA,
     SENDI,
+    SENDI_KW,
     RAISE,
     NOT,
     TotalInstructions

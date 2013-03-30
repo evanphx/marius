@@ -26,9 +26,9 @@ marius: $(OBJ)
 	c++ -ggdb -o marius $(OBJ)
 
 test: marius
+	./marius -c test/syntax.mr
 	test `./marius -p test/simp.mr` = 7
 	test `./marius -p test/arg.mr` = 7
-	test `./marius -p test/cascade.mr` = 7
 	test `./marius -p test/keyword.mr` = 7
 	test `./marius -p test/keyword_hybrid.mr` = 7
 	test `./marius test/module.mr` = 7
@@ -38,7 +38,6 @@ test: marius
 	test `./marius test/local.mr` = 7
 	test `./marius test/local_def.mr` = 7
 	test `./marius test/ivar.mr` = 7
-	test `./marius -I test/import test/attr.mr` = 7
 	test `./marius -I test/import test/imported_class.mr` = 7
 	test `./marius test/symbol.mr` = 'blah'
 	test `./marius test/litstr.mr` = 'blah'
@@ -51,7 +50,7 @@ test: marius
 	test `./marius test/subclass.mr` = 7
 	test `./marius test/cast.mr` = 7
 	test `./marius -p test/no_self_call.mr` = 7
-	test `./marius -p test_keyword_no_recv.mr` = 7
+	test `./marius -p test/keyword_no_recv.mr` = 7
 
 .PHONY: test
 

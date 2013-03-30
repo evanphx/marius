@@ -4,6 +4,13 @@
 namespace marius {
 namespace ast {
 
+  Arguments* Arguments::wrap(ast::Node* n) {
+    ast::Nodes nodes;
+    nodes.push_back(n);
+
+    return new Arguments(nodes);
+  }
+
   Code* State::to_code(String& name, ArgMap& args, int cov) {
     size_t sz = buffer.size();
     Instruction* seq = new Instruction[sz];
@@ -61,7 +68,7 @@ namespace ast {
   int Scope::drive(State& S, int t) {
     if(self_) self_->drive(S, t);
 
-    for(Arguments::iterator i = arg_objs_.begin();
+    for(ArgumentList::iterator i = arg_objs_.begin();
         i != arg_objs_.end();
         ++i) {
       Argument* a = *i;
@@ -85,17 +92,23 @@ namespace ast {
 
     int j = t+2;
 
-    for(Nodes::iterator i = args_.begin();
-        i != args_.end();
-        ++i) {
-      (*i)->drive(S,j++);
+    int count = 0;
+
+    if(args_) {
+      for(Nodes::iterator i = args_->positional.begin();
+          i != args_->positional.end();
+          ++i) {
+        (*i)->drive(S,j++);
+      }
+
+      count = args_->positional.size();
     }
 
     S.push(SENDI);
     S.push(t);
     S.push(t);
     S.push(t+1);
-    S.push(args_.size());
+    S.push(count);
 
     return t;
   }
@@ -104,10 +117,12 @@ namespace ast {
     recv_->accept(V);
     name_->accept(V);
 
-    for(Nodes::iterator i = args_.begin();
-        i != args_.end();
-        ++i) {
-      (*i)->accept(V);
+    if(args_) {
+      for(Nodes::iterator i = args_->positional.begin();
+          i != args_->positional.end();
+          ++i) {
+        (*i)->accept(V);
+      }
     }
 
     V->visit(this);
@@ -138,17 +153,30 @@ namespace ast {
 
     int j = t+1;
 
-    for(Nodes::iterator i = args_.begin();
-        i != args_.end();
-        ++i) {
-      (*i)->drive(S,j++);
+    int count = 0;
+    bool kw = false;
+
+    if(args_) {
+      for(Nodes::iterator i = args_->positional.begin();
+          i != args_->positional.end();
+          ++i) {
+        (*i)->drive(S,j++);
+      }
+
+      count = args_->positional.size();
+      kw = args_->keywords.size() > 0;
     }
 
-    S.push(CALL);
+    S.push(kw ? CALL_KW : CALL);
     S.push(t);
     S.push(S.string(name_));
     S.push(t);
-    S.push(args_.size());
+    S.push(count);
+
+    if(kw) {
+      S.push(S.keyword(args_->keywords));
+    }
+
 
     return t;
   }
@@ -156,43 +184,12 @@ namespace ast {
   void Call::accept(Visitor* V) {
     recv_->accept(V);
 
-    for(Nodes::iterator i = args_.begin();
-        i != args_.end();
-        ++i) {
-      (*i)->accept(V);
-    }
-
-    V->visit(this);
-  }
-
-  int CallWithKeywords::drive(State& S, int t) {
-    recv_->drive(S, t);
-
-    int j = t+1;
-
-    for(Nodes::iterator i = args_.begin();
-        i != args_.end();
-        ++i) {
-      (*i)->drive(S,j++);
-    }
-
-    S.push(CALL_KW);
-    S.push(t);
-    S.push(S.string(name_));
-    S.push(t);
-    S.push(args_.size());
-    S.push(S.keyword(keywords_));
-
-    return t;
-  }
-
-  void CallWithKeywords::accept(Visitor* V) {
-    recv_->accept(V);
-
-    for(Nodes::iterator i = args_.begin();
-        i != args_.end();
-        ++i) {
-      (*i)->accept(V);
+    if(args_) {
+      for(Nodes::iterator i = args_->positional.begin();
+          i != args_->positional.end();
+          ++i) {
+        (*i)->accept(V);
+      }
     }
 
     V->visit(this);

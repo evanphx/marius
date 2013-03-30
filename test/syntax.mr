@@ -1,0 +1,111 @@
+a 7
+a 7 + 10
+a.b 7
+a.b 7 + 10
+a.b 7 + 10 + 11
+a.b 7 + c.d
+a.b c.d + e.f
+a.b.c 7
+a.b().c 7
+a.b(8).c 7
+a.b(8,9).c 7
+a.b c
+a.b c.d
+a.b c.d()
+a.b c.d(1)
+a.b c.d.e
+a.b c.d.e()
+a.b c.d.e(1)
+
+a()
+a(7)
+a(7 + 10)
+a.b()
+a.b(7)
+a.b(7 + 10)
+a.b(7 + 10, 20)
+a.b(c.d(1), e.f(%foo))
+
+a(c=1,d=2)
+a.b(c=1,d=2)
+
+a = b 8
+
+a.b c=8, d=9
+a.b 8, c=8, d=9
+
+b c=8, d=8
+b 8, c=8, d=8
+
+a.b c.d(c=8, d=9)
+a.b(c=8,d=8).e
+
+8 + 9
+a.b + c.d
+a.b(8) + c.d(9)
+a.b(8) - c.d(9)
+
+a.$b
+a.$b()
+a.$b(8)
+a.$b(8, 10)
+a.$b(8, a=10)
+a.$b 8, a=10
+a.$b c=10, d=11
+
+a.b c.$d
+
+if a
+  7
+end
+
+if a; 7; end
+
+if a 8
+  7
+end
+
+unless a.b
+  8
+end
+
+unless a; 8; end
+
+!a.b
+a.b !c.d
+a.b !c.d, !e.d
+a.b(!c.d, !e.d)
+
+
+a.b({7})
+a.b { 7 }
+a.b { 7 }, { 8 }
+a.b { 7 },
+    { 8 }
+
+a.b({ 7 },
+    { 8 })
+
+{ 7 }.b
+{ 7 }.b { 8 }
+{ 7 }.b 7, { 8 }
+{ 7 }.b(7, { 8 })
+
+a.b c={ 8 }, d={ 7 }
+
+a.b c={ 8 },
+    d={ 7 }
+
+a.b + c.d
+a.b - c.d
+a.b * c.d
+a.b / c.d
+a.b == c.d
+a.b != c.d
+
+a.b : String
+
+a.b(c : String, d : Integer)
+a.b c : String, d : Integer
+a.b c.b : String, d.e : Integer
+a.b c.b:String, d.e:Integer

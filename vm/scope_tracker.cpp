@@ -49,9 +49,9 @@ namespace marius {
 
       // ArgMap& args = s->arguments();
 
-      Arguments& args = s->arg_objs();
+      ArgumentList& args = s->arg_objs();
 
-      for(Arguments::iterator i = args.begin();
+      for(ArgumentList::iterator i = args.begin();
           i != args.end();
           ++i)
       {

@@ -73,18 +73,28 @@ namespace marius {
   }
 
   ast::Node* ParserState::call(ast::Node* recv, String& n) {
-    return new ast::Call(n, recv, ast::Nodes());
+    return new ast::Call(n, recv);
   }
 
   ast::Node* ParserState::send_indirect(ast::Node* recv, ast::Node* n) {
-    return new ast::SendIndirect(n, recv, ast::Nodes());
+    return new ast::SendIndirect(n, recv);
+  }
+
+  ast::Node* ParserState::send_indirect_args(ast::Node* recv, ast::Node* name) {
+    ast::Node* n = 0;
+
+    ast::Arguments* args = new ast::Arguments(arg_info_.nodes, arg_info_.keywords);
+
+    n = new ast::SendIndirect(name, recv, args);
+
+    arg_info_ = arg_infos_.back();
+    arg_infos_.pop_back();
+
+    return n;
   }
 
   ast::Node* ParserState::dcolon(ast::Node* recv, String& n, String& a) {
-    ast::Nodes args;
-    args.push_back(new ast::LiteralString(a));
-
-    return new ast::Call(n, recv, args);
+    return new ast::Call(n, recv, ast::Arguments::wrap(new ast::LiteralString(a)));
   }
 
   ast::Node* ParserState::lit_str(String& n) {
@@ -106,14 +116,11 @@ namespace marius {
   }
 
   ast::Call* ParserState::ast_call(String& name, ast::Node* r, ast::Nodes args) {
-    return new ast::Call(name, r, args);
+    return new ast::Call(name, r, new ast::Arguments(args));
   }
 
   ast::Call* ParserState::ast_binop(const char* s, ast::Node* a, ast::Node* b) {
-    ast::Nodes nodes;
-    nodes.push_back(b);
-
-    return new ast::Call(String::internalize(s), a, nodes);
+    return new ast::Call(String::internalize(s), a, ast::Arguments::wrap(b));
   }
 
   ast::Node* ParserState::number(int a) {
@@ -157,27 +164,14 @@ namespace marius {
   ast::Node* ParserState::call_args(ast::Node* recv, String& id) {
     ast::Node* n = 0;
 
-    if(arg_info_.keywords.size() == 0) {
-      n = new ast::Call(id, recv, arg_info_.nodes);
-    } else {
-      n = new ast::CallWithKeywords(id, recv, arg_info_.nodes,
-                                    arg_info_.keywords);
-    }
+    ast::Arguments* args = new ast::Arguments(arg_info_.nodes, arg_info_.keywords);
+
+    n = new ast::Call(id, recv, args);
 
     arg_info_ = arg_infos_.back();
     arg_infos_.pop_back();
 
     assert(n);
-
-    return n;
-  }
-
-  ast::Node* ParserState::call_kw_args(ast::Node* r, String& id) {
-    ast::Node* n = new ast::CallWithKeywords(id, r, arg_info_.nodes,
-                                arg_info_.keywords);
-
-    arg_info_ = arg_infos_.back();
-    arg_infos_.pop_back();
 
     return n;
   }

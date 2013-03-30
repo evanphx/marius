@@ -4,7 +4,7 @@ class Blah
   end
 end
 
-m = :foo
+m = %foo
 
 Blah.new.$m
 

@@ -24,6 +24,7 @@ int main(int argc, char** argv) {
 
   bool debug = false;
   bool print = false;
+  bool check = false;
 
   char** opt = argv + 1;
 
@@ -36,6 +37,9 @@ int main(int argc, char** argv) {
         break;
       case 'p':
         print = true;
+        break;
+      case 'c':
+        check = true;
         break;
       case 'I':
         if(s[2]) {
@@ -85,6 +89,11 @@ int main(int argc, char** argv) {
   Compiler compiler(debug);
 
   if(!compiler.compile(file)) return 1;
+
+  if(check) {
+    printf("syntax ok\n");
+    return 0;
+  }
 
   Code& code = *compiler.code();
 

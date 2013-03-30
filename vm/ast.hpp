@@ -132,14 +132,14 @@ namespace marius {
       void accept(Visitor* V);
     };
 
-    typedef std::vector<Argument*> Arguments;
+    typedef std::vector<Argument*> ArgumentList;
 
     class Scope : public Node {
       ArgMap locals_;
       ArgMap closed_locals_;
       ArgMap arguments_;
 
-      Arguments arg_objs_;
+      ArgumentList arg_objs_;
 
       Argument* self_;
 
@@ -152,7 +152,7 @@ namespace marius {
         , body_(body)
       {}
 
-      Scope(ast::Node* body, ArgMap& locals, ArgMap args, Arguments& ao,
+      Scope(ast::Node* body, ArgMap& locals, ArgMap args, ArgumentList& ao,
             ast::Argument* self)
         : locals_(locals)
         , arguments_(args)
@@ -169,7 +169,7 @@ namespace marius {
         return arguments_;
       }
 
-      Arguments& arg_objs() {
+      ArgumentList& arg_objs() {
         return arg_objs_;
       }
 
@@ -195,14 +195,30 @@ namespace marius {
 
     typedef std::vector<Node*> Nodes;
 
+    struct Arguments {
+      Nodes positional;
+      ArgMap keywords;
+
+      Arguments(Nodes p, ArgMap k)
+        : positional(p)
+        , keywords(k)
+      {}
+
+      Arguments(Nodes p)
+        : positional(p)
+      {}
+
+      static Arguments* wrap(ast::Node* n);
+    };
+
     class SendIndirect : public Node {
     protected:
       Node* name_;
       Node* recv_;
-      Nodes args_;
+      Arguments* args_;
 
     public:
-      SendIndirect(Node* name, Node* recv, Nodes args)
+      SendIndirect(Node* name, Node* recv, Arguments* args=0)
         : name_(name)
         , recv_(recv)
         , args_(args)
@@ -216,26 +232,13 @@ namespace marius {
     protected:
       String& name_;
       Node* recv_;
-      Nodes args_;
+      Arguments* args_;
 
     public:
-      Call(String& name, Node* recv, Nodes args)
+      Call(String& name, Node* recv, Arguments* args=0)
         : name_(name)
         , recv_(recv)
         , args_(args)
-      {}
-
-      int drive(State& S, int t);
-      void accept(Visitor* V);
-    };
-
-    class CallWithKeywords : public Call {
-      ArgMap keywords_;
-
-    public:
-      CallWithKeywords(String& name, Node* recv, Nodes args, ArgMap keys)
-        : Call(name, recv, args)
-        , keywords_(keys)
       {}
 
       int drive(State& S, int t);
@@ -567,7 +570,6 @@ namespace marius {
       virtual void visit(Scope* n) { };
       virtual void visit(SendIndirect* i) { };
       virtual void visit(Call* n) { };
-      virtual void visit(CallWithKeywords* n) { };
       virtual void visit(Number* n) { };
       virtual void visit(Named* n) { };
       virtual void visit(Def* n) { };

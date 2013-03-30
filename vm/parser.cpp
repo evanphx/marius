@@ -37,10 +37,12 @@ namespace marius {
         buffer_ = new char[size_ + 1];
         end_ = buffer_ + size_;
       } else {
-        // shift the unused data up to the front of the buffer.
-        memmove((void*)buffer_, pos_, left);
-        end_ = buffer_ + left;
-        *end_ = 0;
+        if(left > 0) {
+          // shift the unused data up to the front of the buffer.
+          memmove((void*)buffer_, pos_, left);
+          end_ = buffer_ + left;
+          *end_ = 0;
+        }
       }
 
       pos_ = buffer_;
@@ -91,24 +93,24 @@ again:
 
       case '+':
         advance(1);
-        return TK_PLUS;
+        value_.cs = "+";
+        return TK_OP1;
+
+      case '-':
+        advance(1);
+        value_.cs = "-";
+        return TK_OP1;
 
       case '$':
         advance(1);
         return TK_DOLLAR;
 
+      case '%':
+        advance(1);
+        return sym_match();
+
       case '.':
         advance(1);
-        if(next_c() == '{') {
-          advance(1);
-          return TK_CASCADE;
-        }
-
-        if(next_c() == '@') {
-          advance(1);
-          return TK_ATTR;
-        }
-
         return TK_DOT;
 
       case ',':
@@ -140,7 +142,8 @@ again:
 
         if(next_c() == '=') {
           advance(1);
-          return TK_DEQUAL;
+          value_.cs = "==";
+          return TK_OP0;
         }
 
         return TK_EQUAL;
@@ -150,7 +153,8 @@ again:
 
         if(next_c() == '=') {
           advance(1);
-          return TK_NEQUAL;
+          value_.cs = "==";
+          return TK_OP0;
         }
 
         return TK_NOT;
@@ -162,10 +166,12 @@ again:
         column_ = 0;
         line_++;
 
-        // fallthrough
+        advance(1);
+        return TK_NL;
+
       case ';':
         advance(1);
-        return TK_FIN;
+        return TK_SEMI;
 
       case '@':
         advance(1);
@@ -180,7 +186,7 @@ again:
           return TK_DCOLON;
         }
 
-        return TK_COLON;
+        return TK_CAST;
 
       case '"':
         advance(1);
@@ -229,6 +235,12 @@ again:
       : str(s)
       , token(t)
     {}
+
+    bool op_p() {
+      return token == TK_OP0 ||
+             token == TK_OP1 ||
+             token == TK_OP2;
+    }
   };
 
   static Keyword* cKeywords[256] = {0};
@@ -281,6 +293,41 @@ again:
     k[1] = Keyword("try", TK_TRY);
 
     cKeywords[(int)'t'] = k;
+
+    k = new Keyword[2];
+    k[0] = Keyword("unless", TK_UNLESS);
+
+    cKeywords[(int)'u'] = k;
+
+    k = new Keyword[2];
+    k[0] = Keyword("+", TK_OP1);
+
+    cKeywords[(int)'+'] = k;
+
+    k = new Keyword[2];
+    k[0] = Keyword("-", TK_OP1);
+
+    cKeywords[(int)'-'] = k;
+
+    k = new Keyword[2];
+    k[0] = Keyword("*", TK_OP2);
+
+    cKeywords[(int)'*'] = k;
+
+    k = new Keyword[2];
+    k[0] = Keyword("/", TK_OP2);
+
+    cKeywords[(int)'/'] = k;
+
+    k = new Keyword[2];
+    k[0] = Keyword("!=", TK_OP0);
+
+    cKeywords[(int)'!'] = k;
+
+    k = new Keyword[2];
+    k[0] = Keyword("==", TK_OP0);
+
+    cKeywords[(int)'='] = k;
   }
 
   int Parser::keyword_match() {
@@ -293,6 +340,14 @@ again:
       const char* str = next_str(len);
 
       if(str && strncmp(str, k->str, len) == 0) {
+        // If this was an operator, then make sure the
+        // token value is the specific operator.
+        if(k->op_p()) {
+          advance(len);
+          value_.cs = k->str;
+          return k->token;
+        }
+
         // Check that the data following it isn't an alpha
         // character, otherwise we're inside this string
         // as a subsequence.
@@ -310,56 +365,63 @@ again:
   }
 
   int Parser::id_match(int tk) {
-    char* start = pos_;
+    ScratchBuffer buf;
 
-    Buffer buf(pos_, end_ - pos_);
-    uint32_t cp;
+    uint8_t c = next_c();
 
-    int len = decode_utf8(buf, &cp);
-    if(!isalpha(cp)) return -1;
-
-    buf.trim(len);
-
-    while(!buf.empty_p()) {
-      int l = decode_utf8(buf, &cp);
-      bool valid = isalnum(cp) || cp == '_';
-      if(!valid) break;
-      buf.trim(l);
+    while(c && (isalnum(c) || c == '_')) {
+      buf.append(c);
+      advance(1);
+      c = next_c();
     }
 
     if(!buf.empty_p()) {
-      uint8_t c = buf.peek1();
+      c = next_c();
       switch(c) {
       case '?':
       case '!':
-        buf.trim(1);
+        buf.append(c);
+        advance(1);
         break;
       }
     }
 
-    advance(buf.c_buf() - pos_);
-
-    value_.s = &String::internalize(strndup(start, buf.c_buf() - start));
+    value_.s = &String::internalize(buf.copy_out());
     return tk;
   }
 
   int Parser::str_match() {
-    char* start = pos_;
-    char* p = start;
+    ScratchBuffer buf;
 
-    while(p < end_) {
-      if(*p == '"') {
-        int len = p - start;
-        value_.s = &String::internalize(strndup(start, len));
-        advance(len+1);
-        return TK_LITSTR;
-      }
+    uint8_t c = next_c();
 
-      p++;
+    while(c && c != '"') {
+      buf.append(c);
+      advance(1);
+      c = next_c();
     }
 
-    printf("Wasn't able to detect end of quoted string.\n");
-    return -1;
+    if(!c) return -1;
+
+    advance(1);
+
+    value_.s = &String::internalize(buf.copy_out());
+    return TK_LITSTR;
+  }
+
+  int Parser::sym_match() {
+    char* start = pos_;
+
+    if(!isalpha(next_c())) return -1;
+
+    advance(1);
+
+    while(isalpha(next_c())) {
+      advance(1);
+    }
+
+    value_.s = &String::internalize(strndup(start, pos_ - start));
+    return TK_LITSTR;
   }
 
   bool Parser::parse(bool debug) {

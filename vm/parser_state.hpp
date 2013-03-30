@@ -23,7 +23,7 @@ namespace marius {
       ArgMap args; 
       ArgMap local_names;
 
-      ast::Arguments arg_objs;
+      ast::ArgumentList arg_objs;
 
       int next_reg;
 
@@ -150,6 +150,7 @@ namespace marius {
     ast::Node* ast_def(String& name, ast::Node* b);
 
     ast::Node* send_indirect(ast::Node* recv, ast::Node* n);
+    ast::Node* send_indirect_args(ast::Node* recv, ast::Node* n);
 
     ast::Node* call(ast::Node* recv, String& id);
     ast::Node* attr(ast::Node* recv, String& id);

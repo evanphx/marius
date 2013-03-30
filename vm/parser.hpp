@@ -17,14 +17,13 @@ namespace marius {
     long i;
     String* s;
     ast::Node* a;
+    const char* cs;
   };
 
   class Parser {
     char* buffer_;
     int size_;
     char* end_;
-
-    int left_;
 
     char* pos_;
 
@@ -45,7 +44,6 @@ namespace marius {
       : buffer_(strdup(buf))
       , size_(sz == -1 ? strlen(buf) : sz)
       , end_(buf + size_)
-      , left_(sz)
       , pos_(buf)
       , file_(0)
       , engine_(0)
@@ -60,7 +58,6 @@ namespace marius {
       : buffer_(0)
       , size_(0)
       , end_(0)
-      , left_(0)
       , pos_(0)
       , file_(file)
       , engine_(0)
@@ -103,6 +100,7 @@ namespace marius {
     int id_match(int tk);
     int keyword_match();
     int str_match();
+    int sym_match();
   };
 }
 
