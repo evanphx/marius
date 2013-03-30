@@ -12,7 +12,7 @@
 
 %token_prefix TK_
 
-%left OP0 CAST.
+%left OP0 CAST NEQUAL.
 %left OP1.
 %left OP2.
 %left NOT.
@@ -77,6 +77,9 @@ def_args ::= LP id_list RP.
 def(A) ::= def_start ID(B) def_args fin def_body(C). {
               A.a = S->ast_def(*B.s, C.a);
             }
+def(A) ::= def_start ID(B) def_args fin END. {
+              A.a = S->ast_def(*B.s, S->ast_nil());
+            }
 
 lit(A) ::= NUM(B).                   { A.a = S->number(B.i); }
 lit(A) ::= NIL.                      { A.a = S->ast_nil();  }
@@ -96,6 +99,8 @@ np_arg(A) ::= np_arg(B) OP2(O) np_arg(C).
                 { A.a = S->ast_binop(O.cs, B.a, C.a); }
 np_arg(A) ::= np_arg(B) CAST np_arg(C).
                 { A.a = S->cast(B.a, C.a); }
+np_arg(A) ::= np_arg(B) NEQUAL np_arg(C).
+                { A.a = S->not_(S->ast_binop("==", B.a, C.a)); }
 np_arg(A) ::= np_arg(B) DOT ID(C). { A.a = S->call(B.a, *C.s); }
 np_arg(A) ::= np_arg(B) DOT ID(C) LP RP. { A.a = S->call(B.a, *C.s); }
 np_arg(A) ::= np_arg(B) DOT ID(C) LP np_arg_list RP.
@@ -125,6 +130,8 @@ np_arg_list ::= np_arg_list_start np_arg_list_elems np_opt_kw_arg_list.
 np_arg_list ::= np_arg_list_start np_kw_arg_list_elems.
 
 np_recv(A) ::= lit(B). { A.a = B.a; }
+np_recv(A) ::= ID(C) LP RP. { A.a = S->call(S->self(), *C.s); }
+np_recv(A) ::= ID(C) LP np_arg_list RP. { A.a = S->call_args(S->self(), *C.s); }
 np_recv(A) ::= np_recv(B) DOT ID(C). { A.a = S->call(B.a, *C.s); }
 np_recv(A) ::= np_recv(B) DOT ID(C) LP RP. { A.a = S->call(B.a, *C.s); }
 np_recv(A) ::= np_recv(B) DOT ID(C) LP np_arg_list RP. { A.a = S->call_args(B.a, *C.s); }
@@ -141,16 +148,16 @@ s2(A) ::= np_recv(B) DOT ID(C) np_arg_list. { A.a = S->call_args(B.a, *C.s); }
 s2(A) ::= np_recv(B) DOT DOLLAR lit(C) np_arg_list.
             { A.a = S->send_indirect_args(B.a, C.a); }
 s2(A) ::= ID(C) np_arg_list. { A.a = S->call_args(S->self(), *C.s); }
-s2(A) ::= ID(C) LP RP. { A.a = S->call(S->self(), *C.s); }
-s2(A) ::= ID(C) LP np_arg_list RP. { A.a = S->call_args(S->self(), *C.s); }
 s2(A) ::= np_recv(B) CAST np_arg(C).   { A.a = S->cast(B.a, C.a); }
 s2(A) ::= np_recv(B) OP0(O) np_arg(C). { A.a = S->ast_binop(O.cs, B.a, C.a); }
 s2(A) ::= np_recv(B) OP1(O) np_arg(C). { A.a = S->ast_binop(O.cs, B.a, C.a); }
 s2(A) ::= np_recv(B) OP2(O) np_arg(C). { A.a = S->ast_binop(O.cs, B.a, C.a); }
+s2(A) ::= np_recv(B) NEQUAL np_arg(C).
+                { A.a = S->not_(S->ast_binop("==", B.a, C.a)); }
 s2(A) ::= np_recv(B). { A.a = B.a; }
+s2(A) ::= NOT s2(B). { A.a = S->not_(B.a); }
 
 stmt(A) ::= s2(B). { A.a = B.a; }
-stmt(A) ::= NOT s2(B). { A.a = S->not_(B.a); }
 
 /* Lambda */
 

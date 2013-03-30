@@ -153,8 +153,7 @@ again:
 
         if(next_c() == '=') {
           advance(1);
-          value_.cs = "==";
-          return TK_OP0;
+          return TK_NEQUAL;
         }
 
         return TK_NOT;

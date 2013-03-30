@@ -52,6 +52,9 @@ test: marius
 	test `./marius -p test/no_self_call.mr` = 7
 	test `./marius -p test/keyword_no_recv.mr` = 7
 
-.PHONY: test
+spec: test
+	./marius -Ilib spec/string_test.mr
+
+.PHONY: test spec
 
 -include depend

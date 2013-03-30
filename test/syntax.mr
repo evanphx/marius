@@ -26,6 +26,8 @@ a.b(7 + 10)
 a.b(7 + 10, 20)
 a.b(c.d(1), e.f(%foo))
 
+a().b
+
 a(c=1,d=2)
 a.b(c=1,d=2)
 
@@ -109,3 +111,9 @@ a.b(c : String, d : Integer)
 a.b c : String, d : Integer
 a.b c.b : String, d.e : Integer
 a.b c.b:String, d.e:Integer
+
+tests = methods().find_all({ |t| t.prefix?("test") })
+
+if !v
+  7
+end

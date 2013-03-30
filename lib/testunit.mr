@@ -1,22 +1,33 @@
 class TestCase
   def assert_equal(a,b)
     if a != b
-      io.puts("here")
+      io.print "failed: expected "
+      io.print a
+      io.print " to equal "
+      io.puts b
+
       raise "not equal"
     end
   end
 
+  def assert(value)
+    unless value
+      io.puts "failed: not true"
+      raise "failed"
+    end
+  end
+
   def run
-    tests = self.methods().find_all({ |t| t.prefix?("test") })
-    tests.each({ |t| self.run_test(t) })
+    tests = methods().find_all { |t| t.prefix?("test") }
+    tests.each { |t| run_test(t) }
   end
 
   def run_test(name)
-    io.print(name)
-    io.print(": ")
+    io.print name
+    io.print ": "
 
     self.$name
 
-    io.puts("pass")
+    io.puts "pass"
   end
 end

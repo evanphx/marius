@@ -2,7 +2,23 @@ import testunit
 
 class StringTest < testunit::TestCase
   def test_bytesize
-    self.assert_equal("blah".bytesize, 4)
+    assert_equal "blah".bytesize, 4
+  end
+
+  def test_size
+    assert_equal "blah".size, 4
+  end
+
+  def test_utf_bytesize
+    assert_equal "®".bytesize, 2
+  end
+
+  def test_utf_size
+    assert_equal "®".size, 1
+  end
+
+  def test_prefix?
+    assert "blah".prefix?("b")
   end
 end
 

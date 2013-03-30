@@ -130,7 +130,8 @@ namespace marius {
   }
 
   static Handle io_print(State& S, Handle recv, Arguments& args) {
-    printf("%s", args[0]->as_string().c_str());
+    Handle arg = args[0];
+    printf("%s", String::convert(S, *arg).c_str());
     return handle(S, OOP::nil());
   }
 
