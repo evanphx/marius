@@ -1,15 +1,19 @@
 #ifndef MEMORY_OBJECT_HPP
 #define MEMORY_OBJECT_HPP
 
+#include "gc_allocated.hpp"
+
 namespace marius {
   class Class;
   class Environment;
+  class GCImpl;
 
-  class MemoryObject {
+  class MemoryObject : public GCAllocated {
     Class* klass_;
 
-  public:
+    friend class GCImpl;
 
+  public:
     MemoryObject(Class* cls)
       : klass_(cls)
     {}

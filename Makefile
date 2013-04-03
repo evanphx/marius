@@ -1,7 +1,7 @@
-SRC=$(sort $(wildcard vm/*.cpp))
+SRC=$(sort $(wildcard vm/*.cpp vm/util/*.cpp))
 OBJ=$(patsubst %.cpp,%.o,$(SRC))
 
-CXXFLAGS := -ggdb -Wall
+CXXFLAGS := -ggdb -Wall -Ivm
 
 all: marius
 

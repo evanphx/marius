@@ -6,10 +6,15 @@
 #include "class.hpp"
 
 namespace marius {
+  class GCImpl;
+
   class User : public MemoryObject, public Attributes {
+    friend class GCImpl;
+
   public:
-    User(Class* cls)
+    User(State& S, Class* cls)
       : MemoryObject(cls)
+      , Attributes(S)
     {}
   };
 }

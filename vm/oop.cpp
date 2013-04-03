@@ -51,6 +51,9 @@ namespace marius {
     case eMethod:
       printf("<Method:%p>\n", method_);
       return;
+    case eClosure:
+      printf("<Closure:%p>\n", closure_);
+      return;
     case eTrue:
       printf("true\n");
       return;
@@ -84,9 +87,9 @@ namespace marius {
     }
   }
 
-  OOP OOP::set_attribute(String& name, OOP val) {
+  OOP OOP::set_attribute(State& S, String& name, OOP val) {
     if(Attributes* attrs = as_attributes()) {
-      attrs->set_attribute(name, val);
+      attrs->set_attribute(S, name, val);
     }
 
     return val;

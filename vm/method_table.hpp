@@ -24,7 +24,7 @@ namespace marius {
     }
 
     void print();
-    OOP methods();
+    OOP methods(State& S);
   };
 }
 

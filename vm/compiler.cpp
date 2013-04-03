@@ -6,8 +6,8 @@
 #include "local.hpp"
 
 namespace marius {
-  bool Compiler::compile(FILE* f) {
-    Parser parser(f);
+  bool Compiler::compile(State& S, FILE* f) {
+    Parser parser(S, f);
 
     if(!parser.parse(debug_)) return false;
 
@@ -17,22 +17,22 @@ namespace marius {
 
     ArgMap globals;
 
-    globals[String::internalize("Object")] = 0;
-    globals[String::internalize("io")] = 1;
-    globals[String::internalize("Class")] = 2;
-    globals[String::internalize("Importer")] = 3;
+    globals[String::internalize(S, "Object")] = 0;
+    globals[String::internalize(S, "io")] = 1;
+    globals[String::internalize(S, "Class")] = 2;
+    globals[String::internalize(S, "Importer")] = 3;
 
     LocalMap locals;
 
-    calculate_locals(top, globals, locals);
+    calculate_locals(S, top, globals, locals);
 
-    ast::State S(locals);
+    ast::State AS(S, locals);
 
-    top->drive(S, top->locals().size());
+    top->drive(AS, top->locals().size());
 
     ArgMap args;
 
-    code_ = S.to_code(String::internalize("__main__"), args, top->cov());
+    code_ = AS.to_code(String::internalize(S, "__main__"), args, top->cov());
 
     if(debug_) code_->print();
 

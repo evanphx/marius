@@ -7,18 +7,19 @@
 #include "attributes.hpp"
 
 namespace marius {
+  class GCImpl;
+
   class Module : public MemoryObject, public Attributes {
-    typedef StringMap<OOP>::type Bindings;
-    Bindings attributes_;
+    friend class GCImpl;
 
   public:
-    Module(Class* mod, String& name);
+    Module(State& S, Class* mod, String& name);
 
     Method* lookup(String& name);
-    void add_method(const char* name, SimpleFunc func, int arity);
-    void add_native_method(const char* name, Method* m);
+    void add_method(State& S, const char* name, SimpleFunc func, int arity);
+    void add_native_method(State& S, const char* name, Method* m);
 
-    static Class* init(Environment& env);
+    static Class* init(State& S, Environment& env);
   };
 
   class ModuleBuilder {

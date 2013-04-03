@@ -20,6 +20,10 @@ namespace marius {
   class Attributes;
   class Method;
   class Tuple;
+  class State;
+  class Closure;
+
+  class GCImpl;
 
   class OOP {
   public:
@@ -29,14 +33,17 @@ namespace marius {
       eTuple,
 
       // Mutable object types
-      eClass, eUser, eModule,
+      eClass, eUser, eModule, eClosure,
       TotalTypes
     };
 
     const static int cMutableObjects = eClass;
 
   private:
+    friend class GCImpl;
+
     enum IntConstruct { IntConstruct };
+    enum ImmConstruct { ImmConstruct };
 
     Type type_;
 
@@ -51,6 +58,8 @@ namespace marius {
       Class* class_;
       Module* module_;
       User* user_;
+      Closure* closure_;
+      void* raw_;
     };
 
   public:
@@ -68,12 +77,22 @@ namespace marius {
       , module_(mod)
     {}
 
+    OOP(Code* c)
+      : type_(eCode)
+      , code_(c)
+    {}
+
+    OOP(Closure* c)
+      : type_(eClosure)
+      , closure_(c)
+    {}
+
     OOP(enum IntConstruct _, int val)
       : type_(eInteger)
       , int_(val)
     {}
 
-    OOP(bool v)
+    OOP(enum ImmConstruct _, bool v)
       : type_(v ? eTrue : eFalse)
     {}
 
@@ -124,11 +143,11 @@ namespace marius {
     }
 
     static OOP true_() {
-      return OOP(true);
+      return OOP(ImmConstruct, true);
     }
 
     static OOP false_() {
-      return OOP(false);
+      return OOP(ImmConstruct, false);
     }
 
     static OOP integer(int val) {
@@ -139,8 +158,11 @@ namespace marius {
       return OOP(cls);
     }
 
-    static OOP unwind() {
-      return OOP(eUnwind);
+    static OOP copy_of(OOP orig, void* val) {
+      OOP o;
+      o.type_ = orig.type_;
+      o.raw_ = val;
+      return o;
     }
 
     int int_value() {
@@ -223,10 +245,22 @@ namespace marius {
         check(false);
       }
 
+    void* heap_address() {
+      switch(type_) {
+      case eInteger:
+      case eNil:
+      case eTrue:
+      case eFalse:
+        return 0;
+      default:
+        return raw_;
+      }
+    }
+
     Class* klass();
 
     Method* find_method(String& name);
-    OOP set_attribute(String& name, OOP val);
+    OOP set_attribute(State& S, String& name, OOP val);
     OOP attribute(String& name, bool* found=0);
 
     void print();

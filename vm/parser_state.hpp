@@ -40,6 +40,7 @@ namespace marius {
       ArgMap keywords;
     };
 
+    State& S;
     Parser& parser_;
     Context* context_;
     ArgInfo arg_info_;
@@ -54,8 +55,9 @@ namespace marius {
 
   public:
 
-    ParserState(Parser& parse)
-      : parser_(parse)
+    ParserState(State& S, Parser& parse)
+      : S(S)
+      , parser_(parse)
       , context_(new Context)
       , syntax_error_(false)
       , top_(0)
@@ -109,7 +111,7 @@ namespace marius {
 
     int string(const char* str) {
       int idx = context_->strings.size();
-      context_->strings.push_back(&String::internalize(str));
+      context_->strings.push_back(&String::internalize(S, str));
       return idx;
     }
 
@@ -175,6 +177,7 @@ namespace marius {
     ast::Call* ast_binop(const char* s, ast::Node* a, ast::Node* b);
     ast::Node* if_cond(ast::Node* cond, ast::Node* body);
     ast::Node* unless(ast::Node* cond, ast::Node* body);
+    ast::Node* while_(ast::Node* cond, ast::Node* body);
 
     ast::Node* ast_nil();
     ast::Node* ast_true();
@@ -195,6 +198,7 @@ namespace marius {
     ast::Node* raise(ast::Node* v);
 
     ast::Node* not_(ast::Node* v);
+    ast::Node* tuple();
   };
 }
 

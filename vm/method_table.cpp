@@ -14,8 +14,8 @@ namespace marius {
     }
   }
 
-  OOP MethodTable::methods() {
-    Tuple* tup = new Tuple(table_.size());
+  OOP MethodTable::methods(State& S) {
+    Tuple* tup = new(S) Tuple(S, table_.size());
 
     int idx = 0;
 

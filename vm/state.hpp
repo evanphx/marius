@@ -2,6 +2,7 @@
 #define STATE_HPP
 
 #include "handle_sets.hpp"
+#include "gc.hpp"
 
 namespace marius {
   class Environment;
@@ -17,18 +18,12 @@ namespace marius {
     User* importer_;
     HandleScope* handles_;
     HandleSets handle_sets_;
+    GC& gc_;
   public:
 
     OOP* last_fp;
 
-    State(VM& vm, Environment& env, Settings& set)
-      : vm_(vm)
-      , env_(env)
-      , settings_(set)
-      , importer_(0)
-      , handles_(0)
-      , last_fp(0)
-    {}
+    State(VM& vm, Environment& env, Settings& set);
 
     VM& vm() {
       return vm_;
@@ -64,7 +59,24 @@ namespace marius {
       return handles_;
     }
 
+    HandleSets& handle_sets() {
+      return handle_sets_;
+    }
+
+    void* allocate(size_t size) {
+      return gc_.allocate(size);
+    }
+
+    void check();
   };
+}
+
+inline void* operator new(size_t size, marius::State& S) {
+  return S.allocate(size);
+}
+
+inline void* operator new[](size_t size, marius::State& S) {
+  return S.allocate(size);
 }
 
 #endif

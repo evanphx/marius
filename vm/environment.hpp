@@ -6,6 +6,8 @@
 #include "oop.hpp"
 #include "string_map.hpp"
 
+#include "gc.hpp"
+
 namespace marius {
   class String;
   class Class;
@@ -27,16 +29,21 @@ namespace marius {
       return globals_;
     }
 
-    OOP lookup(String& name);
-    OOP lookup(const char* str);
+    Module* top() {
+      return top_;
+    }
 
-    Class* new_class(const char* name, Class* sup=0);
+    OOP lookup(String& name);
+    OOP lookup(State& S, const char* str);
+
+    Class* new_class(State& S, const char* name, Class* sup=0);
 
     void init_ontology(State& S);
 
     void print();
 
-    void bind(String& name, OOP val);
+    void bind(State& S, String& name, OOP val);
+
   };
 }
 

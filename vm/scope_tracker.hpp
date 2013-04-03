@@ -10,7 +10,7 @@ namespace marius {
     class Node;
   }
 
-  void calculate_locals(ast::Node* top, ArgMap& globals, LocalMap& locals);
+  void calculate_locals(State& S, ast::Node* top, ArgMap& globals, LocalMap& locals);
 }
 
 #endif

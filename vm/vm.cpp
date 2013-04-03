@@ -8,6 +8,7 @@
 #include "closure.hpp"
 #include "stack_frame.hpp"
 #include "unwind.hpp"
+#include "tuple.hpp"
 
 #include <stdio.h>
 
@@ -18,6 +19,7 @@ namespace marius {
   VM::VM(bool debug)
     : debug_(debug)
   {
+    stack_size_ = cInitialStack;
     stack_ = new OOP[cInitialStack];
     frames_ = new StackFrame[cInitialStack];
     top_frame_ = frames_ - 1;
@@ -58,7 +60,9 @@ namespace marius {
 
     Code& code = *meth->code();
 
-    Closure* clos = new Closure(code.closed_over_vars(), meth->closure());
+    Closure* clos = new(S) Closure(code.closed_over_vars(), meth->closure());
+
+    top_frame_->closure = clos;
 
     Instruction* seq = code.code();
     Instruction* end = seq + code.size();
@@ -95,15 +99,15 @@ namespace marius {
         break;
 
       case MOVN:
-        fp[seq[0]] = OOP(OOP::eNil);
+        fp[seq[0]] = OOP();
         seq += 1;
         break;
       case MOVT:
-        fp[seq[0]] = OOP(OOP::eTrue);
+        fp[seq[0]] = OOP::true_();
         seq += 1;
         break;
       case MOVF:
-        fp[seq[0]] = OOP(OOP::eFalse);
+        fp[seq[0]] = OOP::false_();
         seq += 1;
         break;
 
@@ -226,7 +230,7 @@ namespace marius {
         break;
 
       case IVA:
-        fp[-1].set_attribute(code.string(seq[0]), fp[seq[1]]);
+        fp[-1].set_attribute(S, code.string(seq[0]), fp[seq[1]]);
         seq += 2;
         break;
 
@@ -242,7 +246,7 @@ namespace marius {
         break;
 
       case LOADC:
-        fp[seq[0]] = OOP(new Method(meth->scope(), code.code(seq[1]), clos));
+        fp[seq[0]] = OOP(new(S) Method(meth->scope(), code.code(seq[1]), clos));
 
         seq += 2;
         break;
@@ -261,6 +265,7 @@ namespace marius {
         break;
 
       case JMPB:
+        S.check();
         seq -= (seq[0] + 1);
         break;
 
@@ -303,8 +308,8 @@ namespace marius {
 
         break;
       case RAISE:
-        print_call_stack();
-        return Unwind::generic_error(fp[seq[0]].as_string());
+        print_call_stack(S);
+        return Unwind::generic_error(S, fp[seq[0]].as_string());
 
       case NOT:
         if(fp[seq[1]].true_condition_p()) {
@@ -316,6 +321,12 @@ namespace marius {
         seq += 2;
 
         break;
+
+      case TUPLE:
+        fp[seq[0]] = Tuple::make(S, &fp[seq[1]], seq[2]);
+        seq += 3;
+        break;
+
 
       default:
         printf("UNKNOWN INSTRUCTION: %d\n", seq[-1]);
@@ -334,8 +345,8 @@ namespace marius {
     if(!meth) {
       printf("NO METHOD :%s on ", name.c_str());
       recv.print();
-      print_call_stack();
-      return Unwind::name_error(name);
+      print_call_stack(S);
+      return Unwind::name_error(S, name);
     }
 
     S.last_fp = fp;
@@ -381,8 +392,8 @@ namespace marius {
 
     if(!meth) {
       printf("NO METHOD :%s\n", name.c_str());
-      print_call_stack();
-      return Unwind::name_error(name);
+      print_call_stack(S);
+      return Unwind::name_error(S, name);
     }
 
     reorg_args(fp, meth, keywords);
@@ -410,14 +421,14 @@ namespace marius {
     return val.as_string();
   }
 
-  void VM::print_call_stack() {
+  void VM::print_call_stack(State& S) {
     int i = 0;
 
     StackFrame* sf = top_frame_;
 
     while(sf >= frames_) {
       printf("%02d: %s#%s\n", i++, sf->method->scope().c_str(),
-                              sf->method->name().c_str());
+                              sf->method->name(S).c_str());
       sf--;
     }
   }

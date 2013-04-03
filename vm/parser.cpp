@@ -107,6 +107,12 @@ again:
 
       case '%':
         advance(1);
+
+        if(next_c() == '(') {
+          advance(1);
+          return TK_TUPLE_START;
+        }
+
         return sym_match();
 
       case '.':
@@ -181,7 +187,7 @@ again:
 
         if(next_c() == ':') {
           advance(1);
-          value_.s = &String::internalize("::");
+          value_.s = &String::internalize(S, "::");
           return TK_DCOLON;
         }
 
@@ -299,6 +305,11 @@ again:
     cKeywords[(int)'u'] = k;
 
     k = new Keyword[2];
+    k[0] = Keyword("while", TK_WHILE);
+
+    cKeywords[(int)'w'] = k;
+
+    k = new Keyword[2];
     k[0] = Keyword("+", TK_OP1);
 
     cKeywords[(int)'+'] = k;
@@ -385,7 +396,7 @@ again:
       }
     }
 
-    value_.s = &String::internalize(buf.copy_out());
+    value_.s = &String::internalize(S, buf.copy_out());
     return tk;
   }
 
@@ -404,7 +415,7 @@ again:
 
     advance(1);
 
-    value_.s = &String::internalize(buf.copy_out());
+    value_.s = &String::internalize(S, buf.copy_out());
     return TK_LITSTR;
   }
 
@@ -419,7 +430,7 @@ again:
       advance(1);
     }
 
-    value_.s = &String::internalize(strndup(start, pos_ - start));
+    value_.s = &String::internalize(S, strndup(start, pos_ - start));
     return TK_LITSTR;
   }
 
@@ -433,7 +444,7 @@ again:
     next_c(); // prime the buffer
     engine_ = mariusParserAlloc(malloc);
 
-    ParserState S(*this);
+    ParserState PS(S, *this);
 
     FILE* stream = 0;
 
@@ -446,12 +457,12 @@ again:
       int token = next_token();
       if(token == -1) break;
 
-      mariusParser(engine_, token, value_, &S);
+      mariusParser(engine_, token, value_, &PS);
 
-      if(S.syntax_error_p()) break;
+      if(PS.syntax_error_p()) break;
 
       if(token == TK_EOF) {
-        mariusParser(engine_, 0, value_, &S);
+        mariusParser(engine_, 0, value_, &PS);
         break;
       }
     }
@@ -460,9 +471,9 @@ again:
 
     if(debug) fclose(stream);
 
-    if(S.syntax_error_p()) return false;
+    if(PS.syntax_error_p()) return false;
 
-    top_ = S.top();
+    top_ = PS.top();
 
     return true;
   }

@@ -6,6 +6,7 @@ namespace marius {
 
   struct StackFrame {
     Method* method;
+    Closure* closure;
   };
 }
 

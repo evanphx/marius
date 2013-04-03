@@ -72,13 +72,13 @@ int main(int argc, char** argv) {
   VM vm(debug);
   Environment env;
 
-  State state(vm, env, settings);
+  State S(vm, env, settings);
 
-  HandleScope handles(state);
+  HandleScope handles(S);
 
-  env.init_ontology(state);
+  env.init_ontology(S);
 
-  state.set_importer(new User(env.lookup("Importer").as_class()));
+  S.set_importer(new(S) User(S, env.lookup(S, "Importer").as_class()));
 
   FILE* file = fopen(*opt, "r");
   if(!file) {
@@ -88,7 +88,7 @@ int main(int argc, char** argv) {
 
   Compiler compiler(debug);
 
-  if(!compiler.compile(file)) return 1;
+  if(!compiler.compile(S, file)) return 1;
 
   if(check) {
     printf("syntax ok\n");
@@ -97,9 +97,9 @@ int main(int argc, char** argv) {
 
   Code& code = *compiler.code();
 
-  Method* top = new Method(String::internalize("__main__"), code, env.globals());
+  Method* top = new(S) Method(String::internalize(S, "__main__"), code, env.globals());
 
-  OOP ret = vm.run(state, top);
+  OOP ret = vm.run(S, top);
 
   if(ret.unwind_p()) {
     std::cout << "Unwind error at toplevel: "

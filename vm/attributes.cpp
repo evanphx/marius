@@ -2,17 +2,17 @@
 
 namespace marius {
   OOP Attributes::attribute(String& name, bool* found) {
-    Bindings::iterator i = attributes_.find(name);
-    if(i == attributes_.end()) {
-      if(found) *found = false;
-      return OOP::nil();
+    option<OOP> v = attributes_.find(name);
+    if(v.set_p()) {
+      if(found) *found = true;
+      return *v;
     }
 
-    if(found) *found = true;
-    return i->second;
+    if(found) *found = false;
+    return OOP::nil();
   }
 
-  void Attributes::set_attribute(String& name, OOP val) {
-    attributes_[name] = val;
+  void Attributes::set_attribute(State& S, String& name, OOP val) {
+    attributes_.set(S, name, val);
   }
 }

@@ -30,7 +30,8 @@ namespace marius {
       "LAMBDA",
       "SENDI",
       "RAISE",
-      "NOT"
+      "NOT",
+      "TUPLE"
     };
 
   void Code::print() {

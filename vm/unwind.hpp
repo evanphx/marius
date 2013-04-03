@@ -4,10 +4,12 @@
 #include "oop.hpp"
 #include "unwind.hpp"
 
+#include "gc_allocated.hpp"
+
 #include <string>
 
 namespace marius {
-  class Unwind {
+  class Unwind : public GCAllocated {
     std::string message_;
 
   public:
@@ -16,10 +18,10 @@ namespace marius {
       return message_;
     }
 
-    static OOP import_error(String& n);
-    static OOP arg_error(int expected, int actual);
-    static OOP name_error(String& name);
-    static OOP generic_error(String& str);
+    static OOP import_error(State& S, String& n);
+    static OOP arg_error(State& S, int expected, int actual);
+    static OOP name_error(State& S, String& name);
+    static OOP generic_error(State& S, String& str);
   };
 }
 

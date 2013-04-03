@@ -6,18 +6,25 @@
 
 #include "oop.hpp"
 
+#include "gc_allocated.hpp"
+
 namespace marius {
-  class Tuple {
+  class GCImpl;
+
+  class Tuple : public GCAllocated {
     OOP* data_;
     size_t size_;
 
+    friend class GCImpl;
+
   public:
-    Tuple(size_t size);
+    Tuple(State& S, size_t size);
 
     size_t size() {
       return size_;
     }
 
+    static Tuple* make(State& S, OOP* e, unsigned size);
     void set(size_t idx, OOP val);
     OOP get(size_t idx);
   };

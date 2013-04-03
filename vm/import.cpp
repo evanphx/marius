@@ -45,31 +45,31 @@ namespace marius {
       const char* path = find_path(S, name);
 
       if(!path) {
-        return handle(S, Unwind::import_error(name));
+        return handle(S, Unwind::import_error(S, name));
       }
 
       FILE* file = fopen(path, "r");
       delete path;
 
       if(!file) {
-        return handle(S, Unwind::import_error(name));
+        return handle(S, Unwind::import_error(S, name));
       }
 
       Compiler compiler;
 
-      if(!compiler.compile(file)) {
-        return handle(S, Unwind::import_error(name));
+      if(!compiler.compile(S, file)) {
+        return handle(S, Unwind::import_error(S, name));
       }
 
-      Module* m = new Module(
-          S.env().lookup("Module").as_class(), name);
+      Module* m = new(S) Module(S,
+          S.env().lookup(S, "Module").as_class(), name);
 
       OOP* fp = args.frame() + 1;
       fp[0] = m;
 
       Code& code = *compiler.code();
 
-      Method* top = new Method(name, code, S.env().globals());
+      Method* top = new(S) Method(name, code, S.env().globals());
 
       S.vm().run(S, top, fp + 1);
 
@@ -82,9 +82,9 @@ namespace marius {
   }
 
   Class* init_import(State& S) {
-    Class* x = S.env().new_class("Importer");
-    x->add_method("import", import, 1);
-    x->add_class_method("current", current, 0);
+    Class* x = S.env().new_class(S, "Importer");
+    x->add_method(S, "import", import, 1);
+    x->add_class_method(S, "current", current, 0);
 
     return x;
   }

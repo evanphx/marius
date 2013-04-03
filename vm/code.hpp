@@ -9,7 +9,11 @@
 #include "string_map.hpp"
 #include "string_vector.hpp"
 
+#include "gc_allocated.hpp"
+
 namespace marius {
+  class GCImpl;
+
   enum InstructionTypes {
     MOVI8   = 0,
     MOVI32,
@@ -39,6 +43,7 @@ namespace marius {
     SENDI_KW,
     RAISE,
     NOT,
+    TUPLE,
     TotalInstructions
   };
 
@@ -48,7 +53,7 @@ namespace marius {
 
   typedef StringMap<int>::type ArgMap;
 
-  class Code {
+  class Code : public GCAllocated {
     String& name_;
     Instruction* code_;
     int size_;
@@ -57,6 +62,8 @@ namespace marius {
     ArgMap args_;
     std::vector<ArgMap> keywords_;
     int closed_over_vars_;
+
+    friend class GCImpl;
 
   public:
     Code(String& name,

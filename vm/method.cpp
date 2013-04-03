@@ -21,11 +21,11 @@ namespace marius {
     , closure_(closure)
   {}
 
-  String& Method::name() {
+  String& Method::name(State& S) {
     if(code_) {
       return code_->name();
     } else {
-      return String::internalize("__internal__");
+      return String::internalize(S, "__internal__");
     }
   }
 
@@ -39,7 +39,7 @@ namespace marius {
 
   OOP Method::run(State& S, OOP recv, Arguments& args) {
     if(arity_ > 0 && args.count() != arity_) {
-      return Unwind::arg_error(arity_, args.count());
+      return Unwind::arg_error(S, arity_, args.count());
     }
 
     if(func_) {

@@ -7,10 +7,14 @@
 #include "oop.hpp"
 #include "utf8.hpp"
 
+#include "util/murmur_hash3.hpp"
+
+#include "gc_allocated.hpp"
+
 namespace marius {
   class State;
 
-  class String {
+  class String : public GCAllocated {
     const char* data_;
     size_t bytelen_;
     size_t charlen_;
@@ -34,8 +38,11 @@ namespace marius {
       return charlen_;
     }
 
+    unsigned hash();
+    bool equal(String& other);
+
     static void init(State& S);
-    static String& internalize(std::string str);
+    static String& internalize(State& S, std::string str);
 
     static String& convert(State& S, OOP obj);
   };

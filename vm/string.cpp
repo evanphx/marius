@@ -10,18 +10,18 @@
 
 namespace marius {
 
-  std::map<std::string, String> mapping_;
+  std::map<std::string, String*> mapping_;
 
-  String& String::internalize(std::string str) {
-    std::map<std::string, String>::iterator i = mapping_.find(str);
-    if(i != mapping_.end()) return (*i).second;
+  String& String::internalize(State& S, std::string str) {
+    std::map<std::string, String*>::iterator i = mapping_.find(str);
+    if(i != mapping_.end()) return *((*i).second);
+
+    String* obj = new(S) String(str.c_str());
 
     mapping_.insert(mapping_.end(),
-        std::map<std::string, String>::value_type(str, String(str.c_str())));
+        std::map<std::string, String*>::value_type(str, obj));
 
-    String& s = mapping_.at(str);
-
-    return s;
+    return *obj;
   }
 
   String& String::convert(State& S, OOP obj) {
@@ -29,13 +29,30 @@ namespace marius {
       return obj.as_string();
     }
 
-    Method* meth = obj.find_method(String::internalize("to_s"));
+    Method* meth = obj.find_method(String::internalize(S, "to_s"));
     check(meth);
 
     Arguments args(S, 0, S.last_fp);
     OOP ret = meth->run(S, obj, args);
     
     return ret.as_string();
+  }
+
+  unsigned String::hash() {
+    if(sizeof(void*) == 8) {
+      unsigned hv[2];
+      MurmurHash3_x64_128(c_str(), bytelen_, bytelen_, hv);
+      return hv[0];
+    } else {
+      unsigned hv;
+      MurmurHash3_x86_32(c_str(), bytelen_, bytelen_, &hv);
+      return hv;
+    }
+  }
+
+  bool String::equal(String& o) {
+    if(bytelen_ != o.bytelen_) return false;
+    return memcmp(c_str(), o.c_str(), bytelen_) == 0;
   }
 
   namespace {
@@ -62,10 +79,10 @@ namespace marius {
   }
 
   void String::init(State& S) {
-    Class* str = S.env().lookup("String").as_class();
+    Class* str = S.env().lookup(S, "String").as_class();
 
-    str->add_method("bytesize", byte_size, 0);
-    str->add_method("size", char_size, 0);
-    str->add_method("prefix?", prefix_p, 1);
+    str->add_method(S, "bytesize", byte_size, 0);
+    str->add_method(S, "size", char_size, 0);
+    str->add_method(S, "prefix?", prefix_p, 1);
   }
 }

@@ -11,6 +11,8 @@ namespace marius {
 
     static const int cInitialSize = 1024;
 
+    friend class GCImpl;
+
   public:
     HandleSet()
       : oops_(new OOP[cInitialSize])

@@ -19,7 +19,7 @@ namespace ast {
       seq[i] = buffer[i];
     }
 
-    return new Code(name, seq, buffer.size(), strings, codes,
+    return new(MS) Code(name, seq, buffer.size(), strings, codes,
                     args, keywords, cov);
   }
 
@@ -134,7 +134,7 @@ namespace ast {
 
     S.push(CALL);
     S.push(t);
-    S.push(S.string(String::internalize("cast")));
+    S.push(S.string(String::internalize(S.MS, "cast")));
     S.push(t);
     S.push(1);
 
@@ -144,6 +144,41 @@ namespace ast {
   void Cast::accept(Visitor* V) {
     type_->accept(V);
     value_->accept(V);
+
+    V->visit(this);
+  }
+
+  int Tuple::drive(State& S, int t) {
+    int count = 0;
+
+    int j = t;
+
+    if(args_) {
+      for(Nodes::iterator i = args_->positional.begin();
+          i != args_->positional.end();
+          ++i) {
+        (*i)->drive(S,j++);
+      }
+
+      count = args_->positional.size();
+    }
+
+    S.push(TUPLE);
+    S.push(t);
+    S.push(t);
+    S.push(count);
+
+    return t;
+  }
+
+  void Tuple::accept(Visitor* V) {
+    if(args_) {
+      for(Nodes::iterator i = args_->positional.begin();
+          i != args_->positional.end();
+          ++i) {
+        (*i)->accept(V);
+      }
+    }
 
     V->visit(this);
   }
@@ -248,7 +283,7 @@ namespace ast {
     S.push(t+1);
     S.push(S.string(name_));
 
-    ast::State subS(S.lm());
+    ast::State subS(S.MS, S.lm());
 
     int r = body_->drive(subS, args_.size() + body_->locals().size());
     subS.push(RET);
@@ -260,7 +295,7 @@ namespace ast {
 
     S.push(CALL);
     S.push(t);
-    S.push(S.string(String::internalize("add_method")));
+    S.push(S.string(String::internalize(S.MS, "add_method")));
     S.push(t);
     S.push(2);
 
@@ -283,7 +318,7 @@ namespace ast {
 
     S.push(CALL);
     S.push(t);
-    S.push(S.string(String::internalize("new_subclass")));
+    S.push(S.string(String::internalize(S.MS, "new_subclass")));
     S.push(t);
     S.push(1);
 
@@ -296,7 +331,7 @@ namespace ast {
 
     S.set_local(l, t);
 
-    ast::State subS(S.lm());
+    ast::State subS(S.MS, S.lm());
     int r = body_->drive(subS, body_->locals().size());
     subS.push(RET);
     subS.push(r);
@@ -305,12 +340,12 @@ namespace ast {
 
     S.push(LOADC);
     S.push(t+1);
-    S.push(S.code(subS.to_code(String::internalize("__body__"),
+    S.push(S.code(subS.to_code(String::internalize(S.MS, "__body__"),
                                args, body_->cov())));
 
     S.push(CALL);
     S.push(t);
-    S.push(S.string(String::internalize("run_body")));
+    S.push(S.string(String::internalize(S.MS, "run_body")));
     S.push(t);
     S.push(1);
 
@@ -377,6 +412,33 @@ namespace ast {
   }
 
   void CascadeCall::accept(Visitor* V) {
+    V->visit(this);
+  }
+
+  int While::drive(State& S, int t) {
+    int top = S.pos();
+
+    cond_->drive(S, t);
+    S.push(JMPIF);
+    S.push(t);
+
+    Label l = S.label();
+    S.push(0);
+
+    body_->drive(S, t);
+
+    S.push(JMPB);
+    S.push(S.pos() - top - 1);
+
+    S.set_label(l);
+
+    return t;
+  }
+
+  void While::accept(Visitor* V) {
+    cond_->accept(V);
+    body_->accept(V);
+
     V->visit(this);
   }
 
@@ -605,7 +667,7 @@ namespace ast {
   }
 
   int Lambda::drive(State& S, int t) {
-    ast::State subS(S.lm());
+    ast::State subS(S.MS, S.lm());
 
     int r = body_->drive(subS, body_->locals().size());
 
@@ -616,7 +678,7 @@ namespace ast {
 
     S.push(LOADC);
     S.push(t);
-    S.push(S.code(subS.to_code(String::internalize("__lambda__"),
+    S.push(S.code(subS.to_code(String::internalize(S.MS, "__lambda__"),
                                args, body_->cov())));
 
     return t;

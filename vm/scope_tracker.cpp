@@ -10,6 +10,7 @@ namespace marius {
   class ScopeTracker : public Visitor {
     typedef StringMap<Local*>::type LocalScope;
 
+    marius::State& S;
     LocalScope* scope_;
 
     std::list<LocalScope*> stack_;
@@ -17,8 +18,9 @@ namespace marius {
     LocalMap& locals_;
 
   public:
-    ScopeTracker(ArgMap& globals, LocalMap& locals)
-      : scope_(new LocalScope)
+    ScopeTracker(marius::State& S, ArgMap& globals, LocalMap& locals)
+      : S(S)
+      , scope_(new LocalScope)
       , globals_(globals)
       , locals_(locals)
     {}
@@ -26,7 +28,7 @@ namespace marius {
     void visit(Import* imp) {
       int depth = stack_.size();
 
-      ArgMap::iterator i = globals_.find(String::internalize("Importer"));
+      ArgMap::iterator i = globals_.find(String::internalize(S, "Importer"));
 
       assert(i != globals_.end());
       Local* l = new Local;
@@ -164,12 +166,13 @@ namespace marius {
     }
 
     void visit(Self* s) {
-      find_scoped(s, String::internalize("self"));
+      find_scoped(s, String::internalize(S, "self"));
     }
   };
 
-  void calculate_locals(ast::Node* top, ArgMap& globals, LocalMap& locals) {
-    ScopeTracker tracker(globals, locals);
+  void calculate_locals(marius::State& S, ast::Node* top,
+                        ArgMap& globals, LocalMap& locals) {
+    ScopeTracker tracker(S, globals, locals);
     top->accept(&tracker);
   }
 }

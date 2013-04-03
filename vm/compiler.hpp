@@ -5,6 +5,7 @@
 
 namespace marius {
   class Code;
+  class State;
 
   class Compiler {
     bool debug_;
@@ -20,7 +21,7 @@ namespace marius {
       return code_;
     }
 
-    bool compile(FILE* f);
+    bool compile(State& S, FILE* f);
   };
 }
 

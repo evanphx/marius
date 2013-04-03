@@ -11,7 +11,7 @@ namespace marius {
 
       Module* mod = recv->as_module();
 
-      mod->add_native_method(name.c_str(), m);
+      mod->add_native_method(S, name.c_str(), m);
 
       return recv;
     }
@@ -23,27 +23,30 @@ namespace marius {
     }
   }
 
-  Class* Module::init(Environment& env) {
-    Class* mod = env.lookup("Module").as_class();
-    mod->add_method("add_method", module_add, 2);
-    mod->add_method("::", module_access, 1);
+  Class* Module::init(State& S, Environment& env) {
+    Class* mod = env.lookup(S, "Module").as_class();
+    mod->add_method(S, "add_method", module_add, 2);
+    mod->add_method(S, "::", module_access, 1);
     return mod;
   }
 
-  Module::Module(Class* mod, String& name)
-    : MemoryObject(new Class(Class::Boot, mod->klass()->klass(), mod, name))
+  Module::Module(State& S, Class* mod, String& name)
+    : MemoryObject(new(S) Class(S, Class::Boot, mod->klass()->klass(), mod, name))
+    , Attributes(S)
   {}
 
   Method* Module::lookup(String& name) {
     return klass()->lookup(name);
   }
 
-  void Module::add_method(const char* name, SimpleFunc func, int arity) {
-    klass()->add_method(name, func, arity);
+  void Module::add_method(State& S, const char* name,
+                          SimpleFunc func, int arity)
+  {
+    klass()->add_method(S, name, func, arity);
   }
 
-  void Module::add_native_method(const char* name, Method* m) {
-    klass()->add_native_method(name, m);
+  void Module::add_native_method(State& S, const char* name, Method* m) {
+    klass()->add_native_method(S, name, m);
   }
 
 }

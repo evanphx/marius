@@ -10,6 +10,17 @@ namespace marius {
     std::vector<HandleSet*> sets_;
 
   public:
+
+    typedef std::vector<HandleSet*>::iterator iterator;
+
+    iterator begin() {
+      return sets_.begin();
+    }
+
+    iterator end() {
+      return sets_.end();
+    }
+
     HandleSet* pull() {
       HandleSet* s = 0;
 

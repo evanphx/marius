@@ -5,18 +5,23 @@
 #include "simple_func.hpp"
 #include "memory_object.hpp"
 
+#include "gc_allocated.hpp"
+
 namespace marius {
   class VM;
   class Environment;
   class Code;
   class Closure;
+  class GCImpl;
 
-  class Method {
+  class Method : public GCAllocated {
     String& scope_;
     SimpleFunc func_;
     Code* code_;
     int arity_;
     Closure* closure_;
+
+    friend class GCImpl;
 
   public:
     Method(String& scope, SimpleFunc func, int arity, Closure* closure=0);
@@ -38,7 +43,7 @@ namespace marius {
       return scope_;
     }
 
-    String& name();
+    String& name(State& S);
 
     OOP closed_over_variable(int depth, int idx);
     void set_closed_over_variable(int depth, int idx, OOP val);

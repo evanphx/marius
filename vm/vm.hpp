@@ -20,13 +20,22 @@ namespace marius {
   class FrameTracker;
 
   class VM {
+    unsigned stack_size_;
     OOP* stack_;
+    unsigned frames_size_;
     StackFrame* frames_;
     StackFrame* top_frame_;
     bool debug_;
+    GC gc_;
+
+    friend class GCImpl;
 
   public:
     VM(bool debug=false);
+
+    GC& gc() {
+      return gc_;
+    }
 
     OOP run(State& S, Method* meth);
     OOP run(State& S, Method* meth, OOP* fp);
@@ -41,7 +50,7 @@ namespace marius {
     OOP load_attr(State& S, String& name, OOP recv, OOP* fp);
 
     String& as_string(OOP val);
-    void print_call_stack();
+    void print_call_stack(State& S);
 
     friend class FrameTracker;
   };

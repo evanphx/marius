@@ -4,22 +4,24 @@
 #include "string.hpp"
 
 namespace marius {
-  Class::Class(enum Boot, Class* cls, Class* sup, String& name)
+  Class::Class(State& S, enum Boot, Class* cls, Class* sup, String& name)
     : MemoryObject(cls)
+    , Attributes(S)
     , name_(name)
     , superclass_(sup)
   {}
 
-  Class::Class(Class* sup, String& name)
-    : MemoryObject(new Class(Class::Boot,
+  Class::Class(State& S, Class* sup, String& name)
+    : MemoryObject(new(S) Class(S, Class::Boot,
                           sup->klass()->klass(),  sup->klass(),
-                          Class::metaclass_name(name)))
+                          Class::metaclass_name(S, name)))
+    , Attributes(S)
     , name_(name)
     , superclass_(sup)
   {}
 
-  String& Class::metaclass_name(String& name) {
-    return String::internalize(std::string("<MetaClass:") + name.c_str() + ">");
+  String& Class::metaclass_name(State& S, String& name) {
+    return String::internalize(S, std::string("<MetaClass:") + name.c_str() + ">");
   }
 
   Method* Class::lookup(String& name) {
@@ -37,22 +39,26 @@ namespace marius {
     return 0;
   }
 
-  void Class::add_method(const char* name, SimpleFunc func, int arity) {
-    String& s = String::internalize(name);
+  void Class::add_method(State& S, const char* name,
+                         SimpleFunc func, int arity)
+  {
+    String& s = String::internalize(S, name);
 
-    Method* meth = new Method(name_, func, arity);
-
-    method_table_.add(s, meth);
-  }
-
-  void Class::add_native_method(const char* name, Method* meth) {
-    String& s = String::internalize(name);
+    Method* meth = new(S) Method(name_, func, arity);
 
     method_table_.add(s, meth);
   }
 
-  void Class::add_class_method(const char* name, SimpleFunc func, int arity) {
-    klass()->add_method(name, func, arity);
+  void Class::add_native_method(State& S, const char* name, Method* meth) {
+    String& s = String::internalize(S, name);
+
+    method_table_.add(s, meth);
+  }
+
+  void Class::add_class_method(State& S, const char* name,
+                               SimpleFunc func, int arity)
+  {
+    klass()->add_method(S, name, func, arity);
   }
 
   static Class** base_classes_;
@@ -65,7 +71,7 @@ namespace marius {
     return base_classes_[idx];
   }
 
-  OOP Class::methods() {
-    return method_table_.methods();
+  OOP Class::methods(State& S) {
+    return method_table_.methods(S);
   }
 }

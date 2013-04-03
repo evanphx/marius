@@ -21,6 +21,7 @@ namespace marius {
   };
 
   class Parser {
+    State& S;
     char* buffer_;
     int size_;
     char* end_;
@@ -40,8 +41,9 @@ namespace marius {
     Code* code_;
 
   public:
-    Parser(char* buf, int sz=-1)
-      : buffer_(strdup(buf))
+    Parser(State& S, char* buf, int sz=-1)
+      : S(S)
+      , buffer_(strdup(buf))
       , size_(sz == -1 ? strlen(buf) : sz)
       , end_(buf + size_)
       , pos_(buf)
@@ -54,8 +56,9 @@ namespace marius {
       value_.i = 0;
     }
 
-    Parser(FILE* file)
-      : buffer_(0)
+    Parser(State& S, FILE* file)
+      : S(S)
+      , buffer_(0)
       , size_(0)
       , end_(0)
       , pos_(0)

@@ -15,7 +15,7 @@ namespace marius {
   }
 
   void ParserState::set_top(ast::Node* b) {
-    ast::Argument* a = new ast::Argument(String::internalize("self"), -1);
+    ast::Argument* a = new ast::Argument(String::internalize(S, "self"), -1);
 
     top_ = new ast::Scope(b, context_->local_names, a);
   }
@@ -27,10 +27,10 @@ namespace marius {
   ast::Node* ParserState::ast_class(String& name, ast::Node* super,
                                     ast::Node* body)
   {
-    ast::Argument* a = new ast::Argument(String::internalize("self"), -1);
+    ast::Argument* a = new ast::Argument(String::internalize(S, "self"), -1);
 
     if(!super) {
-      super = named(String::internalize("Object"));
+      super = named(String::internalize(S, "Object"));
     }
 
     ast::Node* n = new ast::Class(name, super,
@@ -51,7 +51,7 @@ namespace marius {
   }
 
   ast::Node* ParserState::ast_def(String& name, ast::Node* b) {
-    ast::Argument* a = new ast::Argument(String::internalize("self"), -1);
+    ast::Argument* a = new ast::Argument(String::internalize(S, "self"), -1);
 
     ast::Node* n = new ast::Def(name, 
                      new ast::Scope(b, context_->local_names,
@@ -120,7 +120,7 @@ namespace marius {
   }
 
   ast::Call* ParserState::ast_binop(const char* s, ast::Node* a, ast::Node* b) {
-    return new ast::Call(String::internalize(s), a, ast::Arguments::wrap(b));
+    return new ast::Call(String::internalize(S, s), a, ast::Arguments::wrap(b));
   }
 
   ast::Node* ParserState::number(int a) {
@@ -176,12 +176,31 @@ namespace marius {
     return n;
   }
 
+  ast::Node* ParserState::tuple() {
+    ast::Node* n = 0;
+
+    ast::Arguments* args = new ast::Arguments(arg_info_.nodes, arg_info_.keywords);
+
+    n = new ast::Tuple(args);
+
+    arg_info_ = arg_infos_.back();
+    arg_infos_.pop_back();
+
+    assert(n);
+
+    return n;
+  }
+
   ast::Node* ParserState::if_cond(ast::Node* cond, ast::Node* body) {
     return new ast::IfCond(cond, body);
   }
 
   ast::Node* ParserState::unless(ast::Node* cond, ast::Node* body) {
     return new ast::Unless(cond, body);
+  }
+
+  ast::Node* ParserState::while_(ast::Node* cond, ast::Node* body) {
+    return new ast::While(cond, body);
   }
 
   ast::Node* ParserState::ast_nil() {

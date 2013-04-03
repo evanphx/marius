@@ -17,26 +17,26 @@ namespace marius {
     return top_->attribute(name);
   }
 
-  OOP Environment::lookup(const char* name) {
-    return lookup(String::internalize(name));
+  OOP Environment::lookup(State& S, const char* name) {
+    return lookup(String::internalize(S, name));
   }
 
-  Class* Environment::new_class(const char* name, Class* sup) {
-    String& s = String::internalize(name);
+  Class* Environment::new_class(State& S, const char* name, Class* sup) {
+    String& s = String::internalize(S, name);
 
     if(!sup) {
-      sup = lookup("Class").as_class();
+      sup = lookup(S, "Class").as_class();
     }
 
-    Class* cls = new Class(sup, s);
+    Class* cls = new(S) Class(S, sup, s);
 
-    bind(s, cls);
+    bind(S, s, cls);
 
     return cls;
   }
 
-  void Environment::bind(String& name, OOP val) {
-    top_->set_attribute(name, val);
+  void Environment::bind(State& S, String& name, OOP val) {
+    top_->set_attribute(S, name, val);
   }
 
   static Handle int_cast(State& S, Handle recv, Arguments& args) {
@@ -44,7 +44,7 @@ namespace marius {
 
     if(obj->type() == OOP::eInteger) return obj;
 
-    Method* meth = obj->find_method(String::internalize("to_s"));
+    Method* meth = obj->find_method(String::internalize(S, "to_s"));
     check(meth);
 
     Arguments out_args(S, 0, S.last_fp);
@@ -66,7 +66,7 @@ namespace marius {
     char buf[128];
 
     snprintf(buf, sizeof(buf), "%d", recv->int_value());
-    return handle(S, String::internalize(buf));
+    return handle(S, String::internalize(S, buf));
   }
 
   static Handle int_equal(State& S, Handle recv, Arguments& args) {
@@ -77,7 +77,7 @@ namespace marius {
   static Handle class_new_subclass(State& S, Handle recv, Arguments& args) {
     String& name = args[0]->as_string();
 
-    return handle(S, OOP(S.env().new_class(name.c_str(), recv->as_class())));
+    return handle(S, OOP(S.env().new_class(S, name.c_str(), recv->as_class())));
   }
 
   static Handle add_method(State& S, Handle recv, Arguments& args) {
@@ -85,7 +85,7 @@ namespace marius {
 
     Method* m = args[1]->as_method();
 
-    recv->as_class()->add_native_method(name.c_str(), m);
+    recv->as_class()->add_native_method(S, name.c_str(), m);
 
     return handle(S, OOP::nil());
   }
@@ -93,7 +93,7 @@ namespace marius {
   static Handle new_instance(State& S, Handle recv, Arguments& args) {
     Class* cls = recv->as_class();
 
-    return handle(S, OOP(new User(cls)));
+    return handle(S, OOP(new(S) User(S, cls)));
   }
 
   static Handle run_code(State& S, Handle recv, Arguments& args) {
@@ -108,8 +108,8 @@ namespace marius {
 
     std::string n = m->scope().c_str();
 
-    m = new Method(
-                  String::internalize(n + "." + cls->name().c_str()),
+    m = new(S) Method(
+                  String::internalize(S, n + "." + cls->name().c_str()),
                   *m->code(), m->closure());
 
     return handle(S, S.vm().run(S, m, args.frame()));
@@ -136,7 +136,7 @@ namespace marius {
   }
 
   static Handle object_methods(State& S, Handle recv, Arguments& args) {
-    return handle(S, recv->klass()->methods());
+    return handle(S, recv->klass()->methods(S));
   }
 
   static Handle tuple_find_all(State& S, Handle recv, Arguments& args) {
@@ -157,7 +157,7 @@ namespace marius {
       }
     }
 
-    Tuple* out = new Tuple(found.size());
+    Tuple* out = new(S) Tuple(S, found.size());
     for(size_t i = 0; i < found.size(); i++) {
       out->set(i, found[i]);
     }
@@ -192,65 +192,68 @@ namespace marius {
   void Environment::init_ontology(State& S) {
     check(!top_);
 
-    String& on = String::internalize("Object");
-    Class* o = new Class(Class::Boot, 0, 0, on);
+    String& on = String::internalize(S, "Object");
+    Class* o = new(S) Class(S, Class::Boot, 0, 0, on);
 
-    String& cn = String::internalize("Class");
-    Class* c = new Class(Class::Boot, 0, o, cn);
+    String& cn = String::internalize(S, "Class");
+    Class* c = new(S) Class(S, Class::Boot, 0, o, cn);
 
-    String& mn = String::internalize("MetaClass");
-    Class* m = new Class(Class::Boot, 0, 0, mn);
+    String& mn = String::internalize(S, "MetaClass");
+    Class* m = new(S) Class(S, Class::Boot, 0, 0, mn);
 
-    Class* mco = new Class(Class::Boot, m, c, Class::metaclass_name(on));
+    Class* mco = new(S) Class(S, Class::Boot, m, c,
+                              Class::metaclass_name(S, on));
     o->klass_ = mco;
 
-    Class* mcc = new Class(Class::Boot, m, mco, Class::metaclass_name(cn));
+    Class* mcc = new(S) Class(S, Class::Boot, m, mco,
+                              Class::metaclass_name(S, cn));
     c->klass_ = mcc;
 
-    Class* mcm = new Class(Class::Boot, m, mco, Class::metaclass_name(mn));
+    Class* mcm = new(S) Class(S, Class::Boot, m, mco,
+                              Class::metaclass_name(S, mn));
     m->klass_ = mcm;
 
-    Class* mod = new Class(o, String::internalize("Module"));
+    Class* mod = new(S) Class(S, o, String::internalize(S, "Module"));
 
-    top_ = new Module(mod, String::internalize("lang"));
+    top_ = new(S) Module(S, mod, String::internalize(S, "lang"));
 
-    bind(cn, c);
-    bind(mn, m);
-    bind(String::internalize("Module"), mod);
+    bind(S, cn, c);
+    bind(S, mn, m);
+    bind(S, String::internalize(S, "Module"), mod);
 
-    o->add_method("print", object_print, 0);
+    o->add_method(S, "print", object_print, 0);
 
-    c->add_method("new_subclass", class_new_subclass, 1);
-    c->add_method("run_body", run_class_body, 1);
+    c->add_method(S, "new_subclass", class_new_subclass, 1);
+    c->add_method(S, "run_body", run_class_body, 1);
 
-    c->add_method("add_method", add_method, 2);
-    c->add_method("new", new_instance, 0);
+    c->add_method(S, "add_method", add_method, 2);
+    c->add_method(S, "new", new_instance, 0);
 
-    o->add_method("methods", object_methods, 0);
+    o->add_method(S, "methods", object_methods, 0);
 
-    Class* i = new_class("Integer");
-    i->add_class_method("cast", int_cast, 1);
-    i->add_method("+", int_plus, 1);
-    i->add_method("to_s", int_to_s, 0);
-    i->add_method("==", int_equal, 1);
+    Class* i = new_class(S, "Integer");
+    i->add_class_method(S, "cast", int_cast, 1);
+    i->add_method(S, "+", int_plus, 1);
+    i->add_method(S, "to_s", int_to_s, 0);
+    i->add_method(S, "==", int_equal, 1);
 
-    Class* n = new_class("NilClass");
+    Class* n = new_class(S, "NilClass");
 
-    Class* s = new_class("String");
+    Class* s = new_class(S, "String");
 
-    Class* mc = new_class("Method");
-    Class* d = new_class("Code");
-    mc->add_method("eval", run_code, -1);
-    mc->add_method("call", method_call, -1);
+    Class* mc = new_class(S, "Method");
+    Class* d = new_class(S, "Code");
+    mc->add_method(S, "eval", run_code, -1);
+    mc->add_method(S, "call", method_call, -1);
 
-    Class* t = new_class("TrueClass");
-    Class* f = new_class("FalseClass");
+    Class* t = new_class(S, "TrueClass");
+    Class* f = new_class(S, "FalseClass");
 
-    Class* tuple = new_class("Tuple");
-    tuple->add_method("find_all", tuple_find_all, 1);
-    tuple->add_method("each", tuple_each, 1);
+    Class* tuple = new_class(S, "Tuple");
+    tuple->add_method(S, "find_all", tuple_find_all, 1);
+    tuple->add_method(S, "each", tuple_each, 1);
 
-    Class** tbl = new Class*[OOP::TotalTypes];
+    Class** tbl = new(S) Class*[OOP::TotalTypes];
 
     tbl[OOP::eNil] = n;
     tbl[OOP::eClass] = c;
@@ -260,27 +263,27 @@ namespace marius {
     tbl[OOP::eUser] = 0;
     tbl[OOP::eTrue] = t;
     tbl[OOP::eFalse] = f;
-    tbl[OOP::eUnwind] = new_class("Unwind");
+    tbl[OOP::eUnwind] = new_class(S, "Unwind");
     tbl[OOP::eMethod] = mc;
     tbl[OOP::eTuple] = tuple;
 
     Class::init_base(tbl);
 
-    Module::init(*this);
+    Module::init(S, *this);
 
-    String& io_n = String::internalize("io");
+    String& io_n = String::internalize(S, "io");
 
-    Module* io = new Module(mod, io_n);
-    io->add_method("puts", io_puts, 1);
-    io->add_method("print", io_print, 1);
+    Module* io = new(S) Module(S, mod, io_n);
+    io->add_method(S, "puts", io_puts, 1);
+    io->add_method(S, "print", io_print, 1);
 
-    bind(io_n, io);
+    bind(S, io_n, io);
 
     Class* importer = init_import(S);
 
     String::init(S);
   
-    globals_ = new Closure(4);
+    globals_ = new(S) Closure(4);
     globals_->set(0, o);
     globals_->set(1, io);
     globals_->set(2, c);

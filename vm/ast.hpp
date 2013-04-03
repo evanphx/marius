@@ -34,8 +34,11 @@ namespace marius {
       LocalMap& lm_;
 
     public:
-      State(LocalMap& lm)
+      marius::State& MS;
+
+      State(marius::State& ms, LocalMap& lm)
         : lm_(lm)
+        , MS(ms)
       {}
 
       LocalMap& lm() {
@@ -53,7 +56,7 @@ namespace marius {
       }
 
       int string(const char* n) {
-        return string(String::internalize(n));
+        return string(String::internalize(MS, n));
       }
 
       int code(Code* code) {
@@ -70,6 +73,10 @@ namespace marius {
 
       Label label() {
         return Label(buffer.size());
+      }
+
+      int pos() {
+        return buffer.size();
       }
 
       void set_label(Label l) {
@@ -228,6 +235,18 @@ namespace marius {
       void accept(Visitor* V);
     };
 
+    class Tuple : public Node {
+      Arguments* args_;
+
+    public:
+      Tuple(Arguments* a)
+        : args_(a)
+      {}
+
+      int drive(State& S, int t);
+      void accept(Visitor* V);
+    };
+
     class Call : public Node {
     protected:
       String& name_;
@@ -380,6 +399,20 @@ namespace marius {
     public:
       Unless(ast::Node* r, ast::Node* b)
         : recv_(r)
+        , body_(b)
+      {}
+
+      int drive(State& S, int t);
+      void accept(Visitor* V);
+    };
+
+    class While : public Node {
+      ast::Node* cond_;
+      ast::Node* body_;
+
+    public:
+      While(ast::Node* r, ast::Node* b)
+        : cond_(r)
         , body_(b)
       {}
 
@@ -595,6 +628,8 @@ namespace marius {
       virtual void visit(Cast* s) {}
       virtual void visit(Raise* r) {}
       virtual void visit(Not* r) {}
+      virtual void visit(Tuple* t) {}
+      virtual void visit(While* t) {}
     };
 
   }

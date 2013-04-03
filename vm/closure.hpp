@@ -3,11 +3,17 @@
 
 #include "oop.hpp"
 
+#include "gc_allocated.hpp"
+
 namespace marius {
-  class Closure {
+  class GCImpl;
+
+  class Closure : public GCAllocated {
     Closure* parent_;
     int size_;
     OOP* values_;
+
+    friend class GCImpl;
 
   public:
     Closure(int size, Closure* parent=0)
