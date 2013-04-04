@@ -12,7 +12,20 @@ namespace marius {
 
   std::map<std::string, String*> mapping_;
 
-  String& String::internalize(State& S, std::string str) {
+
+  std::map<std::string, String*>& String::internal() {
+    return mapping_;
+  }
+
+  String* String::internalize(State& S, std::string str) {
+    char* cstr = new(S) char[str.size()+1];
+    memcpy(cstr, str.c_str(), str.size());
+    cstr[str.size()] = 0;
+
+    String* obj = new(S) String(cstr);
+    return obj;
+
+    /*
     std::map<std::string, String*>::iterator i = mapping_.find(str);
     if(i != mapping_.end()) return *((*i).second);
 
@@ -22,9 +35,10 @@ namespace marius {
         std::map<std::string, String*>::value_type(str, obj));
 
     return *obj;
+    */
   }
 
-  String& String::convert(State& S, OOP obj) {
+  String* String::convert(State& S, OOP obj) {
     if(obj.type() == OOP::eString) {
       return obj.as_string();
     }
@@ -50,27 +64,34 @@ namespace marius {
     }
   }
 
-  bool String::equal(String& o) {
-    if(bytelen_ != o.bytelen_) return false;
-    return memcmp(c_str(), o.c_str(), bytelen_) == 0;
+  bool String::equal(String* o) {
+    if(bytelen_ != o->bytelen_) return false;
+    return memcmp(c_str(), o->c_str(), bytelen_) == 0;
+  }
+
+  int String::compare(const String* o) const {
+    if(bytelen_ < o->bytelen_) return -1;
+    if(bytelen_ > o->bytelen_) return 1;
+
+    return memcmp(c_str(), o->c_str(), bytelen_);
   }
 
   namespace {
     Handle byte_size(State& S, Handle recv, Arguments& args) {
-      String& s = recv->as_string();
-      return handle(S, OOP::integer(s.bytelen()));
+      String* s = recv->as_string();
+      return handle(S, OOP::integer(s->bytelen()));
     }
 
     Handle char_size(State& S, Handle recv, Arguments& args) {
-      String& s = recv->as_string();
-      return handle(S, OOP::integer(s.charlen()));
+      String* s = recv->as_string();
+      return handle(S, OOP::integer(s->charlen()));
     }
 
     Handle prefix_p(State& S, Handle recv, Arguments& args) {
-      String& s = recv->as_string();
-      String& s2 = args[0]->as_string();
+      String* s = recv->as_string();
+      String* s2 = args[0]->as_string();
 
-      if(strncmp(s.c_str(), s2.c_str(), s2.bytelen()) == 0) {
+      if(strncmp(s->c_str(), s2->c_str(), s2->bytelen()) == 0) {
         return handle(S, OOP::true_());
       } else {
         return handle(S, OOP::false_());

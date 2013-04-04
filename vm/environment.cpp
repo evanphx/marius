@@ -13,7 +13,7 @@
 #include <iostream>
 
 namespace marius {
-  OOP Environment::lookup(String& name) {
+  OOP Environment::lookup(String* name) {
     return top_->attribute(name);
   }
 
@@ -22,7 +22,7 @@ namespace marius {
   }
 
   Class* Environment::new_class(State& S, const char* name, Class* sup) {
-    String& s = String::internalize(S, name);
+    String* s = String::internalize(S, name);
 
     if(!sup) {
       sup = lookup(S, "Class").as_class();
@@ -35,7 +35,7 @@ namespace marius {
     return cls;
   }
 
-  void Environment::bind(State& S, String& name, OOP val) {
+  void Environment::bind(State& S, String* name, OOP val) {
     top_->set_attribute(S, name, val);
   }
 
@@ -75,17 +75,17 @@ namespace marius {
   }
 
   static Handle class_new_subclass(State& S, Handle recv, Arguments& args) {
-    String& name = args[0]->as_string();
+    String* name = args[0]->as_string();
 
-    return handle(S, OOP(S.env().new_class(S, name.c_str(), recv->as_class())));
+    return handle(S, OOP(S.env().new_class(S, name->c_str(), recv->as_class())));
   }
 
   static Handle add_method(State& S, Handle recv, Arguments& args) {
-    String& name = args[0]->as_string();
+    String* name = args[0]->as_string();
 
     Method* m = args[1]->as_method();
 
-    recv->as_class()->add_native_method(S, name.c_str(), m);
+    recv->as_class()->add_native_method(S, name->c_str(), m);
 
     return handle(S, OOP::nil());
   }
@@ -106,10 +106,10 @@ namespace marius {
     Class* cls = recv->as_class();
     Method* m =  args[0]->as_method();
 
-    std::string n = m->scope().c_str();
+    std::string n = m->scope()->c_str();
 
     m = new(S) Method(
-                  String::internalize(S, n + "." + cls->name().c_str()),
+                  String::internalize(S, n + "." + cls->name()->c_str()),
                   *m->code(), m->closure());
 
     return handle(S, S.vm().run(S, m, args.frame()));
@@ -125,13 +125,13 @@ namespace marius {
 
   static Handle io_puts(State& S, Handle recv, Arguments& args) {
     Handle arg = args[0];
-    puts(String::convert(S, *arg).c_str());
+    puts(String::convert(S, *arg)->c_str());
     return handle(S, OOP::nil());
   }
 
   static Handle io_print(State& S, Handle recv, Arguments& args) {
     Handle arg = args[0];
-    printf("%s", String::convert(S, *arg).c_str());
+    printf("%s", String::convert(S, *arg)->c_str());
     return handle(S, OOP::nil());
   }
 
@@ -192,13 +192,13 @@ namespace marius {
   void Environment::init_ontology(State& S) {
     check(!top_);
 
-    String& on = String::internalize(S, "Object");
+    String* on = String::internalize(S, "Object");
     Class* o = new(S) Class(S, Class::Boot, 0, 0, on);
 
-    String& cn = String::internalize(S, "Class");
+    String* cn = String::internalize(S, "Class");
     Class* c = new(S) Class(S, Class::Boot, 0, o, cn);
 
-    String& mn = String::internalize(S, "MetaClass");
+    String* mn = String::internalize(S, "MetaClass");
     Class* m = new(S) Class(S, Class::Boot, 0, 0, mn);
 
     Class* mco = new(S) Class(S, Class::Boot, m, c,
@@ -271,7 +271,7 @@ namespace marius {
 
     Module::init(S, *this);
 
-    String& io_n = String::internalize(S, "io");
+    String* io_n = String::internalize(S, "io");
 
     Module* io = new(S) Module(S, mod, io_n);
     io->add_method(S, "puts", io_puts, 1);

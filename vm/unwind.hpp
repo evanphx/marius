@@ -18,10 +18,10 @@ namespace marius {
       return message_;
     }
 
-    static OOP import_error(State& S, String& n);
+    static OOP import_error(State& S, String* n);
     static OOP arg_error(State& S, int expected, int actual);
-    static OOP name_error(State& S, String& name);
-    static OOP generic_error(State& S, String& str);
+    static OOP name_error(State& S, String* name);
+    static OOP generic_error(State& S, String* str);
   };
 }
 

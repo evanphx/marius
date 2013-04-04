@@ -9,8 +9,8 @@ namespace marius {
     for(Table::iterator i = table_.begin();
         i != table_.end();
         ++i) {
-      String& s = (*i).first;
-      std::cout << s.c_str() << std::endl;
+      String* s = (*i).first;
+      std::cout << s->c_str() << std::endl;
     }
   }
 
@@ -22,7 +22,7 @@ namespace marius {
     for(Table::iterator i = table_.begin();
         i != table_.end();
         ++i) {
-      String& s = (*i).first;
+      String* s = (*i).first;
       tup->set(idx++, OOP(s));
     }
 

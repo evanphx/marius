@@ -3,7 +3,6 @@
 #include "util/immix.hpp"
 #include "oop.hpp"
 #include "bindings.hpp"
-#include "heap_flags.hpp"
 
 #include "method.hpp"
 #include "code.hpp"
@@ -22,23 +21,48 @@
 namespace marius {
   class GCImpl;
 
+  static bool cGCDebug = false;
+
   /**
    * A header prepended to all allocates */
   struct GCInfo {
     unsigned bytes;
     unsigned flags;
 
+    OOP forwarded;
+
     static GCInfo* of(memory::Address addr) {
       return (addr - sizeof(GCInfo)).as<GCInfo>();
     }
 
+    GCInfo(int bytes)
+      : bytes(bytes)
+      , flags(0)
+    {}
+
+    const static int cMarkMask = 0x3;
+    const static int cForwardedFlag = 0x4;
+
     void mark(int val) {
-      flags = 0;
+      flags &= ~cMarkMask;
       flags |= val;
     }
 
     bool marked(int val) {
-      return (flags & 3) == val;
+      return (flags & cMarkMask) == val;
+    }
+
+    bool forwarded_p() {
+      return (flags & cForwardedFlag);
+    }
+
+    OOP forwarded_object() {
+      return forwarded;
+    }
+
+    void set_forward(OOP val) {
+      forwarded = val;
+      flags |= cForwardedFlag;
     }
   };
 
@@ -82,39 +106,43 @@ namespace marius {
 
   public:
     void added_chunk(int count) {
-      std::cout << "[GC IMMIX: Added a chunk: " << count << "]\n";
+      if(cGCDebug) {
+        std::cout << "[GC IMMIX: Added a chunk: " << count << "]\n";
+      }
     }
 
     void blocks_left(int count) {
-      if(count == 1) {
+      if(count == 0) {
         gc_soon_ = true;
-        std::cout << "[GC IMMIX: last block]\n";
+        if(cGCDebug) {
+          std::cout << "[GC IMMIX: last block]\n";
+        }
       }
     }
 
     void set_forwarding_object(OOP from, OOP to) {
-      /*
-      HeapFlags* ff = from->heap_flags();
-      HeapFlags* tf = to->heap_flags();
+      memory::Address addr = object_address(from);
 
-      if(ff && tf) {
-        ff->set_forward(tf);
-      } else {
-        std::cout << "[GC IMMIX: WARNING forwarded non-heap objects]\n";
-      }
-      */
+      if(addr.is_null()) return;
+
+      GCInfo* info = GCInfo::of(addr);
+
+      memory::Address to_addr = object_address(to);
+
+      printf("Moved %p to %p\n", addr.ptr(), to_addr.ptr());
+      info->set_forward(to);
     }
 
     option<OOP> forwarding_object(OOP obj) {
-      /*
-      HeapFlags* hf = obj.heap_flags();
+      memory::Address addr = object_address(obj);
 
-      if(hf) {
-        return option<OOP>(hf->forward());
-      } else {
-        return option<OOP>();
+      if(!addr.is_null()) {
+        check(gc_.allocated_address(addr));
+
+        GCInfo* info = GCInfo::of(addr);
+        if(info->forwarded_p()) return info->forwarded_object();
       }
-      */
+
       return option<OOP>();
     }
 
@@ -127,32 +155,48 @@ namespace marius {
     }
 
     OOP copy(OOP original, immix::Allocator& alloc) {
-      /*
-      unsigned bytes = original.byte_size();
+      memory::Address orig_addr = object_address(original);
+
+      unsigned bytes = size(orig_addr);
 
       if(bytes == 0) {
         std::cout << "[GC IMMIX: WARNING attempted to copy 0 byte object]\n";
         return original;
       }
 
-      memory::Address addr = alloc.allocate(bytes);
+      unsigned alloc_bytes = bytes + sizeof(GCInfo);
 
-      memory::Address orig_addr = object_address(original);
+      bytes_allocated_ += alloc_bytes;
 
-      addr.copy(orig_addr, orig->bytes());
+      memory::Address addr = alloc.allocate(alloc_bytes);
+      if(addr.is_null()) {
+        std::cout << "ERRERRORR!\n";
+        abort();
+      }
 
-      return OOP::copy_of(original, addr);
-      */
-      return OOP::nil();
+      new(addr) GCInfo(bytes);
+
+      memory::Address copy = addr + sizeof(GCInfo);
+
+      copy.copy(orig_addr, bytes);
+
+      return OOP::copy_of(original, copy);
     }
 
-    OOP mark(OOP val) {
-      return gc_.mark_object(val, allocator_);
-    }
+    template <typename T>
+      void mark_spec(T obj) {
+        OOP out = gc_.mark_object(OOP(*obj), allocator_);
+        *((void**)obj) = out.raw_;
+      }
 
-    memory::Address mark(memory::Address addr, unsigned size) {
-      GCInfo::of(addr)->mark(mark_);
-      return gc_.mark_address(addr, size);
+    template <typename T>
+      void mark_raw(T addr) {
+        OOP out = gc_.mark_object(OOP::raw((void*)*addr), allocator_);
+        *((void**)addr) = out.raw_;
+      }
+
+    void mark_obj(OOP* obj) {
+      *obj = gc_.mark_object(OOP(*obj), allocator_);
     }
 
     bool mark_object(OOP val, 
@@ -173,20 +217,22 @@ namespace marius {
     }
 
     void mark_attributes(Bindings& attrs) {
+      mark_raw(&attrs.entries_);
+
       Bindings::Entry** tbl = attrs.entries_;
 
-      mark(tbl, sizeof(Bindings::Entry*) * attrs.capa_);
-
       for(int i = 0; i < attrs.capa_; i++) {
+        if(!tbl[i]) continue;
+
+        mark_raw(&tbl[i]);
         Bindings::Entry* e = tbl[i];
 
-        if(!e) continue;
-
-        mark(e, sizeof(Bindings::Entry));
-
         while(e) {
-          mark(OOP(e->key));
-          mark(OOP(e->val));
+          mark_spec(&e->key);
+          mark_obj(&e->val);
+
+          if(e->next) mark_raw(&e->next);
+
           e = e->next;
         }
       }
@@ -200,29 +246,30 @@ namespace marius {
       case OOP::eTrue:
       case OOP::eFalse:
       case OOP::eInteger:
+      case OOP::eRaw:
         return;
       case OOP::eMethod:
         {
           Method* m = obj.method_;
-          mark(OOP(m->code_));
-          mark(OOP(m->scope_));
+          mark_spec(&m->code_);
+          mark_spec(&m->scope_);
         }
         return;
       case OOP::eCode:
         {
           Code* c = obj.code_;
-          mark(OOP(c->name_));
+          mark_spec(&c->name_);
         }
         return;
       case OOP::eClosure:
         {
           Closure* c = obj.closure_;
           if(c->parent_) {
-            mark(OOP(c->parent_));
+            mark_spec(&c->parent_);
           }
 
           for(int i = 0; i < c->size_; i++) {
-            mark(c->values_[i]);
+            mark_obj(&c->values_[i]);
           }
         }
         return;
@@ -230,18 +277,18 @@ namespace marius {
         {
           Tuple* t = obj.tuple_;
           for(size_t i = 0; i < t->size_; i++) {
-            mark(t->data_[i]);
+            mark_obj(&t->data_[i]);
           }
         }
         return;
       case OOP::eClass:
         {
           Class* c = obj.class_;
-          mark(OOP(c->klass_));
-          mark(OOP(c->name_));
+          mark_spec(&c->klass_);
+          mark_spec(&c->name_);
 
           if(c->superclass_) {
-            mark(OOP(c->superclass_));
+            mark_spec(&c->superclass_);
           }
 
           mark_attributes(c->attributes_);
@@ -250,18 +297,23 @@ namespace marius {
       case OOP::eModule:
         {
           Module* m = obj.module_;
-          mark(OOP(m->klass_));
+          mark_spec(&m->klass_);
           mark_attributes(m->attributes_);
         }
         return;
       case OOP::eUser:
         {
           User* u = obj.user_;
-          mark(OOP(u->klass_));
+          mark_spec(&u->klass_);
           mark_attributes(u->attributes_);
         }
         return;
       case OOP::eString:
+        {
+          String* str = obj.string_;
+          mark_raw(&str->data_);
+        }
+        return;
       case OOP::eUnwind:
       case OOP::TotalTypes:
         return;
@@ -272,52 +324,46 @@ namespace marius {
       return GCInfo::of(addr)->bytes;
     }
 
-    /**
-     * Called when the immix::GC object wishes to mark an object.
-     *
-     * @returns true if the object is not already marked, and in the Immix
-     * space; otherwise false.
-     */
-    bool mark_address(memory::Address addr,
-                      immix::GC<GCImpl, OOP>::MarkStack& ms)
-    {
-      /*
-      Object* obj = addr.as<Object>();
+    void print_block_stats() {
+      immix::Chunks& chunks = gc_.block_allocator().chunks();
+      immix::AllBlockIterator iter(chunks);
 
-      if(obj.marked_p(object_memory_->mark())) return false;
-      obj.mark(object_memory_->mark());
-      gc_->inc_marked_objects();
+      while(immix::Block* block = iter.next()) {
+        if(block->status() == immix::cFree) continue;
 
-      ms.push_back(addr);
-      if(obj.in_immix_p()) return true;
-
-      // If this is a young object, let the GC know not to try and mark
-      // the block it's in.
-      return false;
-      */
-      return false;
+        std::cout << block->address() << ": "
+                  << block->status_string()
+                  << " holes=" << block->holes()
+                  << " lines=" << block->lines_used()
+                  << " objects=" << block->objects()
+                  << " frag=" << block->fragmentation_ratio()
+                  << "\n";
+      }
     }
 
     void collect(State& S) {
-      std::cout << "[GC START]\n";
+      if(cGCDebug) {
+        std::cout << "[GC START]\n";
+      }
+
       gc_soon_ = false;
       gc_.clear_lines();
 
       Environment& e = S.env();
 
-      mark(OOP(e.globals()));
-      mark(OOP(e.top()));
+      mark_spec(&e.globals_);
+      mark_spec(&e.top_);
 
       VM& vm = S.vm();
 
       for(unsigned i = 0; i < vm.stack_size_; i++) {
-        mark(vm.stack_[i]);
+        mark_obj(&vm.stack_[i]);
       }
 
       StackFrame* sf = vm.frames_;
       while(sf >= vm.top_frame_) {
-        mark(OOP(sf->method));
-        mark(OOP(sf->closure));
+        mark_spec(&sf->method);
+        mark_spec(&sf->closure);
         sf--;
       }
 
@@ -332,9 +378,17 @@ namespace marius {
         OOP* pos = hset->oops_;
 
         while(pos < hset->pos_) {
-          mark(*pos);
+          mark_obj(pos);
           pos++;
         }
+      }
+
+      std::map<std::string, String*>& strings = String::internal();
+
+      for(std::map<std::string, String*>::iterator i = strings.begin();
+          i != strings.end();
+          ++i) {
+        mark_spec(&i->second);
       }
 
       gc_.process_mark_stack(allocator_);
@@ -348,27 +402,31 @@ namespace marius {
       immix::Chunks& chunks = gc_.block_allocator().chunks();
       immix::AllBlockIterator iter(chunks);
 
-      int live_bytes = 0;
-      int total_bytes = 0;
+      if(cGCDebug) {
+        int live_bytes = 0;
+        int total_bytes = 0;
 
-      while(immix::Block* block = iter.next()) {
-        total_bytes += immix::cBlockSize;
-        live_bytes += block->bytes_from_lines();
+        while(immix::Block* block = iter.next()) {
+          total_bytes += immix::cBlockSize;
+          live_bytes += block->bytes_from_lines();
 
-        std::cout << block->address() << ": "
-                  << block->status_string()
-                  << " holes=" << block->holes()
-                  << " lines=" << block->lines_used()
-                  << " objects=" << block->objects()
-                  << " frag=" << block->fragmentation_ratio()
-                  << "\n";
+          if(block->status() == immix::cFree) continue;
+
+          std::cout << block->address() << ": "
+                    << block->status_string()
+                    << " holes=" << block->holes()
+                    << " lines=" << block->lines_used()
+                    << " objects=" << block->objects()
+                    << " frag=" << block->fragmentation_ratio()
+                    << "\n";
+        }
+
+        double percentage_live = (double)live_bytes / (double)total_bytes;
+
+        std::cout << "[GC IMMIX: "
+                  << (int)(percentage_live * 100) << "% live "
+                  << ", " << live_bytes << "/" << total_bytes << "]\n";
       }
-
-      double percentage_live = (double)live_bytes / (double)total_bytes;
-
-      std::cout << "[GC IMMIX: "
-                << (int)(percentage_live * 100) << "% live "
-                << ", " << live_bytes << "/" << total_bytes << "]\n";
     }
   };
 
@@ -377,23 +435,26 @@ namespace marius {
   }
 
   memory::Address GC::allocate(unsigned bytes) {
-    bytes += sizeof(GCInfo);
+    unsigned alloc = bytes + sizeof(GCInfo);
 
-    impl_->bytes_allocated_ += bytes;
+    impl_->bytes_allocated_ += alloc;
 
-    memory::Address addr = impl_->allocator_.allocate(bytes);
+    memory::Address addr = impl_->allocator_.allocate(alloc);
+    if(addr.is_null()) {
+      std::cout << "ERRERRORR!\n";
+      abort();
+    }
 
-    GCInfo* info = addr.as<GCInfo>();
-
-    info->bytes = bytes;
-    info->flags = 0;
+    new(addr) GCInfo(bytes);
 
     return addr + sizeof(GCInfo);
   }
 
   void GC::collect(State& S) {
-    std::cout << "[GC IMMIX bytes_since_last="
-              << impl_->bytes_allocated_ << "\n";
+    if(cGCDebug) {
+      std::cout << "[GC IMMIX bytes_since_last="
+                << impl_->bytes_allocated_ << "\n";
+    }
 
     impl_->bytes_allocated_ = 0;
     impl_->collect(S);

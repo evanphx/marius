@@ -33,6 +33,10 @@ namespace memory {
       return reinterpret_cast<void*>(address_);
     }
 
+    void* ptr() const {
+      return reinterpret_cast<void*>(address_);
+    }
+
     Address operator+(int change) const {
       return Address(reinterpret_cast<void*>(address_ + change));
     }
@@ -67,7 +71,7 @@ namespace memory {
     }
 
     void copy(Address source, size_t size) {
-      memcpy(this, source, size);
+      memcpy(ptr(), source, size);
     }
 
     /**

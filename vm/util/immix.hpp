@@ -124,7 +124,16 @@ namespace immix {
    */
 
   struct BlockHeader {
+    int magic;
     Block* block;
+
+    static const int cMagic = 0xa3b9de83;
+
+    void validate() {
+      if(magic != cMagic) {
+        std::cout << "FAILED FAILED\n";
+      }
+    }
   };
 
 
@@ -267,6 +276,7 @@ namespace immix {
      * Marks a line of memory as in use.
      */
     void mark_line(int line) {
+      assert(line >= 0 && line < cLineTableSize);
       lines_[line] = 1;
     }
 
@@ -274,6 +284,7 @@ namespace immix {
      * Marks a line of memory as free.
      */
     void free_line(int line) {
+      assert(line >= 0 && line < cLineTableSize);
       lines_[line] = 0;
     }
 
@@ -281,6 +292,7 @@ namespace immix {
      * Returns true if +line+ is currently free.
      */
     bool is_line_free(int line) const {
+      assert(line >= 0 && line < cLineTableSize);
       return lines_[line] == 0;
     }
 
@@ -289,6 +301,7 @@ namespace immix {
      * the specified +line+.
      */
     int offset_of_line(int line) const {
+      assert(line >= 0 && line < cLineTableSize);
       return line * cLineSize;
     }
 
@@ -296,6 +309,7 @@ namespace immix {
      * Returns the memory Address of the start of the specified line.
      */
     Address address_of_line(int line) {
+      assert(line >= 0 && line < cLineTableSize);
       return address_ + (line * cLineSize);
     }
 
@@ -310,6 +324,7 @@ namespace immix {
     static Block* from_address(Address addr) {
       Address base = addr & ~cBlockMask;
       BlockHeader* header = base.as<BlockHeader>();
+      header->validate();
       return header->block;
     }
 
@@ -510,6 +525,7 @@ namespace immix {
         Block& block = blocks_[index];
         block.set_address(current);
         BlockHeader* header = current.as<BlockHeader>();
+        header->magic = BlockHeader::cMagic;
         header->block = &block;
         current += cBlockSize;
       }
@@ -826,7 +842,7 @@ namespace immix {
             hole_start_line_++;
           }
 
-          limit_ = block_->address_of_line(hole_start_line_);
+          limit_ = block_->address_of_line(hole_start_line_ - 1) + 1;
           return true;
         }
       }
@@ -1064,19 +1080,12 @@ namespace immix {
      * marking of an object, it calls back to ObjectDescriber to handle this.
      */
     Object mark_object(Object obj, Allocator& alloc) {
+      Address addr = desc.object_address(obj);
+      if(addr.is_null()) return obj;
+
       option<Object> fwd = desc.forwarding_object(obj);
 
-      if(fwd.set_p()) {
-        obj = *fwd;
-      }
-
-      // Returns false if addr is already marked, if so, we don't
-      // do the block marking logic again.
-      if(!desc.mark_object(obj, mark_stack_)) {
-        return obj;
-      }
-
-      Address addr = desc.object_address(obj);
+      if(fwd.set_p()) return *fwd;
 
       // Find the Block the address relates to
       Block* block = Block::from_address(addr);
@@ -1093,28 +1102,11 @@ namespace immix {
       // Mark the line(s) in the Block that this object occupies as in use
       block->mark_address(addr, desc.size(addr));
 
+      // Returns false if addr is already marked, if so, we don't
+      // do the block marking logic again.
+      desc.mark_object(obj, mark_stack_);
+
       return obj;
-    }
-
-    Address mark_address(Address addr, unsigned size) {
-      // Find the Block the address relates to
-      Block* block = Block::from_address(addr);
-      /*
-      if(block->status() == cEvacuate && !desc.pinned(addr)) {
-        // Block is marked for evacuation, so copy the object to a new Block
-        Object moved = desc.copy(obj, alloc);
-        desc.set_forwarding_object(obj, moved);
-
-        obj = moved;
-        addr = desc.object_address(obj);
-        block = Block::from_address(addr);
-      }
-      */
-
-      // Mark the line(s) in the Block that this object occupies as in use
-      block->mark_address(addr, size);
-
-      return addr;
     }
 
     /**

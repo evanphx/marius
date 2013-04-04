@@ -13,9 +13,9 @@ namespace marius {
     friend class GCImpl;
 
   public:
-    Module(State& S, Class* mod, String& name);
+    Module(State& S, Class* mod, String* name);
 
-    Method* lookup(String& name);
+    Method* lookup(String* name);
     void add_method(State& S, const char* name, SimpleFunc func, int arity);
     void add_native_method(State& S, const char* name, Method* m);
 

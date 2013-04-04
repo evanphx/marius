@@ -11,7 +11,7 @@ namespace ast {
     return new Arguments(nodes);
   }
 
-  Code* State::to_code(String& name, ArgMap& args, int cov) {
+  Code* State::to_code(String* name, ArgMap& args, int cov) {
     size_t sz = buffer.size();
     Instruction* seq = new Instruction[sz];
 

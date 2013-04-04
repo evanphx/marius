@@ -19,7 +19,7 @@
 namespace marius {
   namespace {
 
-    const char* find_path(State& S, String& req) {
+    const char* find_path(State& S, String* req) {
       std::vector<const char*>& lp = S.settings().load_path();
 
       char* path = new char[1024];
@@ -29,7 +29,7 @@ namespace marius {
           ++i) {
         strcat(path, *i);
         strcat(path, "/");
-        strcat(path, req.c_str());
+        strcat(path, req->c_str());
         strcat(path, ".mr");
 
         if(access(path, R_OK) == 0) return path;
@@ -40,7 +40,7 @@ namespace marius {
     }
 
     Handle import(State& S, Handle recv, Arguments& args) {
-      String& name = args[0]->as_string();
+      String* name = args[0]->as_string();
 
       const char* path = find_path(S, name);
 

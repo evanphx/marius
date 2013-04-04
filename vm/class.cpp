@@ -4,14 +4,14 @@
 #include "string.hpp"
 
 namespace marius {
-  Class::Class(State& S, enum Boot, Class* cls, Class* sup, String& name)
+  Class::Class(State& S, enum Boot, Class* cls, Class* sup, String* name)
     : MemoryObject(cls)
     , Attributes(S)
     , name_(name)
     , superclass_(sup)
   {}
 
-  Class::Class(State& S, Class* sup, String& name)
+  Class::Class(State& S, Class* sup, String* name)
     : MemoryObject(new(S) Class(S, Class::Boot,
                           sup->klass()->klass(),  sup->klass(),
                           Class::metaclass_name(S, name)))
@@ -20,11 +20,11 @@ namespace marius {
     , superclass_(sup)
   {}
 
-  String& Class::metaclass_name(State& S, String& name) {
-    return String::internalize(S, std::string("<MetaClass:") + name.c_str() + ">");
+  String* Class::metaclass_name(State& S, String* name) {
+    return String::internalize(S, std::string("<MetaClass:") + name->c_str() + ">");
   }
 
-  Method* Class::lookup(String& name) {
+  Method* Class::lookup(String* name) {
     Method* meth;
 
     Class* cls = this;
@@ -42,7 +42,7 @@ namespace marius {
   void Class::add_method(State& S, const char* name,
                          SimpleFunc func, int arity)
   {
-    String& s = String::internalize(S, name);
+    String* s = String::internalize(S, name);
 
     Method* meth = new(S) Method(name_, func, arity);
 
@@ -50,7 +50,7 @@ namespace marius {
   }
 
   void Class::add_native_method(State& S, const char* name, Method* meth) {
-    String& s = String::internalize(S, name);
+    String* s = String::internalize(S, name);
 
     method_table_.add(s, meth);
   }

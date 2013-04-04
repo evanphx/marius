@@ -14,11 +14,11 @@ namespace marius {
 
   class Bindings {
     struct Entry : public GCAllocated {
-      String& key;
+      String* key;
       OOP val;
       Entry* next;
 
-      Entry(String& k, OOP v)
+      Entry(String* k, OOP v)
         : key(k)
         , val(v)
         , next(0)
@@ -35,8 +35,8 @@ namespace marius {
 
   public:
     Bindings(State& S);
-    option<OOP> find(String& name);
-    void set(State& S, String& name, OOP val);
+    option<OOP> find(String* name);
+    void set(State& S, String* name, OOP val);
   };
 }
 

@@ -131,7 +131,7 @@ namespace marius {
       scope_->insert(LocalScope::value_type(a->name(), locals_.add(a)));
     }
 
-    void find_scoped(Node* n, String& name) {
+    void find_scoped(Node* n, String* name) {
       LocalScope::iterator j = scope_->find(name);
       if(j != scope_->end()) {
         locals_.add(n, j->second);

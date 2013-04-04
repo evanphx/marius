@@ -6,18 +6,18 @@
 namespace marius {
   namespace {
     Handle module_add(State& S, Handle recv, Arguments& args) {
-      String& name = args[0]->as_string();
+      String* name = args[0]->as_string();
       Method* m = args[1]->as_method();
 
       Module* mod = recv->as_module();
 
-      mod->add_native_method(S, name.c_str(), m);
+      mod->add_native_method(S, name->c_str(), m);
 
       return recv;
     }
 
     Handle module_access(State& S, Handle recv, Arguments& args) {
-      String& name = args[0]->as_string();
+      String* name = args[0]->as_string();
 
       return handle(S, recv->attribute(name, 0));
     }
@@ -30,12 +30,12 @@ namespace marius {
     return mod;
   }
 
-  Module::Module(State& S, Class* mod, String& name)
+  Module::Module(State& S, Class* mod, String* name)
     : MemoryObject(new(S) Class(S, Class::Boot, mod->klass()->klass(), mod, name))
     , Attributes(S)
   {}
 
-  Method* Module::lookup(String& name) {
+  Method* Module::lookup(String* name) {
     return klass()->lookup(name);
   }
 

@@ -14,11 +14,13 @@ namespace marius {
   class State;
   class Module;
   class Closure;
+  class GCImpl;
 
   class Environment {
     Module* top_;
     Closure* globals_;
 
+    friend class GCImpl;
   public:
     Environment(Module* m=0)
       : top_(m)
@@ -33,7 +35,7 @@ namespace marius {
       return top_;
     }
 
-    OOP lookup(String& name);
+    OOP lookup(String* name);
     OOP lookup(State& S, const char* str);
 
     Class* new_class(State& S, const char* name, Class* sup=0);
@@ -42,7 +44,7 @@ namespace marius {
 
     void print();
 
-    void bind(State& S, String& name, OOP val);
+    void bind(State& S, String* name, OOP val);
 
   };
 }

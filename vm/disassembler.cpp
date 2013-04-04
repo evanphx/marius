@@ -11,7 +11,7 @@ namespace marius {
     for(ArgMap::iterator i = kw.begin();
         i != kw.end();
         ++i) {
-      printf("%s=R(%d) ", (*i).first.ptr()->c_str(), r + i->second);
+      printf("%s=R(%d) ", (*i).first->c_str(), r + i->second);
     }
   }
 
@@ -84,20 +84,20 @@ namespace marius {
       case 0:
         printf("R(%d) := R(%d).%s\n",
                 seq[1], seq[3],
-                code_.string(seq[2]).c_str());
+                code_.string(seq[2])->c_str());
         break;
 
       case 1:
         printf("R(%d) := R(%d).%s R(%d)\n",
                 seq[1], seq[3],
-                code_.string(seq[2]).c_str(),
+                code_.string(seq[2])->c_str(),
                 seq[3] + 1);
 
         break;
       default:
         printf("R(%d) := R(%d).%s R(%d)..R(%d)\n",
                 seq[1], seq[3],
-                code_.string(seq[2]).c_str(),
+                code_.string(seq[2])->c_str(),
                 seq[3] + 1, seq[3] + seq[4]);
       }
       return 5;
@@ -105,7 +105,7 @@ namespace marius {
     case CALL_KW:
       printf("R(%d) := R(%d).%s ",
               seq[1], seq[3],
-              code_.string(seq[2]).c_str());
+              code_.string(seq[2])->c_str());
 
       print_keywords(code_.keywords(seq[5]), seq[3]+1);
       printf("\n");
@@ -113,30 +113,30 @@ namespace marius {
 
     case IVA:
       printf("@%s = R(%d)\n",
-             code_.string(seq[1]).c_str(), seq[2]);
+             code_.string(seq[1])->c_str(), seq[2]);
       return 3;
 
     case IVR:
       printf("R(%d) := @%s\n",
              seq[1],
-             code_.string(seq[2]).c_str());
+             code_.string(seq[2])->c_str());
       return 3;
 
     case LATTR:
       printf("R(%d) := R(%d)::%s\n", seq[1], seq[3],
-             code_.string(seq[2]).c_str());
+             code_.string(seq[2])->c_str());
       return 4;
 
     case LOADS:
       printf("R(%d) := \"%s\"\n",
                 seq[1],
-                code_.string(seq[2]).c_str());
+                code_.string(seq[2])->c_str());
       return 3;
 
     case LOADN:
       printf("R(%d) := ENV[:%s]\n",
                 seq[1],
-                code_.string(seq[2]).c_str());
+                code_.string(seq[2])->c_str());
       return 3;
 
     case RET:

@@ -17,8 +17,8 @@ namespace marius {
       : attributes_(S)
     {}
 
-    OOP attribute(String& name, bool* found=0);
-    void set_attribute(State& S, String& name, OOP val);
+    OOP attribute(String* name, bool* found=0);
+    void set_attribute(State& S, String* name, OOP val);
   };
 }
 

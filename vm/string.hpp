@@ -11,13 +11,18 @@
 
 #include "gc_allocated.hpp"
 
+#include <map>
+
 namespace marius {
   class State;
+  class GCImpl;
 
   class String : public GCAllocated {
     const char* data_;
     size_t bytelen_;
     size_t charlen_;
+
+    friend class GCImpl;
 
   public:
     String(const char* data)
@@ -26,7 +31,7 @@ namespace marius {
       , charlen_(utf8_charlen(data, bytelen_))
     {}
 
-    const char* c_str() {
+    const char* c_str() const {
       return data_;
     }
 
@@ -39,12 +44,16 @@ namespace marius {
     }
 
     unsigned hash();
-    bool equal(String& other);
+    bool equal(String* other);
+    int compare(const String* other) const;
 
     static void init(State& S);
-    static String& internalize(State& S, std::string str);
 
-    static String& convert(State& S, OOP obj);
+    static std::map<std::string, String*>& internal();
+
+    static String* internalize(State& S, std::string str);
+
+    static String* convert(State& S, OOP obj);
   };
 }
 

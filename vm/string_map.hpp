@@ -3,19 +3,18 @@
 
 #include <map>
 
-#include "ref.hpp"
 #include "string.hpp"
 
 namespace marius {
   template <typename T>
     struct StringMap {
       struct less {
-        bool operator()(const ref<String>& a, const ref<String>& b) {
-          return a.ptr() < b.ptr();
+        bool operator()(const String* a, const String* b) {
+          return a->compare(b);
         }
       };
 
-      typedef std::map<ref<String>, T, less> type;
+      typedef std::map<String*, T, less> type;
     };
 }
 

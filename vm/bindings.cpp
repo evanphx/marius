@@ -8,23 +8,27 @@ namespace marius {
     : entries_(new(S) Entry*[cDefaultCapa])
     , capa_(cDefaultCapa)
     , size_(0)
-  {}
+  {
+    for(unsigned i = 0; i < size_; i++) {
+      entries_[i] = 0;
+    }
+  }
 
-  option<OOP> Bindings::find(String& name) {
-    unsigned h = name.hash();
+  option<OOP> Bindings::find(String* name) {
+    unsigned h = name->hash();
 
     Entry* e = entries_[h % capa_];
 
     while(e) {
-      if(e->key.equal(name)) return e->val;
+      if(e->key->equal(name)) return e->val;
       e = e->next;
     }
 
     return option<OOP>();
   }
 
-  void Bindings::set(State& S, String& name, OOP val) {
-    unsigned h = name.hash();
+  void Bindings::set(State& S, String* name, OOP val) {
+    unsigned h = name->hash();
 
     unsigned idx = h % capa_;
 
@@ -32,7 +36,7 @@ namespace marius {
 
     if(e) {
       for(;;) {
-        if(e->key.equal(name)) {
+        if(e->key->equal(name)) {
           e->val = val;
           return;
         }

@@ -5,7 +5,7 @@
 #include "unwind.hpp"
 
 namespace marius {
-  Method::Method(String& scope, SimpleFunc func, int arity, Closure* closure)
+  Method::Method(String* scope, SimpleFunc func, int arity, Closure* closure)
     : scope_(scope)
     , func_(func)
     , code_(0)
@@ -13,7 +13,7 @@ namespace marius {
     , closure_(closure)
   {}
 
-  Method::Method(String& scope, Code& code, Closure* closure)
+  Method::Method(String* scope, Code& code, Closure* closure)
     : scope_(scope)
     , func_(0)
     , code_(&code)
@@ -21,7 +21,7 @@ namespace marius {
     , closure_(closure)
   {}
 
-  String& Method::name(State& S) {
+  String* Method::name(State& S) {
     if(code_) {
       return code_->name();
     } else {

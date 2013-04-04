@@ -1100,14 +1100,14 @@ static void yy_reduce(
       case 20: /* class ::= class_start ID fin class_body */
 #line 60 "vm/parser.lm"
 {
-               yygotominor.yy16.a = S->ast_class(*yymsp[-2].minor.yy0.s, 0, yymsp[0].minor.yy16.a);
+               yygotominor.yy16.a = S->ast_class(yymsp[-2].minor.yy0.s, 0, yymsp[0].minor.yy16.a);
              }
 #line 1106 "vm/parser.c.inc"
         break;
       case 21: /* class ::= class_start ID LT s2 fin class_body */
 #line 64 "vm/parser.lm"
 {
-               yygotominor.yy16.a = S->ast_class(*yymsp[-4].minor.yy0.s, yymsp[-2].minor.yy16.a, yymsp[0].minor.yy16.a);
+               yygotominor.yy16.a = S->ast_class(yymsp[-4].minor.yy0.s, yymsp[-2].minor.yy16.a, yymsp[0].minor.yy16.a);
              }
 #line 1113 "vm/parser.c.inc"
         break;
@@ -1119,20 +1119,20 @@ static void yy_reduce(
       case 24: /* id_list ::= id_list comma ID */
       case 25: /* id_list ::= ID */ yytestcase(yyruleno==25);
 #line 71 "vm/parser.lm"
-{ S->def_arg(*yymsp[0].minor.yy0.s); }
+{ S->def_arg(yymsp[0].minor.yy0.s); }
 #line 1124 "vm/parser.c.inc"
         break;
       case 28: /* def ::= def_start ID def_args fin def_body */
 #line 77 "vm/parser.lm"
 {
-              yygotominor.yy16.a = S->ast_def(*yymsp[-3].minor.yy0.s, yymsp[0].minor.yy16.a);
+              yygotominor.yy16.a = S->ast_def(yymsp[-3].minor.yy0.s, yymsp[0].minor.yy16.a);
             }
 #line 1131 "vm/parser.c.inc"
         break;
       case 29: /* def ::= def_start ID def_args fin END */
 #line 80 "vm/parser.lm"
 {
-              yygotominor.yy16.a = S->ast_def(*yymsp[-3].minor.yy0.s, S->ast_nil());
+              yygotominor.yy16.a = S->ast_def(yymsp[-3].minor.yy0.s, S->ast_nil());
             }
 #line 1138 "vm/parser.c.inc"
         break;
@@ -1163,17 +1163,17 @@ static void yy_reduce(
         break;
       case 35: /* lit ::= ID */
 #line 89 "vm/parser.lm"
-{ yygotominor.yy16.a = S->named(*yymsp[0].minor.yy0.s); }
+{ yygotominor.yy16.a = S->named(yymsp[0].minor.yy0.s); }
 #line 1168 "vm/parser.c.inc"
         break;
       case 36: /* lit ::= IVAR */
 #line 90 "vm/parser.lm"
-{ yygotominor.yy16.a = S->ivar_read(*yymsp[0].minor.yy0.s); }
+{ yygotominor.yy16.a = S->ivar_read(yymsp[0].minor.yy0.s); }
 #line 1173 "vm/parser.c.inc"
         break;
       case 37: /* lit ::= LITSTR */
 #line 91 "vm/parser.lm"
-{ yygotominor.yy16.a = S->lit_str(*yymsp[0].minor.yy0.s); }
+{ yygotominor.yy16.a = S->lit_str(yymsp[0].minor.yy0.s); }
 #line 1178 "vm/parser.c.inc"
         break;
       case 39: /* np_arg ::= np_arg OP0 np_arg */
@@ -1201,19 +1201,19 @@ static void yy_reduce(
       case 44: /* np_arg ::= np_arg DOT ID */
       case 65: /* np_recv ::= np_recv DOT ID */ yytestcase(yyruleno==65);
 #line 104 "vm/parser.lm"
-{ yygotominor.yy16.a = S->call(yymsp[-2].minor.yy16.a, *yymsp[0].minor.yy0.s); }
+{ yygotominor.yy16.a = S->call(yymsp[-2].minor.yy16.a, yymsp[0].minor.yy0.s); }
 #line 1206 "vm/parser.c.inc"
         break;
       case 45: /* np_arg ::= np_arg DOT ID LP RP */
       case 66: /* np_recv ::= np_recv DOT ID LP RP */ yytestcase(yyruleno==66);
 #line 105 "vm/parser.lm"
-{ yygotominor.yy16.a = S->call(yymsp[-4].minor.yy16.a, *yymsp[-2].minor.yy0.s); }
+{ yygotominor.yy16.a = S->call(yymsp[-4].minor.yy16.a, yymsp[-2].minor.yy0.s); }
 #line 1212 "vm/parser.c.inc"
         break;
       case 46: /* np_arg ::= np_arg DOT ID LP np_arg_list RP */
       case 67: /* np_recv ::= np_recv DOT ID LP np_arg_list RP */ yytestcase(yyruleno==67);
 #line 107 "vm/parser.lm"
-{ yygotominor.yy16.a = S->call_args(yymsp[-5].minor.yy16.a, *yymsp[-3].minor.yy0.s); }
+{ yygotominor.yy16.a = S->call_args(yymsp[-5].minor.yy16.a, yymsp[-3].minor.yy0.s); }
 #line 1218 "vm/parser.c.inc"
         break;
       case 47: /* np_arg ::= np_arg DOT DOLLAR lit */
@@ -1253,22 +1253,22 @@ static void yy_reduce(
         break;
       case 55: /* np_kw_arg ::= ID EQUAL np_arg */
 #line 121 "vm/parser.lm"
-{ S->add_kw_arg(*yymsp[-2].minor.yy0.s, yymsp[0].minor.yy16.a); }
+{ S->add_kw_arg(yymsp[-2].minor.yy0.s, yymsp[0].minor.yy16.a); }
 #line 1258 "vm/parser.c.inc"
         break;
       case 63: /* np_recv ::= ID LP RP */
 #line 133 "vm/parser.lm"
-{ yygotominor.yy16.a = S->call(S->self(), *yymsp[-2].minor.yy0.s); }
+{ yygotominor.yy16.a = S->call(S->self(), yymsp[-2].minor.yy0.s); }
 #line 1263 "vm/parser.c.inc"
         break;
       case 64: /* np_recv ::= ID LP np_arg_list RP */
 #line 134 "vm/parser.lm"
-{ yygotominor.yy16.a = S->call_args(S->self(), *yymsp[-3].minor.yy0.s); }
+{ yygotominor.yy16.a = S->call_args(S->self(), yymsp[-3].minor.yy0.s); }
 #line 1268 "vm/parser.c.inc"
         break;
       case 68: /* np_recv ::= np_recv DCOLON ID */
 #line 138 "vm/parser.lm"
-{ yygotominor.yy16.a = S->dcolon(yymsp[-2].minor.yy16.a, *yymsp[-1].minor.yy0.s, *yymsp[0].minor.yy0.s); }
+{ yygotominor.yy16.a = S->dcolon(yymsp[-2].minor.yy16.a, yymsp[-1].minor.yy0.s, yymsp[0].minor.yy0.s); }
 #line 1273 "vm/parser.c.inc"
         break;
       case 73: /* np_recv ::= TUPLE_START np_arg_list RP */
@@ -1278,7 +1278,7 @@ static void yy_reduce(
         break;
       case 74: /* s2 ::= np_recv DOT ID np_arg_list */
 #line 148 "vm/parser.lm"
-{ yygotominor.yy16.a = S->call_args(yymsp[-3].minor.yy16.a, *yymsp[-1].minor.yy0.s); }
+{ yygotominor.yy16.a = S->call_args(yymsp[-3].minor.yy16.a, yymsp[-1].minor.yy0.s); }
 #line 1283 "vm/parser.c.inc"
         break;
       case 75: /* s2 ::= np_recv DOT DOLLAR lit np_arg_list */
@@ -1288,7 +1288,7 @@ static void yy_reduce(
         break;
       case 76: /* s2 ::= ID np_arg_list */
 #line 151 "vm/parser.lm"
-{ yygotominor.yy16.a = S->call_args(S->self(), *yymsp[-1].minor.yy0.s); }
+{ yygotominor.yy16.a = S->call_args(S->self(), yymsp[-1].minor.yy0.s); }
 #line 1293 "vm/parser.c.inc"
         break;
       case 85: /* lambda_start ::= LB */
@@ -1298,7 +1298,7 @@ static void yy_reduce(
         break;
       case 86: /* lambda_args ::= PIPE ID PIPE */
 #line 167 "vm/parser.lm"
-{ S->def_arg(*yymsp[-1].minor.yy0.s); }
+{ S->def_arg(yymsp[-1].minor.yy0.s); }
 #line 1303 "vm/parser.c.inc"
         break;
       case 88: /* lambda ::= lambda_start lambda_args seq RB */
@@ -1323,7 +1323,7 @@ static void yy_reduce(
         break;
       case 92: /* stmt ::= IMPORT ID */
 #line 180 "vm/parser.lm"
-{ yygotominor.yy16.a = S->import(*yymsp[0].minor.yy0.s); }
+{ yygotominor.yy16.a = S->import(yymsp[0].minor.yy0.s); }
 #line 1328 "vm/parser.c.inc"
         break;
       case 93: /* stmt ::= TRY fin seq fin RESCUE fin seq fin END */
@@ -1335,12 +1335,12 @@ static void yy_reduce(
         break;
       case 94: /* stmt ::= ID EQUAL s2 */
 #line 186 "vm/parser.lm"
-{ yygotominor.yy16.a = S->assign(*yymsp[-2].minor.yy0.s, yymsp[0].minor.yy16.a); }
+{ yygotominor.yy16.a = S->assign(yymsp[-2].minor.yy0.s, yymsp[0].minor.yy16.a); }
 #line 1340 "vm/parser.c.inc"
         break;
       case 95: /* stmt ::= IVAR EQUAL s2 */
 #line 187 "vm/parser.lm"
-{ yygotominor.yy16.a = S->ivar_assign(*yymsp[-2].minor.yy0.s, yymsp[0].minor.yy16.a); }
+{ yygotominor.yy16.a = S->ivar_assign(yymsp[-2].minor.yy0.s, yymsp[0].minor.yy16.a); }
 #line 1345 "vm/parser.c.inc"
         break;
       case 96: /* stmt ::= RAISE s2 */

@@ -187,7 +187,7 @@ again:
 
         if(next_c() == ':') {
           advance(1);
-          value_.s = &String::internalize(S, "::");
+          value_.s = String::internalize(S, "::");
           return TK_DCOLON;
         }
 
@@ -396,7 +396,7 @@ again:
       }
     }
 
-    value_.s = &String::internalize(S, buf.copy_out());
+    value_.s = String::internalize(S, buf.copy_out());
     return tk;
   }
 
@@ -415,7 +415,7 @@ again:
 
     advance(1);
 
-    value_.s = &String::internalize(S, buf.copy_out());
+    value_.s = String::internalize(S, buf.copy_out());
     return TK_LITSTR;
   }
 
@@ -430,7 +430,7 @@ again:
       advance(1);
     }
 
-    value_.s = &String::internalize(S, strndup(start, pos_ - start));
+    value_.s = String::internalize(S, strndup(start, pos_ - start));
     return TK_LITSTR;
   }
 

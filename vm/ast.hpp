@@ -49,9 +49,9 @@ namespace marius {
         buffer.push_back(op);
       }
 
-      int string(String& str) {
+      int string(String* str) {
         int idx = strings.size();
-        strings.push_back(&str);
+        strings.push_back(str);
         return idx;
       }
 
@@ -90,7 +90,7 @@ namespace marius {
       void set_local(Local* l, int t);
       void get_local(Local* l, int t);
 
-      Code* to_code(String& name, ArgMap& args, int cov);
+      Code* to_code(String* name, ArgMap& args, int cov);
 
     };
 
@@ -118,16 +118,16 @@ namespace marius {
     };
 
     class Argument : public Node {
-      String& name_;
+      String* name_;
       int position_;
 
     public:
-      Argument(String& n, int p)
+      Argument(String* n, int p)
         : name_(n)
         , position_(p)
       {}
 
-      String& name() {
+      String* name() {
         return name_;
       }
 
@@ -191,11 +191,11 @@ namespace marius {
       int drive(State& S, int t);
       void accept(Visitor* V);
 
-      void add_local(String& n, int reg) {
+      void add_local(String* n, int reg) {
         locals_[n] = reg;
       }
 
-      void add_closed_local(String& n, int loc) {
+      void add_closed_local(String* n, int loc) {
         closed_locals_[n] = loc;
       }
     };
@@ -249,12 +249,12 @@ namespace marius {
 
     class Call : public Node {
     protected:
-      String& name_;
+      String* name_;
       Node* recv_;
       Arguments* args_;
 
     public:
-      Call(String& name, Node* recv, Arguments* args=0)
+      Call(String* name, Node* recv, Arguments* args=0)
         : name_(name)
         , recv_(recv)
         , args_(args)
@@ -277,14 +277,14 @@ namespace marius {
     };
 
     class Named : public Node {
-      String& name_;
+      String* name_;
 
     public:
-      Named(String& n)
+      Named(String* n)
         : name_(n)
       {}
 
-      String& name() {
+      String* name() {
         return name_;
       }
 
@@ -305,18 +305,18 @@ namespace marius {
     };
 
     class Class : public Node {
-      String& name_;
+      String* name_;
       Node* super_;
       Scope* body_;
 
     public:
-      Class(String& n, Node* sup, Scope* b)
+      Class(String* n, Node* sup, Scope* b)
         : name_(n)
         , super_(sup)
         , body_(b)
       {}
 
-      String& name() {
+      String* name() {
         return name_;
       }
 
@@ -333,12 +333,12 @@ namespace marius {
     };
 
     class Def : public Node {
-      String& name_;
+      String* name_;
       Scope* body_;
       ArgMap args_;
 
     public:
-      Def(String& name, Scope* body, ArgMap args)
+      Def(String* name, Scope* body, ArgMap args)
         : name_(name)
         , body_(body)
         , args_(args)
@@ -349,11 +349,11 @@ namespace marius {
     };
 
     class CascadeCall : public Node {
-      String& name_;
+      String* name_;
 
     public:
 
-      CascadeCall(String& n)
+      CascadeCall(String* n)
         : name_(n)
       {}
 
@@ -445,14 +445,14 @@ namespace marius {
     };
 
     class Import : public Node {
-      String& name_;
+      String* name_;
 
     public:
-      Import(String& n)
+      Import(String* n)
         : name_(n)
       {}
 
-      String& name() {
+      String* name() {
         return name_;
       }
 
@@ -475,16 +475,16 @@ namespace marius {
     };
 
     class Assign : public Node {
-      String& name_;
+      String* name_;
       Node* value_;
 
     public:
-      Assign(String& n, Node* v)
+      Assign(String* n, Node* v)
         : name_(n)
         , value_(v)
       {}
 
-      String& name() {
+      String* name() {
         return name_;
       }
 
@@ -494,10 +494,10 @@ namespace marius {
 
     class LoadAttr : public Node {
       Node* recv_;
-      String& name_;
+      String* name_;
 
     public:
-      LoadAttr(Node* recv, String& n)
+      LoadAttr(Node* recv, String* n)
         : recv_(recv)
         , name_(n)
       {}
@@ -507,11 +507,11 @@ namespace marius {
     };
 
     class IvarAssign : public Node {
-      String& name_;
+      String* name_;
       Node* value_;
 
     public:
-      IvarAssign(String& n, Node* v)
+      IvarAssign(String* n, Node* v)
         : name_(n)
         , value_(v)
       {}
@@ -521,10 +521,10 @@ namespace marius {
     };
 
     class IvarRead : public Node {
-      String& name_;
+      String* name_;
 
     public:
-      IvarRead(String& n)
+      IvarRead(String* n)
         : name_(n)
       {}
 
@@ -533,10 +533,10 @@ namespace marius {
     };
 
     class LiteralString : public Node {
-      String& str_;
+      String* str_;
 
     public:
-      LiteralString(String& n)
+      LiteralString(String* n)
         : str_(n)
       {}
 

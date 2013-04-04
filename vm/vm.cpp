@@ -338,12 +338,12 @@ namespace marius {
   }
 
   OOP VM::run_method(State& S,
-                     OOP recv, String& name, int argc, OOP* fp)
+                     OOP recv, String* name, int argc, OOP* fp)
   {
     Method* meth = recv.find_method(name);
 
     if(!meth) {
-      printf("NO METHOD :%s on ", name.c_str());
+      printf("NO METHOD :%s on ", name->c_str());
       recv.print();
       print_call_stack(S);
       return Unwind::name_error(S, name);
@@ -385,13 +385,13 @@ namespace marius {
   }
 
   OOP VM::run_kw_method(State& S,
-                        OOP recv, String& name, int argc, OOP* fp,
+                        OOP recv, String* name, int argc, OOP* fp,
                         ArgMap& keywords)
   {
     Method* meth = recv.find_method(name);
 
     if(!meth) {
-      printf("NO METHOD :%s\n", name.c_str());
+      printf("NO METHOD :%s\n", name->c_str());
       print_call_stack(S);
       return Unwind::name_error(S, name);
     }
@@ -405,11 +405,11 @@ namespace marius {
     return meth->run(S, recv, args);
   }
 
-  OOP VM::load_named(State& S, String& name) {
+  OOP VM::load_named(State& S, String* name) {
     return S.env().lookup(name);
   }
 
-  OOP VM::load_attr(State& S, String& name, OOP recv, OOP* fp) {
+  OOP VM::load_attr(State& S, String* name, OOP recv, OOP* fp) {
     bool found = false;
     OOP val = recv.attribute(name, &found);
     if(found) return val;
@@ -417,7 +417,7 @@ namespace marius {
     return OOP::nil();
   }
 
-  String& VM::as_string(OOP val) {
+  String* VM::as_string(OOP val) {
     return val.as_string();
   }
 
@@ -427,8 +427,8 @@ namespace marius {
     StackFrame* sf = top_frame_;
 
     while(sf >= frames_) {
-      printf("%02d: %s#%s\n", i++, sf->method->scope().c_str(),
-                              sf->method->name(S).c_str());
+      printf("%02d: %s#%s\n", i++, sf->method->scope()->c_str(),
+                              sf->method->name(S)->c_str());
       sf--;
     }
   }

@@ -15,11 +15,11 @@ namespace marius {
     Table table_;
 
   public:
-    Method* lookup(String& str) {
+    Method* lookup(String* str) {
       return table_[str];
     }
 
-    void add(String& name, Method* m) {
+    void add(String* name, Method* m) {
       table_[name] = m;
     }
 

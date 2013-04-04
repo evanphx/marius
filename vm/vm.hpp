@@ -40,16 +40,16 @@ namespace marius {
     OOP run(State& S, Method* meth);
     OOP run(State& S, Method* meth, OOP* fp);
     OOP run_method(State& S, OOP recv,
-                           String& name, int argc, OOP* argv);
+                           String* name, int argc, OOP* argv);
 
     void reorg_args(OOP* fp, Method* meth, ArgMap& keywords);
     OOP run_kw_method(State& S, OOP recv,
-                              String& name, int argc, OOP* argv,
+                              String* name, int argc, OOP* argv,
                               ArgMap& keywords);
-    OOP load_named(State& S, String& name);
-    OOP load_attr(State& S, String& name, OOP recv, OOP* fp);
+    OOP load_named(State& S, String* name);
+    OOP load_attr(State& S, String* name, OOP recv, OOP* fp);
 
-    String& as_string(OOP val);
+    String* as_string(OOP val);
     void print_call_stack(State& S);
 
     friend class FrameTracker;

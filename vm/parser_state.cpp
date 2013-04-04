@@ -24,7 +24,7 @@ namespace marius {
     return new ast::Seq(l, r);
   }
 
-  ast::Node* ParserState::ast_class(String& name, ast::Node* super,
+  ast::Node* ParserState::ast_class(String* name, ast::Node* super,
                                     ast::Node* body)
   {
     ast::Argument* a = new ast::Argument(String::internalize(S, "self"), -1);
@@ -50,7 +50,7 @@ namespace marius {
     context_ = new Context();
   }
 
-  ast::Node* ParserState::ast_def(String& name, ast::Node* b) {
+  ast::Node* ParserState::ast_def(String* name, ast::Node* b) {
     ast::Argument* a = new ast::Argument(String::internalize(S, "self"), -1);
 
     ast::Node* n = new ast::Def(name, 
@@ -65,14 +65,14 @@ namespace marius {
     return n;
   }
 
-  void ParserState::def_arg(String& name) {
+  void ParserState::def_arg(String* name) {
     int num = context_->args.size();
 
     context_->args[name] = context_->args.size();
     context_->arg_objs.push_back(new ast::Argument(name, num));
   }
 
-  ast::Node* ParserState::call(ast::Node* recv, String& n) {
+  ast::Node* ParserState::call(ast::Node* recv, String* n) {
     return new ast::Call(n, recv);
   }
 
@@ -93,19 +93,19 @@ namespace marius {
     return n;
   }
 
-  ast::Node* ParserState::dcolon(ast::Node* recv, String& n, String& a) {
+  ast::Node* ParserState::dcolon(ast::Node* recv, String* n, String* a) {
     return new ast::Call(n, recv, ast::Arguments::wrap(new ast::LiteralString(a)));
   }
 
-  ast::Node* ParserState::lit_str(String& n) {
+  ast::Node* ParserState::lit_str(String* n) {
     return new ast::LiteralString(n);
   }
 
-  ast::Node* ParserState::attr(ast::Node* r, String& n) {
+  ast::Node* ParserState::attr(ast::Node* r, String* n) {
     return new ast::LoadAttr(r, n);
   }
 
-  ast::Node* ParserState::named(String& s) {
+  ast::Node* ParserState::named(String* s) {
     return new ast::Named(s);
   }
 
@@ -115,7 +115,7 @@ namespace marius {
     context_ = new Context();
   }
 
-  ast::Call* ParserState::ast_call(String& name, ast::Node* r, ast::Nodes args) {
+  ast::Call* ParserState::ast_call(String* name, ast::Node* r, ast::Nodes args) {
     return new ast::Call(name, r, new ast::Arguments(args));
   }
 
@@ -135,7 +135,7 @@ namespace marius {
     cascades_.push_back(new ast::Cascade(recv));
   }
 
-  void ParserState::cascade(String& name) {
+  void ParserState::cascade(String* name) {
     cascades_.back()->push_message(new ast::CascadeCall(name));
   }
 
@@ -156,12 +156,12 @@ namespace marius {
     arg_info_.nodes.push_back(a);
   }
 
-  void ParserState::add_kw_arg(String& name, ast::Node* a) {
+  void ParserState::add_kw_arg(String* name, ast::Node* a) {
     arg_info_.keywords[name] = arg_info_.nodes.size();
     arg_info_.nodes.push_back(a);
   }
 
-  ast::Node* ParserState::call_args(ast::Node* recv, String& id) {
+  ast::Node* ParserState::call_args(ast::Node* recv, String* id) {
     ast::Node* n = 0;
 
     ast::Arguments* args = new ast::Arguments(arg_info_.nodes, arg_info_.keywords);
@@ -219,7 +219,7 @@ namespace marius {
     return new ast::Self();
   }
 
-  ast::Node* ParserState::import(String& name) {
+  ast::Node* ParserState::import(String* name) {
     return new ast::Import(name);
   }
 
@@ -227,15 +227,15 @@ namespace marius {
     return new ast::Try(b, h);
   }
 
-  ast::Node* ParserState::assign(String& name, ast::Node* n) {
+  ast::Node* ParserState::assign(String* name, ast::Node* n) {
     return new ast::Assign(name, n);
   }
 
-  ast::Node* ParserState::ivar_assign(String& name, ast::Node* v) {
+  ast::Node* ParserState::ivar_assign(String* name, ast::Node* v) {
     return new ast::IvarAssign(name, v);
   }
 
-  ast::Node* ParserState::ivar_read(String& name) {
+  ast::Node* ParserState::ivar_read(String* name) {
     return new ast::IvarRead(name);
   }
 

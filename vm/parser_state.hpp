@@ -111,7 +111,7 @@ namespace marius {
 
     int string(const char* str) {
       int idx = context_->strings.size();
-      context_->strings.push_back(&String::internalize(S, str));
+      context_->strings.push_back(String::internalize(S, str));
       return idx;
     }
 
@@ -131,7 +131,7 @@ namespace marius {
       return context_->locals;
     }
 
-    void start_def(String& s);
+    void start_def(String* s);
 
     int bin_op(const char* op, int a, int b);
     int minus(int a, int b);
@@ -142,38 +142,38 @@ namespace marius {
     ast::Node* ret(ast::Node* n);
 
     ast::Node* seq(ast::Node* parent, ast::Node* child);
-    ast::Node* ast_class(String& name, ast::Node* super, ast::Node* body);
+    ast::Node* ast_class(String* name, ast::Node* super, ast::Node* body);
 
     void start_class();
-    int new_class(String& s);
+    int new_class(String* s);
 
     void start_def();
-    void def_arg(String& s);
-    ast::Node* ast_def(String& name, ast::Node* b);
+    void def_arg(String* s);
+    ast::Node* ast_def(String* name, ast::Node* b);
 
     ast::Node* send_indirect(ast::Node* recv, ast::Node* n);
     ast::Node* send_indirect_args(ast::Node* recv, ast::Node* n);
 
-    ast::Node* call(ast::Node* recv, String& id);
-    ast::Node* attr(ast::Node* recv, String& id);
+    ast::Node* call(ast::Node* recv, String* id);
+    ast::Node* attr(ast::Node* recv, String* id);
 
     void start_cascade(ast::Node* n);
-    void cascade(String& name);
+    void cascade(String* name);
     ast::Node* end_cascade();
 
     void start_arg_list();
     void add_arg(ast::Node* n);
-    void add_kw_arg(String& id, ast::Node* n);
-    ast::Node* call_args(ast::Node* n, String& id);
-    ast::Node* call_kw_args(ast::Node* n, String& id);
+    void add_kw_arg(String* id, ast::Node* n);
+    ast::Node* call_args(ast::Node* n, String* id);
+    ast::Node* call_kw_args(ast::Node* n, String* id);
 
-    ast::Node* dcolon(ast::Node* r, String& id, String& arg);
-    ast::Node* lit_str(String& s);
+    ast::Node* dcolon(ast::Node* r, String* id, String* arg);
+    ast::Node* lit_str(String* s);
 
     // AST
-    ast::Node* named(String& s);
+    ast::Node* named(String* s);
     ast::Node* number(int a);
-    ast::Call* ast_call(String& name, ast::Node* r, ast::Nodes args);
+    ast::Call* ast_call(String* name, ast::Node* r, ast::Nodes args);
     ast::Call* ast_binop(const char* s, ast::Node* a, ast::Node* b);
     ast::Node* if_cond(ast::Node* cond, ast::Node* body);
     ast::Node* unless(ast::Node* cond, ast::Node* body);
@@ -184,12 +184,12 @@ namespace marius {
     ast::Node* ast_false();
     ast::Node* self();
 
-    ast::Node* import(String& name);
+    ast::Node* import(String* name);
 
     ast::Node* ast_try(ast::Node* b, ast::Node* h);
-    ast::Node* assign(String& name, ast::Node* n);
-    ast::Node* ivar_assign(String& name, ast::Node* n);
-    ast::Node* ivar_read(String& name);
+    ast::Node* assign(String* name, ast::Node* n);
+    ast::Node* ivar_assign(String* name, ast::Node* n);
+    ast::Node* ivar_read(String* name);
 
     void start_lambda();
     ast::Node* lambda(ast::Node* b);

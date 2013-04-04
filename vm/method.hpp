@@ -15,7 +15,7 @@ namespace marius {
   class GCImpl;
 
   class Method : public GCAllocated {
-    String& scope_;
+    String* scope_;
     SimpleFunc func_;
     Code* code_;
     int arity_;
@@ -24,8 +24,8 @@ namespace marius {
     friend class GCImpl;
 
   public:
-    Method(String& scope, SimpleFunc func, int arity, Closure* closure=0);
-    Method(String& scope, Code& code, Closure* closure=0);
+    Method(String* scope, SimpleFunc func, int arity, Closure* closure=0);
+    Method(String* scope, Code& code, Closure* closure=0);
 
     Code* code() {
       return code_;
@@ -39,11 +39,11 @@ namespace marius {
       return closure_;
     }
 
-    String& scope() {
+    String* scope() {
       return scope_;
     }
 
-    String& name(State& S);
+    String* name(State& S);
 
     OOP closed_over_variable(int depth, int idx);
     void set_closed_over_variable(int depth, int idx, OOP val);

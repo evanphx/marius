@@ -30,7 +30,7 @@ namespace marius {
     enum Type {
       // Value object types
       eNil, eTrue, eFalse, eInteger, eString, eUnwind, eCode, eMethod,
-      eTuple,
+      eTuple, eRaw,
 
       // Mutable object types
       eClass, eUser, eModule, eClosure,
@@ -65,6 +65,7 @@ namespace marius {
   public:
     OOP()
       : type_(eNil)
+      , int_(0)
     {}
 
     OOP(Class* cls)
@@ -96,9 +97,9 @@ namespace marius {
       : type_(v ? eTrue : eFalse)
     {}
 
-    OOP(String& str)
+    OOP(String* str)
       : type_(eString)
-      , string_(&str)
+      , string_(str)
     {}
 
     OOP(Code& code)
@@ -154,6 +155,14 @@ namespace marius {
       return OOP(IntConstruct, val);
     }
 
+    static OOP raw(void* obj) {
+      OOP o;
+      o.type_ = eRaw;
+      o.raw_ = obj;
+
+      return o;
+    }
+
     static OOP wrap_klass(Class* cls) {
       return OOP(cls);
     }
@@ -170,9 +179,9 @@ namespace marius {
       return int_;
     }
 
-    String& as_string() {
+    String* as_string() {
       check(type_ == eString);
-      return *string_;
+      return string_;
     }
 
     Class* as_class() {
@@ -259,9 +268,9 @@ namespace marius {
 
     Class* klass();
 
-    Method* find_method(String& name);
-    OOP set_attribute(State& S, String& name, OOP val);
-    OOP attribute(String& name, bool* found=0);
+    Method* find_method(String* name);
+    OOP set_attribute(State& S, String* name, OOP val);
+    OOP attribute(String* name, bool* found=0);
 
     void print();
   };

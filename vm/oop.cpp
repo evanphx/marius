@@ -20,7 +20,7 @@ namespace marius {
   }
 
 
-  Method* OOP::find_method(String& name) {
+  Method* OOP::find_method(String* name) {
     if(type_ == eModule) {
       return module_->lookup(name);
     } else {
@@ -34,7 +34,7 @@ namespace marius {
       printf("%d\n", int_);
       return;
     case eClass:
-      printf("%s\n", class_->name().c_str());
+      printf("%s\n", class_->name()->c_str());
       return;
     case eNil:
       printf("nil\n");
@@ -43,7 +43,7 @@ namespace marius {
       printf("\"%s\"\n", string_->c_str());
       return;
     case eUser:
-      printf("<%s:%p>\n", user_->klass()->name().c_str(), user_);
+      printf("<%s:%p>\n", user_->klass()->name()->c_str(), user_);
       return;
     case eCode:
       printf("<Code:%p>\n", user_);
@@ -69,6 +69,9 @@ namespace marius {
     case eTuple:
       printf("<Tuple>\n");
       return;
+    case eRaw:
+      printf("<raw>\n");
+      return;
     case TotalTypes:
       check(false);
     }
@@ -87,7 +90,7 @@ namespace marius {
     }
   }
 
-  OOP OOP::set_attribute(State& S, String& name, OOP val) {
+  OOP OOP::set_attribute(State& S, String* name, OOP val) {
     if(Attributes* attrs = as_attributes()) {
       attrs->set_attribute(S, name, val);
     }
@@ -95,7 +98,7 @@ namespace marius {
     return val;
   }
 
-  OOP OOP::attribute(String& name, bool* found) {
+  OOP OOP::attribute(String* name, bool* found) {
     if(Attributes* attrs = as_attributes()) {
       return attrs->attribute(name, found);
     } else {

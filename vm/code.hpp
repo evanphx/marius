@@ -54,7 +54,7 @@ namespace marius {
   typedef StringMap<int>::type ArgMap;
 
   class Code : public GCAllocated {
-    String& name_;
+    String* name_;
     Instruction* code_;
     int size_;
     std::vector<String*> strings_;
@@ -66,7 +66,7 @@ namespace marius {
     friend class GCImpl;
 
   public:
-    Code(String& name,
+    Code(String* name,
          Instruction* buf, int size,
          std::vector<String*> strings,
          std::vector<Code*> codes,
@@ -83,7 +83,7 @@ namespace marius {
       , closed_over_vars_(cov)
     {}
 
-    String& name() {
+    String* name() {
       return name_;
     }
 
@@ -95,8 +95,8 @@ namespace marius {
       return size_;
     }
 
-    String& string(int idx) {
-      return *strings_.at(idx);
+    String* string(int idx) {
+      return strings_.at(idx);
     }
 
     Code& code(int idx) {
