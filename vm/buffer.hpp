@@ -39,7 +39,7 @@ namespace marius {
       return len == 0;
     }
 
-    int trim(int count) {
+    int trim(size_t count) {
       if(count > len) count = len;
 
       buf += count;

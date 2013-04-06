@@ -2,6 +2,10 @@
 #include <string>
 #include <iostream>
 
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+
 #include <ctype.h>
 #include <cxxabi.h>
 

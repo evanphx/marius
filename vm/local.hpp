@@ -92,6 +92,9 @@ namespace marius {
       case eClosureAccess:
         return owned_->idx();
       }
+
+      // compiler snack
+      return 0;
     }
 
     int depth() {
@@ -105,6 +108,9 @@ namespace marius {
       case eArgument:
         assert(0);
       }
+
+      // compiler snack
+      return 0;
     }
 
   };
