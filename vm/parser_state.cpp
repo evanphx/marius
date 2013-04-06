@@ -123,6 +123,10 @@ namespace marius {
     return new ast::Call(String::internalize(S, s), a, ast::Arguments::wrap(b));
   }
 
+  ast::Call* ParserState::ast_binop(String* op, ast::Node* a, ast::Node* b) {
+    return new ast::Call(op, a, ast::Arguments::wrap(b));
+  }
+
   ast::Node* ParserState::number(int a) {
     return new ast::Number(a);
   }

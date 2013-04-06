@@ -92,13 +92,11 @@ again:
         goto again;
 
       case '+':
-        advance(1);
-        value_.cs = "+";
+        match_operator();
         return TK_OP1;
 
       case '-':
-        advance(1);
-        value_.cs = "-";
+        match_operator();
         return TK_OP1;
 
       case '$':
@@ -221,6 +219,41 @@ again:
 
 
     return -1;
+  }
+
+  void Parser::match_operator() {
+    ScratchBuffer buf;
+
+    buf.append(next_c());
+    advance(1);
+
+    for(;;) {
+      char c = next_c();
+      switch(c) {
+      case '+':
+      case '-':
+      case '!':
+      case '@':
+      case '#':
+      case '$':
+      case '%':
+      case '^':
+      case '&':
+      case '*':
+      case '<':
+      case '>':
+      case '?':
+      case '|':
+      case '~':
+      case ':':
+        buf.append(c);
+        advance(1);
+        break;
+      default:
+        value_.s = String::internalize(S, buf.copy_out());
+        return;
+      }
+    }
   }
 
   static inline int min(int a, int b) {

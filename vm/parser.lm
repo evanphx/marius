@@ -74,10 +74,14 @@ id_list ::= ID(A). { S->def_arg(A.s); }
 def_args ::= .
 def_args ::= LP id_list RP.
 
-def(A) ::= def_start ID(B) def_args fin def_body(C). {
+def_name(A) ::= ID(B).  { A.s = B.s; }
+def_name(A) ::= OP1(B). { A.s = B.s; }
+
+
+def(A) ::= def_start def_name(B) def_args fin def_body(C). {
               A.a = S->ast_def(B.s, C.a);
             }
-def(A) ::= def_start ID(B) def_args fin END. {
+def(A) ::= def_start def_name(B) def_args fin END. {
               A.a = S->ast_def(B.s, S->ast_nil());
             }
 
@@ -94,7 +98,7 @@ np_arg(A) ::= lit(B). { A.a = B.a; }
 np_arg(A) ::= np_arg(B) OP0(O) np_arg(C).
                 { A.a = S->ast_binop(O.cs, B.a, C.a); }
 np_arg(A) ::= np_arg(B) OP1(O) np_arg(C).
-                { A.a = S->ast_binop(O.cs, B.a, C.a); }
+                { A.a = S->ast_binop(O.s, B.a, C.a); }
 np_arg(A) ::= np_arg(B) OP2(O) np_arg(C).
                 { A.a = S->ast_binop(O.cs, B.a, C.a); }
 np_arg(A) ::= np_arg(B) CAST np_arg(C).
@@ -151,7 +155,7 @@ s2(A) ::= np_recv(B) DOT DOLLAR lit(C) np_arg_list.
 s2(A) ::= ID(C) np_arg_list. { A.a = S->call_args(S->self(), C.s); }
 s2(A) ::= np_recv(B) CAST np_arg(C).   { A.a = S->cast(B.a, C.a); }
 s2(A) ::= np_recv(B) OP0(O) np_arg(C). { A.a = S->ast_binop(O.cs, B.a, C.a); }
-s2(A) ::= np_recv(B) OP1(O) np_arg(C). { A.a = S->ast_binop(O.cs, B.a, C.a); }
+s2(A) ::= np_recv(B) OP1(O) np_arg(C). { A.a = S->ast_binop(O.s, B.a, C.a); }
 s2(A) ::= np_recv(B) OP2(O) np_arg(C). { A.a = S->ast_binop(O.cs, B.a, C.a); }
 s2(A) ::= np_recv(B) NEQUAL np_arg(C).
                 { A.a = S->not_(S->ast_binop("==", B.a, C.a)); }
