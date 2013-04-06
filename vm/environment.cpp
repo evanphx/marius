@@ -11,6 +11,7 @@
 #include "tuple.hpp"
 
 #include <iostream>
+#include <stdio.h>
 
 namespace marius {
   OOP Environment::lookup(String* name) {
