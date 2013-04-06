@@ -9,7 +9,7 @@ namespace marius {
     , capa_(cDefaultCapa)
     , size_(0)
   {
-    for(unsigned i = 0; i < size_; i++) {
+    for(unsigned i = 0; i < capa_; i++) {
       entries_[i] = 0;
     }
   }
