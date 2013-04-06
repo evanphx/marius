@@ -10,7 +10,7 @@ namespace marius {
     struct StringMap {
       struct less {
         bool operator()(const String* a, const String* b) {
-          return a->compare(b);
+          return a->compare(b) < 0;
         }
       };
 

@@ -73,7 +73,7 @@ namespace marius {
     if(bytelen_ < o->bytelen_) return -1;
     if(bytelen_ > o->bytelen_) return 1;
 
-    return memcmp(c_str(), o->c_str(), bytelen_);
+    return strncmp(c_str(), o->c_str(), bytelen_);
   }
 
   namespace {
