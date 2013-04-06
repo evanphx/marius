@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+#include <stdlib.h>
+
 namespace marius {
   static bool hard_abort = true;
 
