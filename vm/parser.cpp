@@ -162,9 +162,13 @@ again:
 
         return TK_NOT;
       case '<':
-        advance(1);
-        return TK_LT;
+        match_operator();
 
+        if(value_.s->equal("<")) {
+          return TK_LT;
+        }
+
+        return TK_OP1;
       case '\n':
         column_ = 0;
         line_++;

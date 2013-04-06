@@ -96,7 +96,7 @@ lit(A) ::= LITSTR(B).                { A.a = S->lit_str(B.s); }
 
 np_arg(A) ::= lit(B). { A.a = B.a; }
 np_arg(A) ::= np_arg(B) OP0(O) np_arg(C).
-                { A.a = S->ast_binop(O.cs, B.a, C.a); }
+                { A.a = S->ast_binop(O.s, B.a, C.a); }
 np_arg(A) ::= np_arg(B) OP1(O) np_arg(C).
                 { A.a = S->ast_binop(O.s, B.a, C.a); }
 np_arg(A) ::= np_arg(B) OP2(O) np_arg(C).
@@ -154,7 +154,7 @@ s2(A) ::= np_recv(B) DOT DOLLAR lit(C) np_arg_list.
             { A.a = S->send_indirect_args(B.a, C.a); }
 s2(A) ::= ID(C) np_arg_list. { A.a = S->call_args(S->self(), C.s); }
 s2(A) ::= np_recv(B) CAST np_arg(C).   { A.a = S->cast(B.a, C.a); }
-s2(A) ::= np_recv(B) OP0(O) np_arg(C). { A.a = S->ast_binop(O.cs, B.a, C.a); }
+s2(A) ::= np_recv(B) OP0(O) np_arg(C). { A.a = S->ast_binop(O.s, B.a, C.a); }
 s2(A) ::= np_recv(B) OP1(O) np_arg(C). { A.a = S->ast_binop(O.s, B.a, C.a); }
 s2(A) ::= np_recv(B) OP2(O) np_arg(C). { A.a = S->ast_binop(O.cs, B.a, C.a); }
 s2(A) ::= np_recv(B) NEQUAL np_arg(C).

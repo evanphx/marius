@@ -45,6 +45,7 @@ namespace marius {
 
     unsigned hash();
     bool equal(String* other);
+    bool equal(const char* other);
     int compare(const String* other) const;
 
     static void init(State& S);

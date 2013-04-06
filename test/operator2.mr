@@ -1,0 +1,7 @@
+class Blah
+  def <+>(o)
+    3 + o
+  end
+end
+
+Blah.new <+> 4

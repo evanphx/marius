@@ -1184,17 +1184,17 @@ static void yy_reduce(
 #line 1185 "vm/parser.c.inc"
         break;
       case 41: /* np_arg ::= np_arg OP0 np_arg */
-      case 43: /* np_arg ::= np_arg OP2 np_arg */ yytestcase(yyruleno==43);
+      case 42: /* np_arg ::= np_arg OP1 np_arg */ yytestcase(yyruleno==42);
       case 80: /* s2 ::= np_recv OP0 np_arg */ yytestcase(yyruleno==80);
-      case 82: /* s2 ::= np_recv OP2 np_arg */ yytestcase(yyruleno==82);
+      case 81: /* s2 ::= np_recv OP1 np_arg */ yytestcase(yyruleno==81);
 #line 99 "vm/parser.lm"
-{ yygotominor.yy30.a = S->ast_binop(yymsp[-1].minor.yy0.cs, yymsp[-2].minor.yy30.a, yymsp[0].minor.yy30.a); }
+{ yygotominor.yy30.a = S->ast_binop(yymsp[-1].minor.yy0.s, yymsp[-2].minor.yy30.a, yymsp[0].minor.yy30.a); }
 #line 1193 "vm/parser.c.inc"
         break;
-      case 42: /* np_arg ::= np_arg OP1 np_arg */
-      case 81: /* s2 ::= np_recv OP1 np_arg */ yytestcase(yyruleno==81);
-#line 101 "vm/parser.lm"
-{ yygotominor.yy30.a = S->ast_binop(yymsp[-1].minor.yy0.s, yymsp[-2].minor.yy30.a, yymsp[0].minor.yy30.a); }
+      case 43: /* np_arg ::= np_arg OP2 np_arg */
+      case 82: /* s2 ::= np_recv OP2 np_arg */ yytestcase(yyruleno==82);
+#line 103 "vm/parser.lm"
+{ yygotominor.yy30.a = S->ast_binop(yymsp[-1].minor.yy0.cs, yymsp[-2].minor.yy30.a, yymsp[0].minor.yy30.a); }
 #line 1199 "vm/parser.c.inc"
         break;
       case 44: /* np_arg ::= np_arg CAST np_arg */

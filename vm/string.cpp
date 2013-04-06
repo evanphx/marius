@@ -69,6 +69,12 @@ namespace marius {
     return memcmp(c_str(), o->c_str(), bytelen_) == 0;
   }
 
+  bool String::equal(const char* o) {
+    size_t len = strlen(o);
+    if(bytelen_ != len) return false;
+    return memcmp(c_str(), o, len) == 0;
+  }
+
   int String::compare(const String* o) const {
     if(bytelen_ < o->bytelen_) return -1;
     if(bytelen_ > o->bytelen_) return 1;
