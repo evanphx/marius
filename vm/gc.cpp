@@ -238,6 +238,28 @@ namespace marius {
       }
     }
 
+    void mark_method_table(MethodTable* mt) {
+      mark_raw(&mt->entries_);
+
+      MethodTable::Entry** tbl = mt->entries_;
+
+      for(int i = 0; i < mt->capa_; i++) {
+        if(!tbl[i]) continue;
+
+        mark_raw(&tbl[i]);
+        MethodTable::Entry* e = tbl[i];
+
+        while(e) {
+          mark_spec(&e->key);
+          mark_spec(&e->method);
+
+          if(e->next) mark_raw(&e->next);
+
+          e = e->next;
+        }
+      }
+    }
+
     void walk_pointers(OOP obj,
                        immix::Marker<GCImpl, OOP>& marker)
     {
@@ -291,6 +313,7 @@ namespace marius {
             mark_spec(&c->superclass_);
           }
 
+          mark_method_table(c->method_table_);
           mark_attributes(c->attributes_);
         }
         return;

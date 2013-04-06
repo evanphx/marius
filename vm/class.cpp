@@ -9,6 +9,7 @@ namespace marius {
     , Attributes(S)
     , name_(name)
     , superclass_(sup)
+    , method_table_(new(S) MethodTable(S))
   {}
 
   Class::Class(State& S, Class* sup, String* name)
@@ -18,6 +19,7 @@ namespace marius {
     , Attributes(S)
     , name_(name)
     , superclass_(sup)
+    , method_table_(new(S) MethodTable(S))
   {}
 
   String* Class::metaclass_name(State& S, String* name) {
@@ -25,13 +27,13 @@ namespace marius {
   }
 
   Method* Class::lookup(String* name) {
-    Method* meth;
+    option<Method*> meth;
 
     Class* cls = this;
 
     while(true) {
-      meth = cls->method_table_.lookup(name);
-      if(meth) return meth;
+      meth = cls->method_table_->lookup(name);
+      if(meth.set_p()) return *meth;
       cls = cls->superclass_;
       if(!cls) break;
     }
@@ -46,13 +48,13 @@ namespace marius {
 
     Method* meth = new(S) Method(name_, func, arity);
 
-    method_table_.add(s, meth);
+    method_table_->add(S, s, meth);
   }
 
   void Class::add_native_method(State& S, const char* name, Method* meth) {
     String* s = String::internalize(S, name);
 
-    method_table_.add(s, meth);
+    method_table_->add(S, s, meth);
   }
 
   void Class::add_class_method(State& S, const char* name,
@@ -72,6 +74,6 @@ namespace marius {
   }
 
   OOP Class::methods(State& S) {
-    return method_table_.methods(S);
+    return method_table_->methods(S);
   }
 }

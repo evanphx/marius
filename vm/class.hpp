@@ -16,7 +16,7 @@ namespace marius {
   class Class : public MemoryObject, public Attributes {
     String* name_;
     Class* superclass_;
-    MethodTable method_table_;
+    MethodTable* method_table_;
 
     friend class GCImpl;
 
