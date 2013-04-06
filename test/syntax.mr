@@ -117,3 +117,5 @@ tests = methods().find_all({ |t| t.prefix?("test") })
 if !v
   7
 end
+
+%(1, 2, 3)
