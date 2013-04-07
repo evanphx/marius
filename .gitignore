@@ -1,3 +1,4 @@
+.vagrant
 *.o
 vm/parser.out
 tools/lemon
