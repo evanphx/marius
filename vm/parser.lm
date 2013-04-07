@@ -17,6 +17,7 @@
 %left OP2.
 %left NOT.
 %left DOT DCOLON.
+%left LSB.
 
 %extra_argument { marius::ParserState* S }
 
@@ -69,7 +70,7 @@ def_start ::= DEF. { S->start_def(); }
 def_body(A) ::= seq(B) fin END. { A.a = B.a; }
 
 arg ::= ID(A). { S->def_arg(A.s); }
-arg ::= ID(A) CAST ID(B). { S->def_arg_cast(A.s, S->named(B.s)); }
+arg ::= ID(A) CAST np_recv(B). { S->def_arg_cast(A.s, B.a); }
 
 id_list ::= id_list comma arg.
 id_list ::= arg.
@@ -123,6 +124,8 @@ np_arg(A) ::= np_arg(B) DOT DOLLAR lit(C) LP np_arg_list RP.
                  { A.a = S->send_indirect_args(B.a, C.a); }
 np_arg(A) ::= NOT np_arg(B). { A.a = S->not_(B.a); }
 np_arg(A) ::= lambda(B). { A.a = B.a; }
+np_arg(A) ::= np_arg(B) LSB np_arg_list RSB.
+               { A.a = S->call_args(B.a, "[]"); }
 
 np_arg_list_start ::= . { S->start_arg_list(); }
 np_arg_list_elems ::= np_arg_list_elems comma np_arg(A). { S->add_arg(A.a); }
