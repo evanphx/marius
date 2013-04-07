@@ -93,6 +93,7 @@ again:
 
       case '+':
       case '-':
+      case '$':
         if(match_operator()) {
           return TK_OP1_SET;
         } else {
@@ -108,10 +109,6 @@ again:
           return TK_OP2;
         }
         break;
-
-      case '$':
-        advance(1);
-        return TK_DOLLAR;
 
       case '%':
         advance(1);
@@ -130,6 +127,12 @@ again:
 
       case '.':
         advance(1);
+
+        if(next_c() == '$') {
+          advance(1);
+          return TK_DOT_DOLLAR;
+        }
+
         return TK_DOT;
 
       case ',':
