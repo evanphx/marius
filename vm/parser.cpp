@@ -92,12 +92,20 @@ again:
         goto again;
 
       case '+':
-        match_operator();
-        return TK_OP1;
+        if(match_operator()) {
+          return TK_OP1_SET;
+        } else {
+          return TK_OP1;
+        }
+        break;
 
       case '-':
-        match_operator();
-        return TK_OP1;
+        if(match_operator()) {
+          return TK_OP1_SET;
+        } else {
+          return TK_OP1;
+        }
+        break;
 
       case '$':
         advance(1);
@@ -146,7 +154,7 @@ again:
 
         if(next_c() == '=') {
           advance(1);
-          value_.cs = "==";
+          value_.s = String::internalize(S, "==");
           return TK_OP0;
         }
 
@@ -162,13 +170,16 @@ again:
 
         return TK_NOT;
       case '<':
-        match_operator();
+        {
+          bool s = match_operator();
 
-        if(value_.s->equal("<")) {
-          return TK_LT;
+          if(value_.s->equal("<")) {
+            return TK_LT;
+          }
+
+          return s ? TK_OP1_SET : TK_OP1;
         }
 
-        return TK_OP1;
       case '\n':
         column_ = 0;
         line_++;
@@ -225,7 +236,7 @@ again:
     return -1;
   }
 
-  void Parser::match_operator() {
+  bool Parser::match_operator() {
     ScratchBuffer buf;
 
     buf.append(next_c());
@@ -250,12 +261,19 @@ again:
       case '|':
       case '~':
       case ':':
+      case '=':
         buf.append(c);
         advance(1);
         break;
       default:
+        bool set = false;
+        if(buf.last() == '=') {
+          buf.remove_last();
+          set = true;
+        }
+
         value_.s = String::internalize(S, buf.copy_out());
-        return;
+        return set;
       }
     }
   }

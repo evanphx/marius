@@ -188,5 +188,8 @@ stmt(A) ::= TRY fin seq(C) fin RESCUE fin seq(D) fin END. {
             }
 
 stmt(A) ::= ID(B) EQUAL s2(C). { A.a = S->assign(B.s, C.a); }
+stmt(A) ::= ID(B) OP1_SET(D) s2(C). { A.a = S->assign_op(B.s, D.s, C.a); }
 stmt(A) ::= IVAR(B) EQUAL s2(C). { A.a = S->ivar_assign(B.s, C.a); }
+stmt(A) ::= IVAR(B) OP1_SET(D) s2(C).
+              { A.a = S->ivar_assign_op(B.s, D.s, C.a); }
 stmt(A) ::= RAISE s2(B). { A.a = S->raise(B.a); }

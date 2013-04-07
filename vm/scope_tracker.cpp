@@ -111,7 +111,35 @@ namespace marius {
 
     void visit(Assign* a) {
       LocalScope::iterator j = scope_->find(a->name());
-      if(j != scope_->end()) return;
+      if(j != scope_->end()) {
+        locals_.add(a, j->second);
+        return;
+      }
+
+      int d = 0;
+      for(std::list<LocalScope*>::reverse_iterator i = stack_.rbegin();
+          i != stack_.rend();
+          ++i, d++)
+      {
+        LocalScope* s = *i;
+
+        LocalScope::iterator j = s->find(a->name());
+        if(j != s->end()) {
+          j->second->make_closure();
+          Local* l = locals_.add(a);
+          l->make_closure_access(j->second, d);
+        }
+      }
+
+      scope_->insert(LocalScope::value_type(a->name(), locals_.add(a)));
+    }
+
+    void visit(AssignOp* a) {
+      LocalScope::iterator j = scope_->find(a->name());
+      if(j != scope_->end()) {
+        locals_.add(a, j->second);
+        return;
+      }
 
       int d = 0;
       for(std::list<LocalScope*>::reverse_iterator i = stack_.rbegin();

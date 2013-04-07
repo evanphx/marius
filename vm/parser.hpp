@@ -104,7 +104,7 @@ namespace marius {
     int keyword_match();
     int str_match();
     int sym_match();
-    void match_operator();
+    bool match_operator();
   };
 }
 

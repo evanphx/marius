@@ -492,6 +492,26 @@ namespace marius {
       void accept(Visitor* V);
     };
 
+    class AssignOp : public Node {
+      String* name_;
+      String* op_;
+      Node* value_;
+
+    public:
+      AssignOp(String* n, String* o, Node* v)
+        : name_(n)
+        , op_(o)
+        , value_(v)
+      {}
+
+      String* name() {
+        return name_;
+      }
+
+      int drive(State& S, int t);
+      void accept(Visitor* V);
+    };
+
     class LoadAttr : public Node {
       Node* recv_;
       String* name_;
@@ -513,6 +533,22 @@ namespace marius {
     public:
       IvarAssign(String* n, Node* v)
         : name_(n)
+        , value_(v)
+      {}
+
+      int drive(State& S, int t);
+      void accept(Visitor* V);
+    };
+
+    class IvarAssignOp : public Node {
+      String* name_;
+      String* op_;
+      Node* value_;
+
+    public:
+      IvarAssignOp(String* n, String* o, Node* v)
+        : name_(n)
+        , op_(o)
         , value_(v)
       {}
 
@@ -618,8 +654,10 @@ namespace marius {
       virtual void visit(Import* n) { };
       virtual void visit(Try* n) { };
       virtual void visit(Assign* n) { };
+      virtual void visit(AssignOp* n) { };
       virtual void visit(LoadAttr* n) { };
       virtual void visit(IvarAssign* n) { };
+      virtual void visit(IvarAssignOp* n) { };
       virtual void visit(IvarRead* n) { };
       virtual void visit(LiteralString* n) { };
       virtual void visit(Lambda* l) { };

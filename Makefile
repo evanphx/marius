@@ -53,6 +53,8 @@ test: marius
 	test `./marius -p test/keyword_no_recv.mr` = 7
 	test `./marius -p test/operator.mr` = 7
 	test `./marius -p test/operator2.mr` = 7
+	test `./marius -p test/assign_op.mr` = 7
+	test `./marius -p test/ivar_assign_op.mr` = 7
 
 spec: test
 	./marius -Ilib spec/string_test.mr

@@ -192,6 +192,9 @@ namespace marius {
     ast::Node* ivar_assign(String* name, ast::Node* n);
     ast::Node* ivar_read(String* name);
 
+    ast::Node* assign_op(String* name, String* op, ast::Node* n);
+    ast::Node* ivar_assign_op(String* name, String* op, ast::Node* n);
+
     void start_lambda();
     ast::Node* lambda(ast::Node* b);
 

@@ -78,6 +78,14 @@ namespace marius {
       len++;
     }
 
+    uint8_t last() {
+      return buf[len-1];
+    }
+
+    void remove_last() {
+      len--;
+    }
+
     char* copy_out() {
       return strndup((const char*)buf, len);
     }

@@ -1,0 +1,9 @@
+class Blah
+  def foo
+    @blah = 3
+    @blah += 4
+    @blah
+  end
+end
+
+Blah.new.foo

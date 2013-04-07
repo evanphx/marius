@@ -613,6 +613,30 @@ namespace ast {
     V->visit(this);
   }
 
+  int AssignOp::drive(State& S, int t) {
+    Local* l = S.lm().get(this);
+    assert(l);
+
+    S.get_local(l, t);
+    value_->drive(S, t + 1);
+
+    S.push(CALL);
+    S.push(t);
+    S.push(S.string(op_));
+    S.push(t);
+    S.push(1);
+
+    S.set_local(l, t);
+
+    return t;
+  }
+
+  void AssignOp::accept(Visitor* V) {
+    value_->accept(V);
+
+    V->visit(this);
+  }
+
   int LoadAttr::drive(State& S, int t) {
     recv_->drive(S, t);
     S.push(LATTR);
@@ -638,6 +662,31 @@ namespace ast {
   }
 
   void IvarAssign::accept(Visitor* V) {
+    value_->accept(V);
+    V->visit(this);
+  }
+
+  int IvarAssignOp::drive(State& S, int t) {
+    S.push(IVR);
+    S.push(S.string(name_));
+    S.push(t);
+
+    value_->drive(S, t + 1);
+
+    S.push(CALL);
+    S.push(t);
+    S.push(S.string(op_));
+    S.push(t);
+    S.push(1);
+
+    S.push(IVA);
+    S.push(S.string(name_));
+    S.push(t);
+
+    return t;
+  }
+
+  void IvarAssignOp::accept(Visitor* V) {
     value_->accept(V);
     V->visit(this);
   }
