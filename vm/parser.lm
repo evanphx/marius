@@ -68,8 +68,11 @@ class(A) ::= class_start ID(B) LT s2(C) fin class_body(D). {
 def_start ::= DEF. { S->start_def(); }
 def_body(A) ::= seq(B) fin END. { A.a = B.a; }
 
-id_list ::= id_list comma ID(A). { S->def_arg(A.s); }
-id_list ::= ID(A). { S->def_arg(A.s); }
+arg ::= ID(A). { S->def_arg(A.s); }
+arg ::= ID(A) CAST ID(B). { S->def_arg_cast(A.s, S->named(B.s)); }
+
+id_list ::= id_list comma arg.
+id_list ::= arg.
 
 def_args ::= .
 def_args ::= LP id_list RP.

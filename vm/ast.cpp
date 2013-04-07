@@ -82,6 +82,17 @@ namespace ast {
 
   void Scope::accept(Visitor* V) {
     V->before_visit(this);
+
+    for(ArgumentList::iterator i = arg_objs_.begin();
+        i != arg_objs_.end();
+        ++i) {
+      Argument* arg = *i;
+
+      if(ast::Node* n = arg->cast()) {
+        n->accept(V);
+      }
+    }
+
     body_->accept(V);
     V->visit(this);
   }
@@ -290,7 +301,27 @@ namespace ast {
 
     ast::State subS(S.MS, S.lm());
 
-    int r = body_->drive(subS, args_.size() + body_->locals().size());
+    int first_reg = args_.size() + body_->locals().size();
+
+    for(ArgumentList::iterator i = body_->arg_objs().begin();
+        i != body_->arg_objs().end();
+        ++i) {
+      Argument* arg = *i;
+      if(ast::Node* n = arg->cast()) {
+        n->drive(subS, first_reg);
+        subS.push(MOVR);
+        subS.push(first_reg+1);
+        subS.push(arg->position());
+
+        subS.push(CALL);
+        subS.push(arg->position());
+        subS.push(subS.string(String::internalize(S.MS, "cast")));
+        subS.push(first_reg);
+        subS.push(1);
+      }
+    }
+
+    int r = body_->drive(subS, first_reg);
     subS.push(RET);
     subS.push(r);
 

@@ -119,11 +119,19 @@ namespace marius {
 
     class Argument : public Node {
       String* name_;
+      Node* cast_;
       int position_;
 
     public:
       Argument(String* n, int p)
         : name_(n)
+        , cast_(0)
+        , position_(p)
+      {}
+
+      Argument(String* n, Node* c, int p)
+        : name_(n)
+        , cast_(c)
         , position_(p)
       {}
 
@@ -133,6 +141,10 @@ namespace marius {
 
       int position() {
         return position_;
+      }
+
+      Node* cast() {
+        return cast_;
       }
 
       int drive(State& S, int t);
