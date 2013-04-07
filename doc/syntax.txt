@@ -1,0 +1,29 @@
+Bottom to top:
+
+integer literal
+double literal
+string literal
+
+if/elsif/else
+unless
+while
+case/when
+
+post if
+post unless
+
+and
+or
+
+break
+next
+return
+
+try/rescue/ensure/else
+
+super
+method call
+method call with kwargs
+method call with no parens
+
+cast
