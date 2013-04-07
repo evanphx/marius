@@ -290,11 +290,12 @@ namespace marius {
 
     Dictionary::init(S, dict);
   
-    globals_ = new(S) Closure(5);
+    globals_ = new(S) Closure(6);
     globals_->set(0, o);
     globals_->set(1, io);
     globals_->set(2, c);
     globals_->set(3, importer);
     globals_->set(4, dict);
+    globals_->set(5, i);
   }
 }

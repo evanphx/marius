@@ -133,12 +133,6 @@ namespace marius {
                 code_.string(seq[2])->c_str());
       return 3;
 
-    case LOADN:
-      printf("R(%d) := ENV[:%s]\n",
-                seq[1],
-                code_.string(seq[2])->c_str());
-      return 3;
-
     case RET:
       printf("<- R(%d)\n", seq[1]);
       return 2;

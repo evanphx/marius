@@ -212,24 +212,6 @@ namespace marius {
 
         break;
 
-      case LOADN:
-        t = load_named(S, code.string(seq[1]));
-
-        if(t.unwind_p()) {
-          if(es.size() == 0) return t;
-          te = es.back();
-          es.pop_back();
-
-          fp[te.reg] = t.unwind_value();
-
-          seq = code.code() + te.ip;
-        } else {
-          fp[seq[0]] = t;
-          seq += 2;
-        }
-
-        break;
-
       case IVA:
         fp[-1].set_attribute(S, code.string(seq[0]), fp[seq[1]]);
         seq += 2;
@@ -406,10 +388,6 @@ namespace marius {
     Arguments args(S, argc, fp, keywords);
 
     return meth->run(S, recv, args);
-  }
-
-  OOP VM::load_named(State& S, String* name) {
-    return S.env().lookup(name);
   }
 
   OOP VM::load_attr(State& S, String* name, OOP recv, OOP* fp) {

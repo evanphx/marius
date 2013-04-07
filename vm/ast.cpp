@@ -248,9 +248,14 @@ namespace ast {
     if(l) {
       S.get_local(l, t);
     } else {
-      S.push(LOADN);
+      S.push(SELF);
+      S.push(t);
+
+      S.push(CALL);
       S.push(t);
       S.push(S.string(name_));
+      S.push(t);
+      S.push(0);
     }
 
     return t;

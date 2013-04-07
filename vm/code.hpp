@@ -27,7 +27,6 @@ namespace marius {
     IVA,
     IVR,
     RET,
-    LOADN,
     LOADS,
     LOADC,
     SELF,
