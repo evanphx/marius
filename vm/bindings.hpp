@@ -28,10 +28,10 @@ namespace marius {
     friend class GCImpl;
 
     Entry** entries_;
-    int capa_;
-    int size_;
+    unsigned capa_;
+    unsigned size_;
 
-    static const int cDefaultCapa = 8;
+    static const unsigned cDefaultCapa = 8;
 
   public:
     Bindings(State& S);

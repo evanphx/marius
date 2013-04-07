@@ -51,7 +51,7 @@ namespace marius {
     uint8_t* p = buf.buf;
 
     uint32_t c = *p++ & 0xff;
-    int n;
+    unsigned n;
 
     *uv = c;
 

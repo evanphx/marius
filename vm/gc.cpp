@@ -222,7 +222,7 @@ namespace marius {
 
       Bindings::Entry** tbl = attrs.entries_;
 
-      for(int i = 0; i < attrs.capa_; i++) {
+      for(unsigned i = 0; i < attrs.capa_; i++) {
         if(!tbl[i]) continue;
 
         mark_raw(&tbl[i]);
@@ -244,7 +244,7 @@ namespace marius {
 
       MethodTable::Entry** tbl = mt->entries_;
 
-      for(int i = 0; i < mt->capa_; i++) {
+      for(unsigned i = 0; i < mt->capa_; i++) {
         if(!tbl[i]) continue;
 
         mark_raw(&tbl[i]);
@@ -291,7 +291,7 @@ namespace marius {
             mark_spec(&c->parent_);
           }
 
-          for(int i = 0; i < c->size_; i++) {
+          for(unsigned i = 0; i < c->size_; i++) {
             mark_obj(&c->values_[i]);
           }
         }

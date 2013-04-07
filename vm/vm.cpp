@@ -79,7 +79,8 @@ namespace marius {
     while(seq < end) {
 #ifdef TRACE
       if(debug_) {
-        printf("[%04ld] ", seq - code.code());
+        int ip = seq - code.code();
+        printf("[%04d] ", ip);
         dis.print_one(seq);
       }
 #endif

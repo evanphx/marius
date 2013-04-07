@@ -73,15 +73,15 @@ namespace immix {
   /// The size of a Line; should be a multiple of the processor cache line size,
   /// and sufficient to hold several typical objects; we use 128 bytes.
   /// @todo Check impact of different line sizes
-  const int cLineSize  = 1 << cLineBits;
+  const unsigned cLineSize  = 1 << cLineBits;
 
   /// Line mask used to convert an objects Address to the Address of the start
   /// of the line.
-  const int cLineMask  = cLineSize - 1;
+  const unsigned cLineMask  = cLineSize - 1;
 
   /// Each block consists of an array of lines, known as the line table.
   /// The line table array is sized to fill the Block.
-  const int cLineTableSize = cBlockSize / cLineSize;
+  const unsigned cLineTableSize = cBlockSize / cLineSize;
 
   /// Memory for blocks is allocated in chunks; these are set to be 10 MB, thus
   /// each chunk has space for 320 blocks.
@@ -98,7 +98,7 @@ namespace immix {
   /// recycled block rapidly diminishes as the number of lines increases,
   /// we don't bother searching partially free blocks if the size of the
   /// object is at or above this number of lines.
-  const int cMediumObjectLimit = cLineSize * 4; //< @todo calculate this
+  const unsigned cMediumObjectLimit = cLineSize * 4; //< @todo calculate this
 
   /**
    * Enumeration of possible block states.
@@ -275,15 +275,15 @@ namespace immix {
     /**
      * Marks a line of memory as in use.
      */
-    void mark_line(int line) {
-      assert(line >= 0 && line < cLineTableSize);
+    void mark_line(unsigned line) {
+      assert(line < cLineTableSize);
       lines_[line] = 1;
     }
 
     /**
      * Marks a line of memory as free.
      */
-    void free_line(int line) {
+    void free_line(unsigned line) {
       assert(line >= 0 && line < cLineTableSize);
       lines_[line] = 0;
     }
@@ -291,7 +291,7 @@ namespace immix {
     /**
      * Returns true if +line+ is currently free.
      */
-    bool is_line_free(int line) const {
+    bool is_line_free(unsigned line) const {
       assert(line >= 0 && line < cLineTableSize);
       return lines_[line] == 0;
     }
@@ -300,7 +300,7 @@ namespace immix {
      * Returns the offset in bytes from the start of the block to the start of
      * the specified +line+.
      */
-    int offset_of_line(int line) const {
+    int offset_of_line(unsigned line) const {
       assert(line >= 0 && line < cLineTableSize);
       return line * cLineSize;
     }
@@ -308,7 +308,7 @@ namespace immix {
     /**
      * Returns the memory Address of the start of the specified line.
      */
-    Address address_of_line(int line) {
+    Address address_of_line(unsigned line) {
       assert(line >= 0 && line < cLineTableSize);
       return address_ + (line * cLineSize);
     }
@@ -344,7 +344,7 @@ namespace immix {
     void mark_address(Address addr, unsigned size) {
       // Mark the line containing +addr+ as in use
       size_t offset = addr - address_;
-      int line = offset / cLineSize;
+      unsigned line = offset / cLineSize;
       mark_line(line);
 
       // Next, determine how many lines this object is occupying.
@@ -378,7 +378,7 @@ namespace immix {
       holes_ = 0;
       lines_used_ = 0;
       bool in_hole = false;
-      for(int i = 0; i < cLineTableSize; i++) {
+      for(unsigned i = 0; i < cLineTableSize; i++) {
         if(lines_[i] == 0) {
           if(!in_hole) holes_++;
           in_hole = true;
@@ -772,7 +772,7 @@ namespace immix {
   protected:
     Address cursor_;
     Address limit_;
-    int hole_start_line_;
+    unsigned hole_start_line_;
     Block* block_;
 
   public:

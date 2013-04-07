@@ -10,7 +10,7 @@ namespace marius {
 
   class Closure : public GCAllocated {
     Closure* parent_;
-    int size_;
+    unsigned size_;
     OOP* values_;
 
     friend class GCImpl;
