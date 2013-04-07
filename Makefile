@@ -57,6 +57,7 @@ test: marius
 	test `./marius -p test/ivar_assign_op.mr` = 7
 	test `./marius -p test/dict.mr` = 7
 	test `./marius -p test/cast_arg.mr` = 7
+	test `./marius -p test/brackets.mr` = 7
 
 spec: test
 	./marius -Ilib spec/string_test.mr

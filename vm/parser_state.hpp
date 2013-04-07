@@ -166,6 +166,7 @@ namespace marius {
     void add_arg(ast::Node* n);
     void add_kw_arg(String* id, ast::Node* n);
     ast::Node* call_args(ast::Node* n, String* id);
+    ast::Node* call_args(ast::Node* n, const char* id);
     ast::Node* call_kw_args(ast::Node* n, String* id);
 
     ast::Node* dcolon(ast::Node* r, String* id, String* arg);

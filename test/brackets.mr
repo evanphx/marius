@@ -1,0 +1,7 @@
+class Blah
+  def [](a)
+    a + 4
+  end
+end
+
+Blah.new[3]

@@ -146,6 +146,20 @@ again:
         advance(1);
         return TK_LB;
 
+      case '[':
+        advance(1);
+        if(next_c() == ']') {
+          advance(1);
+          value_.s = String::internalize(S, "[]");
+          return TK_SQUARE;
+        }
+
+        return TK_LSB;
+
+      case ']':
+        advance(1);
+        return TK_RSB;
+
       case '(':
         advance(1);
         return TK_LP;

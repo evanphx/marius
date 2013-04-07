@@ -187,6 +187,10 @@ namespace marius {
     return n;
   }
 
+  ast::Node* ParserState::call_args(ast::Node* recv, const char* id) {
+    return call_args(recv, String::internalize(S, id));
+  }
+
   ast::Node* ParserState::tuple() {
     ast::Node* n = 0;
 
