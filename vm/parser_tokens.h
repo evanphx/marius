@@ -40,6 +40,7 @@
 #define TK_IMPORT                         40
 #define TK_TRY                            41
 #define TK_RESCUE                         42
-#define TK_OP1_SET                        43
-#define TK_OP0_SET                        44
-#define TK_RAISE                          45
+#define TK_OP2_SET                        43
+#define TK_OP1_SET                        44
+#define TK_OP0_SET                        45
+#define TK_RAISE                          46

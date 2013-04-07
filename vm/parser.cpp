@@ -92,6 +92,7 @@ again:
         goto again;
 
       case '+':
+      case '-':
         if(match_operator()) {
           return TK_OP1_SET;
         } else {
@@ -99,11 +100,12 @@ again:
         }
         break;
 
-      case '-':
+      case '*':
+      case '/':
         if(match_operator()) {
-          return TK_OP1_SET;
+          return TK_OP2_SET;
         } else {
-          return TK_OP1;
+          return TK_OP2;
         }
         break;
 
@@ -283,6 +285,7 @@ again:
       case '~':
       case ':':
       case '=':
+      case '/':
         buf.append(c);
         advance(1);
         break;
@@ -316,12 +319,6 @@ again:
       : str(s)
       , token(t)
     {}
-
-    bool op_p() {
-      return token == TK_OP0 ||
-             token == TK_OP1 ||
-             token == TK_OP2;
-    }
   };
 
   static Keyword* cKeywords[256] = {0};
@@ -384,36 +381,6 @@ again:
     k[0] = Keyword("while", TK_WHILE);
 
     cKeywords[(int)'w'] = k;
-
-    k = new Keyword[2];
-    k[0] = Keyword("+", TK_OP1);
-
-    cKeywords[(int)'+'] = k;
-
-    k = new Keyword[2];
-    k[0] = Keyword("-", TK_OP1);
-
-    cKeywords[(int)'-'] = k;
-
-    k = new Keyword[2];
-    k[0] = Keyword("*", TK_OP2);
-
-    cKeywords[(int)'*'] = k;
-
-    k = new Keyword[2];
-    k[0] = Keyword("/", TK_OP2);
-
-    cKeywords[(int)'/'] = k;
-
-    k = new Keyword[2];
-    k[0] = Keyword("!=", TK_OP0);
-
-    cKeywords[(int)'!'] = k;
-
-    k = new Keyword[2];
-    k[0] = Keyword("==", TK_OP0);
-
-    cKeywords[(int)'='] = k;
   }
 
   int Parser::keyword_match() {
@@ -426,14 +393,6 @@ again:
       const char* str = next_str(len);
 
       if(str && strncmp(str, k->str, len) == 0) {
-        // If this was an operator, then make sure the
-        // token value is the specific operator.
-        if(k->op_p()) {
-          advance(len);
-          value_.cs = k->str;
-          return k->token;
-        }
-
         // Check that the data following it isn't an alpha
         // character, otherwise we're inside this string
         // as a subsequence.
