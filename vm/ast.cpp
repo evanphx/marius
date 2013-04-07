@@ -764,4 +764,40 @@ namespace ast {
     value_->accept(V);
     V->visit(this);
   }
+
+  int Dictionary::drive(State& S, int t) {
+    Local* l = S.lm().get(this);
+    assert(l);
+
+    S.get_local(l, t);
+
+    int j = t+1;
+
+    for(Nodes::iterator i = args_->positional.begin();
+        i != args_->positional.end();
+        ++i) {
+      (*i)->drive(S,j++);
+    }
+
+    int count = args_->positional.size();
+
+    S.push(CALL_KW);
+    S.push(t);
+    S.push(S.string(String::internalize(S.MS, "literal")));
+    S.push(t);
+    S.push(count);
+    S.push(S.keyword(args_->keywords));
+
+    return t;
+  }
+
+  void Dictionary::accept(Visitor* V) {
+    for(Nodes::iterator i = args_->positional.begin();
+        i != args_->positional.end();
+        ++i) {
+      (*i)->accept(V);
+    }
+
+    V->visit(this);
+  }
 }}

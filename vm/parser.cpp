@@ -119,6 +119,11 @@ again:
           return TK_TUPLE_START;
         }
 
+        if(next_c() == '{') {
+          advance(1);
+          return TK_DICT_START;
+        }
+
         return sym_match();
 
       case '.':
@@ -177,8 +182,10 @@ again:
             return TK_LT;
           }
 
-          return s ? TK_OP1_SET : TK_OP1;
+          return s ? TK_OP0_SET : TK_OP0;
         }
+      case '>':
+        return match_operator() ? TK_OP0_SET : TK_OP0;
 
       case '\n':
         column_ = 0;

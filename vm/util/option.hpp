@@ -4,7 +4,8 @@
 template <typename T>
 class option {
   bool set_;
-  T value_;
+
+  char bits_[sizeof(T)];
 
 public:
   option()
@@ -13,11 +14,12 @@ public:
 
   option(T v)
     : set_(true)
-    , value_(v)
-  {}
+  {
+    new(bits_) T(v);
+  }
 
   T operator*() {
-    return value_;
+    return *((T*)bits_);
   }
 
   bool set_p() {

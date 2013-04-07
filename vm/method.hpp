@@ -43,6 +43,10 @@ namespace marius {
       return scope_;
     }
 
+    bool simple_p() {
+      return func_ != 0;
+    }
+
     String* name(State& S);
 
     OOP closed_over_variable(int depth, int idx);

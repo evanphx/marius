@@ -72,6 +72,9 @@ namespace marius {
     case eRaw:
       printf("<raw>\n");
       return;
+    case eDictionary:
+      printf("<dict>\n");
+      return;
     case TotalTypes:
       check(false);
     }

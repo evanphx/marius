@@ -16,7 +16,7 @@
 %left OP1.
 %left OP2.
 %left NOT.
-%left DOT.
+%left DOT DCOLON.
 
 %extra_argument { marius::ParserState* S }
 
@@ -75,6 +75,7 @@ def_args ::= .
 def_args ::= LP id_list RP.
 
 def_name(A) ::= ID(B).  { A.s = B.s; }
+def_name(A) ::= OP0(B). { A.s = B.s; }
 def_name(A) ::= OP1(B). { A.s = B.s; }
 
 
@@ -109,6 +110,7 @@ np_arg(A) ::= np_arg(B) DOT ID(C). { A.a = S->call(B.a, C.s); }
 np_arg(A) ::= np_arg(B) DOT ID(C) LP RP. { A.a = S->call(B.a, C.s); }
 np_arg(A) ::= np_arg(B) DOT ID(C) LP np_arg_list RP.
                 { A.a = S->call_args(B.a, C.s); }
+np_arg(A) ::= np_arg(B) DCOLON(C) ID(D). { A.a = S->dcolon(B.a, C.s, D.s); }
 np_arg(A) ::= np_arg(B) DOT DOLLAR lit(C).
                  { A.a = S->send_indirect(B.a, C.a); }
 np_arg(A) ::= np_arg(B) DOT DOLLAR lit(C) LP RP.
@@ -148,6 +150,7 @@ np_recv(A) ::= np_recv(B) DOT DOLLAR lit(C) LP np_arg_list RP.
                  { A.a = S->send_indirect_args(B.a, C.a); }
 np_recv(A) ::= lambda(B). { A.a = B.a; }
 np_recv(A) ::= TUPLE_START np_arg_list RP. { A.a = S->tuple(); }
+np_recv(A) ::= DICT_START np_arg_list RB. { A.a = S->dict(); }
 
 s2(A) ::= np_recv(B) DOT ID(C) np_arg_list. { A.a = S->call_args(B.a, C.s); }
 s2(A) ::= np_recv(B) DOT DOLLAR lit(C) np_arg_list.
@@ -189,7 +192,10 @@ stmt(A) ::= TRY fin seq(C) fin RESCUE fin seq(D) fin END. {
 
 stmt(A) ::= ID(B) EQUAL s2(C). { A.a = S->assign(B.s, C.a); }
 stmt(A) ::= ID(B) OP1_SET(D) s2(C). { A.a = S->assign_op(B.s, D.s, C.a); }
+stmt(A) ::= ID(B) OP0_SET(D) s2(C). { A.a = S->assign_op(B.s, D.s, C.a); }
 stmt(A) ::= IVAR(B) EQUAL s2(C). { A.a = S->ivar_assign(B.s, C.a); }
 stmt(A) ::= IVAR(B) OP1_SET(D) s2(C).
+              { A.a = S->ivar_assign_op(B.s, D.s, C.a); }
+stmt(A) ::= IVAR(B) OP0_SET(D) s2(C).
               { A.a = S->ivar_assign_op(B.s, D.s, C.a); }
 stmt(A) ::= RAISE s2(B). { A.a = S->raise(B.a); }

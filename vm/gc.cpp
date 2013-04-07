@@ -12,6 +12,7 @@
 #include "user.hpp"
 #include "environment.hpp"
 #include "closure.hpp"
+#include "dictionary.hpp"
 
 #include "vm.hpp"
 #include "stack_frame.hpp"
@@ -317,6 +318,15 @@ namespace marius {
           mark_attributes(c->attributes_);
         }
         return;
+
+      case OOP::eDictionary:
+        {
+          Dictionary* d = obj.dict_;
+          mark_attributes(d->table_);
+        }
+
+        return;
+
       case OOP::eModule:
         {
           Module* m = obj.module_;

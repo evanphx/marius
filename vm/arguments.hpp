@@ -3,14 +3,24 @@
 
 #include "state.hpp"
 #include "handle.hpp"
+#include "code.hpp"
+#include "util/option.hpp"
 
 namespace marius {
   class Arguments {
     State& S_;
     OOP* fp_;
     int argc_;
+    option<ArgMap> keywords_;
 
   public:
+
+    Arguments(State& S, int argc, OOP* fp, option<ArgMap> keys)
+      : S_(S)
+      , fp_(fp)
+      , argc_(argc)
+      , keywords_(keys)
+    {}
 
     Arguments(State& S, int argc, OOP* fp)
       : S_(S)
@@ -28,6 +38,10 @@ namespace marius {
 
     Handle self() {
       return handle(S_, fp_[-1]);
+    }
+
+    option<ArgMap>& keywords() {
+      return keywords_;
     }
 
     Handle operator[](int idx) {

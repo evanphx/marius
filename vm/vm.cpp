@@ -396,11 +396,13 @@ namespace marius {
       return Unwind::name_error(S, name);
     }
 
-    reorg_args(fp, meth, keywords);
+    if(!meth->simple_p()) {
+      reorg_args(fp, meth, keywords);
+    }
 
     S.last_fp = fp;
 
-    Arguments args(S, argc, fp);
+    Arguments args(S, argc, fp, keywords);
 
     return meth->run(S, recv, args);
   }

@@ -22,6 +22,7 @@ namespace marius {
   class Tuple;
   class State;
   class Closure;
+  class Dictionary;
 
   class GCImpl;
 
@@ -33,7 +34,7 @@ namespace marius {
       eTuple, eRaw,
 
       // Mutable object types
-      eClass, eUser, eModule, eClosure,
+      eClass, eUser, eModule, eClosure, eDictionary,
       TotalTypes
     };
 
@@ -59,6 +60,7 @@ namespace marius {
       Module* module_;
       User* user_;
       Closure* closure_;
+      Dictionary* dict_;
       void* raw_;
     };
 
@@ -86,6 +88,11 @@ namespace marius {
     OOP(Closure* c)
       : type_(eClosure)
       , closure_(c)
+    {}
+
+    OOP(Dictionary* d)
+      : type_(eDictionary)
+      , dict_(d)
     {}
 
     OOP(enum IntConstruct _, int val)
@@ -177,6 +184,11 @@ namespace marius {
     int int_value() {
       check(type_ == eInteger);
       return int_;
+    }
+
+    Dictionary* as_dictionary() {
+      check(type_ == eDictionary);
+      return dict_;
     }
 
     String* as_string() {

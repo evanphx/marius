@@ -21,6 +21,7 @@ namespace marius {
     globals[String::internalize(S, "io")] = 1;
     globals[String::internalize(S, "Class")] = 2;
     globals[String::internalize(S, "Importer")] = 3;
+    globals[String::internalize(S, "Dictionary")] = 4;
 
     LocalMap locals;
 

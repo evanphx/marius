@@ -9,6 +9,7 @@
 #include "method.hpp"
 #include "closure.hpp"
 #include "tuple.hpp"
+#include "dictionary.hpp"
 
 #include <iostream>
 #include <stdio.h>
@@ -254,6 +255,8 @@ namespace marius {
     tuple->add_method(S, "find_all", tuple_find_all, 1);
     tuple->add_method(S, "each", tuple_each, 1);
 
+    Class* dict = new_class(S, "Dictionary");
+
     Class** tbl = new(S) Class*[OOP::TotalTypes];
 
     tbl[OOP::eNil] = n;
@@ -267,6 +270,7 @@ namespace marius {
     tbl[OOP::eUnwind] = new_class(S, "Unwind");
     tbl[OOP::eMethod] = mc;
     tbl[OOP::eTuple] = tuple;
+    tbl[OOP::eDictionary] = dict;
 
     Class::init_base(tbl);
 
@@ -283,11 +287,14 @@ namespace marius {
     Class* importer = init_import(S);
 
     String::init(S);
+
+    Dictionary::init(S, dict);
   
-    globals_ = new(S) Closure(4);
+    globals_ = new(S) Closure(5);
     globals_->set(0, o);
     globals_->set(1, io);
     globals_->set(2, c);
     globals_->set(3, importer);
+    globals_->set(4, dict);
   }
 }

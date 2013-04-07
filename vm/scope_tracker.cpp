@@ -40,6 +40,18 @@ namespace marius {
       scope_->insert(LocalScope::value_type(imp->name(), lv));
     }
 
+    void visit(ast::Dictionary* dict) {
+      int depth = stack_.size();
+
+      ArgMap::iterator i = globals_.find(String::internalize(S, "Dictionary"));
+
+      assert(i != globals_.end());
+      Local* l = new Local;
+      l->make_global(i->second, depth);
+
+      locals_.add(dict, l);
+    }
+
     void before_visit(ast::Class* cls) {
       scope_->insert(LocalScope::value_type(cls->name(),
                                             locals_.add(cls->body())));

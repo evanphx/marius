@@ -195,6 +195,20 @@ namespace marius {
     return n;
   }
 
+  ast::Node* ParserState::dict() {
+    ast::Node* n = 0;
+
+    ast::Arguments* args = new ast::Arguments(arg_info_.nodes, arg_info_.keywords);
+    n = new ast::Dictionary(args);
+
+    arg_info_ = arg_infos_.back();
+    arg_infos_.pop_back();
+
+    assert(n);
+
+    return n;
+  }
+
   ast::Node* ParserState::if_cond(ast::Node* cond, ast::Node* body) {
     return new ast::IfCond(cond, body);
   }

@@ -247,6 +247,18 @@ namespace marius {
       void accept(Visitor* V);
     };
 
+    class Dictionary : public Node {
+      Arguments* args_;
+
+    public:
+      Dictionary(Arguments* a)
+        : args_(a)
+      {}
+
+      int drive(State& S, int t);
+      void accept(Visitor* V);
+    };
+
     class Call : public Node {
     protected:
       String* name_;
@@ -668,6 +680,7 @@ namespace marius {
       virtual void visit(Not* r) {}
       virtual void visit(Tuple* t) {}
       virtual void visit(While* t) {}
+      virtual void visit(Dictionary* t) {}
     };
 
   }
