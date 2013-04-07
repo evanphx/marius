@@ -68,7 +68,7 @@ namespace marius {
   void ParserState::def_arg(String* name) {
     int num = context_->args.size();
 
-    context_->args[name] = context_->args.size();
+    context_->args[name] = num;
     context_->arg_objs.push_back(new ast::Argument(name, num));
   }
 
