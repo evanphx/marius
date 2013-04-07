@@ -1,3 +1,4 @@
+debug.out
 .vagrant
 *.o
 vm/parser.out
