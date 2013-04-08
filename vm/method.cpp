@@ -2,7 +2,7 @@
 #include "vm.hpp"
 #include "state.hpp"
 #include "closure.hpp"
-#include "unwind.hpp"
+#include "exception.hpp"
 
 namespace marius {
   Method::Method(String* scope, SimpleFunc func, int arity, Closure* closure)
@@ -39,7 +39,9 @@ namespace marius {
 
   OOP Method::run(State& S, OOP recv, Arguments& args) {
     if(arity_ > 0 && args.count() != arity_) {
-      return Unwind::arg_error(S, arity_, args.count());
+      return OOP::make_unwind(
+        Exception::create(S, "ArgumentError",
+                                  "Expected %d, got %d", arity_, args.count()));
     }
 
     if(func_) {

@@ -13,6 +13,8 @@
 #include "environment.hpp"
 #include "closure.hpp"
 #include "dictionary.hpp"
+#include "exception.hpp"
+#include "invoke_info.hpp"
 
 #include "vm.hpp"
 #include "stack_frame.hpp"
@@ -347,7 +349,36 @@ namespace marius {
           mark_raw(&str->data_);
         }
         return;
+
+      case OOP::eInvokeInfo:
+        {
+          InvokeInfo* ii = obj.invoke_info_;
+          if(ii->previous_) {
+            mark_spec(&ii->previous_);
+          }
+
+          mark_spec(&ii->method_);
+        }
+        return;
+
+      case OOP::eException:
       case OOP::eUnwind:
+        {
+          Exception* e = obj.exception_;
+          if(e->parent_) {
+            mark_spec(&e->parent_);
+          }
+
+          mark_spec(&e->message_);
+          mark_attributes(e->attributes_);
+
+          if(e->backtrace_) {
+            mark_spec(&e->backtrace_);
+          }
+        }
+
+        return;
+
       case OOP::TotalTypes:
         return;
       }

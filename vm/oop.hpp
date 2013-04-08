@@ -15,7 +15,8 @@ namespace marius {
   class String;
   class Code;
   class Method;
-  class Unwind;
+  class Exception;
+  class InvokeInfo;
   class User;
   class Attributes;
   class Method;
@@ -31,10 +32,10 @@ namespace marius {
     enum Type {
       // Value object types
       eNil, eTrue, eFalse, eInteger, eString, eUnwind, eCode, eMethod,
-      eTuple, eRaw,
+      eTuple, eRaw, eInvokeInfo,
 
       // Mutable object types
-      eClass, eUser, eModule, eClosure, eDictionary,
+      eClass, eUser, eModule, eClosure, eDictionary, eException,
       TotalTypes
     };
 
@@ -52,7 +53,8 @@ namespace marius {
       int int_;
       String* string_;
       Code* code_;
-      Unwind* unwind_;
+      Exception* exception_;
+      InvokeInfo* invoke_info_;
       Method* method_;
       Tuple* tuple_;
 
@@ -119,9 +121,14 @@ namespace marius {
       , user_(obj)
     {}
 
-    OOP(Unwind* u)
-      : type_(eUnwind)
-      , unwind_(u)
+    OOP(Exception* u)
+      : type_(eException)
+      , exception_(u)
+    {}
+
+    OOP(InvokeInfo* u)
+      : type_(eInvokeInfo)
+      , invoke_info_(u)
     {}
 
     OOP(Method* m)
@@ -236,9 +243,21 @@ namespace marius {
       return type_ == eUnwind;
     }
 
-    Unwind* unwind_value() {
+    Exception* exception() {
+      check(type_ == eException || type_ == eUnwind);
+      return exception_;
+    }
+
+    Exception* unwind_value() {
       check(type_ == eUnwind);
-      return unwind_;
+      return exception_;
+    }
+
+    static OOP make_unwind(Exception* exc) {
+      OOP o;
+      o.type_ = eUnwind;
+      o.exception_ = exc;
+      return o;
     }
 
     // template <typename T>
@@ -294,7 +313,6 @@ namespace marius {
   SPEC(String*, eString, string_);
   SPEC(Code*, eCode, code_);
   SPEC(User*, eUser, user_);
-  SPEC(Unwind*, eUnwind, unwind_);
   SPEC(int, eInteger, int_);
 
 #undef SPEC

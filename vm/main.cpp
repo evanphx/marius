@@ -7,12 +7,12 @@
 #include "state.hpp"
 #include "compiler.hpp"
 #include "settings.hpp"
-#include "unwind.hpp"
 #include "user.hpp"
 #include "method.hpp"
 
 #include "handle.hpp"
 #include "closure.hpp"
+#include "exception.hpp"
 
 #include <vector>
 #include <iostream>

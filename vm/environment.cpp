@@ -257,6 +257,10 @@ namespace marius {
 
     Class* dict = new_class(S, "Dictionary");
 
+    new_class(S, "ArgumentError");
+    new_class(S, "RuntimeError");
+    new_class(S, "ImportError");
+
     Class** tbl = new(S) Class*[OOP::TotalTypes];
 
     tbl[OOP::eNil] = n;

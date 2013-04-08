@@ -12,7 +12,7 @@
 #include "method.hpp"
 #include "closure.hpp"
 
-#include "unwind.hpp"
+#include "exception.hpp"
 
 #include <string.h>
 
@@ -45,20 +45,26 @@ namespace marius {
       const char* path = find_path(S, name);
 
       if(!path) {
-        return handle(S, Unwind::import_error(S, name));
+        return handle(S, OOP::make_unwind(
+            Exception::create(S, "ImportError",
+                              "Unable to find '%s'", path)));
       }
 
       FILE* file = fopen(path, "r");
       delete path;
 
       if(!file) {
-        return handle(S, Unwind::import_error(S, name));
+        return handle(S, OOP::make_unwind(
+            Exception::create(S, "ImportError",
+                              "Unable to open '%s'", path)));
       }
 
       Compiler compiler;
 
       if(!compiler.compile(S, file)) {
-        return handle(S, Unwind::import_error(S, name));
+        return handle(S, OOP::make_unwind(
+            Exception::create(S, "ImportError",
+                              "Unable to compile '%s'", path)));
       }
 
       Module* m = new(S) Module(S,
@@ -86,6 +92,7 @@ namespace marius {
     x->add_method(S, "import", import, 1);
     x->add_class_method(S, "current", current, 0);
 
+    S.env().new_class(S, "ImportError");
     return x;
   }
 }

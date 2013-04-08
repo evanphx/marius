@@ -7,8 +7,8 @@
 #include "disassembler.hpp"
 #include "closure.hpp"
 #include "stack_frame.hpp"
-#include "unwind.hpp"
 #include "tuple.hpp"
+#include "exception.hpp"
 
 #include <stdio.h>
 
@@ -29,11 +29,11 @@ namespace marius {
     return run(S, meth, stack_);
   }
 
-  struct Exception {
+  struct ExceptionHandler {
     int reg;
     int ip;
 
-    Exception(int r, int i)
+    ExceptionHandler(int r, int i)
       : reg(r)
       , ip(i)
     {}
@@ -67,10 +67,10 @@ namespace marius {
     Instruction* seq = code.code();
     Instruction* end = seq + code.size();
 
-    std::vector<Exception> es;
+    std::vector<ExceptionHandler> es;
 
     OOP t;
-    Exception te(0,0);
+    ExceptionHandler te(0,0);
 
 #ifdef TRACE
     Disassembler dis(code);
@@ -271,7 +271,7 @@ namespace marius {
         break;
 
       case REGE:
-        es.push_back(Exception(seq[0], seq[1]));
+        es.push_back(ExceptionHandler(seq[0], seq[1]));
         seq += 2;
 
         break;
@@ -292,7 +292,7 @@ namespace marius {
         break;
       case RAISE:
         print_call_stack(S);
-        return Unwind::generic_error(S, fp[seq[0]].as_string());
+        return OOP::make_unwind(Exception::wrap(S, fp[seq[0]]));
 
       case NOT:
         if(fp[seq[1]].true_condition_p()) {
@@ -329,7 +329,9 @@ namespace marius {
       printf("NO METHOD :%s on ", name->c_str());
       recv.print();
       print_call_stack(S);
-      return Unwind::name_error(S, name);
+      return OOP::make_unwind(
+          Exception::create(S, "NoMethodError",
+                               "Unable to method '%s'", name->c_str()));
     }
 
     S.last_fp = fp;
@@ -376,7 +378,9 @@ namespace marius {
     if(!meth) {
       printf("NO METHOD :%s\n", name->c_str());
       print_call_stack(S);
-      return Unwind::name_error(S, name);
+      return OOP::make_unwind(
+          Exception::create(S, "NoMethodError",
+                               "Unable to method '%s'", name->c_str()));
     }
 
     if(!meth->simple_p()) {

@@ -63,14 +63,18 @@ namespace marius {
     case eModule:
       printf("<Module:%p>\n", module_);
       return;
+    case eException:
     case eUnwind:
-      printf("<Unwind:%p>\n", unwind_);
+      printf("<Exception:%p>\n", exception_);
       return;
     case eTuple:
       printf("<Tuple>\n");
       return;
     case eRaw:
       printf("<raw>\n");
+      return;
+    case eInvokeInfo:
+      printf("<invokeinfo>\n");
       return;
     case eDictionary:
       printf("<dict>\n");
