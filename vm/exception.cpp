@@ -4,6 +4,7 @@
 #include "vm.hpp"
 
 #include <stdarg.h>
+#include <stdio.h>
 
 namespace marius {
   Exception* Exception::create(State& S, const char* cls,
