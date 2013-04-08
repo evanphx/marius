@@ -9,6 +9,7 @@
 #include "stack_frame.hpp"
 #include "tuple.hpp"
 #include "exception.hpp"
+#include "invoke_info.hpp"
 
 #include <stdio.h>
 
@@ -64,7 +65,8 @@ namespace marius {
 
     top_frame_->closure = clos;
 
-    Instruction* seq = code.code();
+    Instruction* start = code.code();
+    Instruction* seq = start;
     Instruction* end = seq + code.size();
 
     std::vector<ExceptionHandler> es;
@@ -113,6 +115,8 @@ namespace marius {
         break;
 
       case SENDI:
+        top_frame_->ip = (seq - start) - 1;
+
         t = run_method(S,
                        fp[seq[2]], as_string(fp[seq[1]]),
                        seq[3],     fp + (seq[2] + 1));
@@ -133,6 +137,8 @@ namespace marius {
         break;
 
       case SENDI_KW:
+        top_frame_->ip = (seq - start) - 1;
+
         t = run_kw_method(S,
                           fp[seq[2]], as_string(fp[seq[1]]),
                           seq[3],     fp + (seq[2] + 1),
@@ -154,6 +160,8 @@ namespace marius {
         break;
 
       case CALL:
+        top_frame_->ip = (seq - start) - 1;
+
         t = run_method(S,
                        fp[seq[2]], code.string(seq[1]),
                        seq[3],     fp + (seq[2] + 1));
@@ -173,6 +181,8 @@ namespace marius {
 
         break;
       case CALL_KW:
+        top_frame_->ip = (seq - start) - 1;
+
         t = run_kw_method(S,
                           fp[seq[2]], code.string(seq[1]),
                           seq[3],     fp + (seq[2] + 1),
@@ -194,6 +204,8 @@ namespace marius {
         break;
 
       case LATTR:
+        top_frame_->ip = (seq - start) - 1;
+
         t = load_attr(S, code.string(seq[1]), fp[seq[2]],
                       fp + (seq[2] + 1));
 
@@ -291,7 +303,7 @@ namespace marius {
 
         break;
       case RAISE:
-        print_call_stack(S);
+        top_frame_->ip = (seq - start) - 1;
         return OOP::make_unwind(Exception::wrap(S, fp[seq[0]]));
 
       case NOT:
@@ -328,7 +340,6 @@ namespace marius {
     if(!meth) {
       printf("NO METHOD :%s on ", name->c_str());
       recv.print();
-      print_call_stack(S);
       return OOP::make_unwind(
           Exception::create(S, "NoMethodError",
                                "Unable to method '%s'", name->c_str()));
@@ -377,7 +388,6 @@ namespace marius {
 
     if(!meth) {
       printf("NO METHOD :%s\n", name->c_str());
-      print_call_stack(S);
       return OOP::make_unwind(
           Exception::create(S, "NoMethodError",
                                "Unable to method '%s'", name->c_str()));
@@ -416,5 +426,19 @@ namespace marius {
                               sf->method->name(S)->c_str());
       sf--;
     }
+  }
+
+  InvokeInfo* VM::invoke_info(State& S) {
+    StackFrame* sf = frames_;
+
+    InvokeInfo* last = 0;
+
+    while(sf <= top_frame_) {
+      InvokeInfo* i = new(S) InvokeInfo(last, sf->ip, sf->method);
+      last = i;
+      sf++;
+    }
+
+    return last;
   }
 }

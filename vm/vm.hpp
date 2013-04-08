@@ -51,6 +51,7 @@ namespace marius {
 
     String* as_string(OOP val);
     void print_call_stack(State& S);
+    InvokeInfo* invoke_info(State& S);
 
     friend class FrameTracker;
   };

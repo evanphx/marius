@@ -5,6 +5,7 @@ namespace marius {
   class Method;
 
   struct StackFrame {
+    int ip;
     Method* method;
     Closure* closure;
   };

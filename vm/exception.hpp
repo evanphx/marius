@@ -8,6 +8,7 @@
 namespace marius {
   class String;
   class InvokeInfo;
+  class VM;
 
   class Exception : public MemoryObject, public Attributes {
     Exception* parent_;
@@ -25,8 +26,20 @@ namespace marius {
       , backtrace_(0)
     {}
 
+    Exception(State& S, Class* cls, String* msg, InvokeInfo* bt)
+      : MemoryObject(cls)
+      , Attributes(S)
+      , parent_(0)
+      , message_(msg)
+      , backtrace_(bt)
+    {}
+
     String* message() {
       return message_;
+    }
+
+    InvokeInfo* backtrace() {
+      return backtrace_;
     }
 
     static Exception* create(State& S, const char* cls, const char* fmt, ...);

@@ -1,6 +1,9 @@
 #include "exception.hpp"
 #include "state.hpp"
 #include "environment.hpp"
+#include "vm.hpp"
+
+#include <stdarg.h>
 
 namespace marius {
   Exception* Exception::create(State& S, const char* cls,
@@ -18,7 +21,7 @@ namespace marius {
 
     return new(S) Exception(S, 
                     S.env().lookup(S, cls).as_class(),
-                    String::internalize(S, buf));
+                    String::internalize(S, buf), S.vm().invoke_info(S));
   }
   
   Exception* Exception::wrap(State& S, OOP val) {
@@ -28,6 +31,6 @@ namespace marius {
 
     return new(S) Exception(S, 
                     S.env().lookup(S, "RuntimeError").as_class(),
-                    val.as_string());
+                    val.as_string(), S.vm().invoke_info(S));
   }
 }

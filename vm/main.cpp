@@ -9,6 +9,7 @@
 #include "settings.hpp"
 #include "user.hpp"
 #include "method.hpp"
+#include "invoke_info.hpp"
 
 #include "handle.hpp"
 #include "closure.hpp"
@@ -102,9 +103,28 @@ int main(int argc, char** argv) {
   OOP ret = vm.run(S, top);
 
   if(ret.unwind_p()) {
-    std::cout << "Unwind error at toplevel: "
-              << ret.unwind_value()->message()
+    Exception* exc = ret.unwind_value();
+
+    std::cout << "Error at toplevel: "
+              << exc->message()->c_str()
+              << " (" << exc->klass()->name()->c_str() << ")"
               << std::endl;
+
+    InvokeInfo* i = exc->backtrace();
+    if(i) {
+      while(i) {
+        std::cout << "    "
+                  << i->method()->scope()->c_str() << "#"
+                  << i->method()->name(S)->c_str()
+                  << "+" << i->ip()
+                  << std::endl;
+
+        i = i->previous();
+      }
+    } else {
+      std::cout << "< NO BACKTRACE AVAILABLE >" << std::endl;
+    }
+
 
     return 1;
   }

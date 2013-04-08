@@ -24,6 +24,14 @@ namespace marius {
       , method_(m)
     {}
 
+    InvokeInfo* previous() {
+      return previous_;
+    }
+
+    Method* method() {
+      return method_;
+    }
+
     int ip() {
       return ip_;
     }
