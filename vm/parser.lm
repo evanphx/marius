@@ -102,16 +102,22 @@ lit(A) ::= IVAR(B).                  { A.a = S->ivar_read(B.s); }
 lit(A) ::= LITSTR(B).                { A.a = S->lit_str(B.s); }
 
 np_arg(A) ::= lit(B). { A.a = B.a; }
+
 np_arg(A) ::= np_arg(B) OP0(O) np_arg(C).
                 { A.a = S->ast_binop(O.s, B.a, C.a); }
+np_arg(A) ::= np_arg(B) OP0(O) LP s2(C) RP.
+                { A.a = S->ast_binop(O.s, B.a, C.a); }
+
 np_arg(A) ::= np_arg(B) OP1(O) np_arg(C).
                 { A.a = S->ast_binop(O.s, B.a, C.a); }
 np_arg(A) ::= np_arg(B) OP1(O) LP s2(C) RP.
                 { A.a = S->ast_binop(O.s, B.a, C.a); }
+
 np_arg(A) ::= np_arg(B) OP2(O) np_arg(C).
                 { A.a = S->ast_binop(O.cs, B.a, C.a); }
 np_arg(A) ::= np_arg(B) OP2(O) LP s2(C) RP.
                 { A.a = S->ast_binop(O.cs, B.a, C.a); }
+
 np_arg(A) ::= np_arg(B) CAST np_arg(C).
                 { A.a = S->cast(B.a, C.a); }
 np_arg(A) ::= np_arg(B) NEQUAL np_arg(C).

@@ -27,7 +27,7 @@ namespace marius {
     String* s = String::internalize(S, name);
 
     if(!sup) {
-      sup = lookup(S, "Class").as_class();
+      sup = lookup(S, "Object").as_class();
     }
 
     Class* cls = new(S) Class(S, sup, s);
@@ -219,6 +219,7 @@ namespace marius {
 
     top_ = new(S) Module(S, mod, String::internalize(S, "lang"));
 
+    bind(S, on, o);
     bind(S, cn, c);
     bind(S, mn, m);
     bind(S, String::internalize(S, "Module"), mod);
