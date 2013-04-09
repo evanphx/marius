@@ -3,7 +3,7 @@
 
 #include "bindings.hpp"
 #include "util/option.hpp"
-#include "handle.hpP"
+#include "handle.hpp"
 
 namespace marius {
   class Dictionary {
