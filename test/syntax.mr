@@ -147,6 +147,10 @@ t.kind_of?(Class)
 t < testunit::TestCase
 t.kind_of?(Class) && t < testunit::TestCase
 
+import a.b.c.d
+
 a.detect {
 b
 }
+
+

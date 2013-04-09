@@ -249,7 +249,7 @@ namespace marius {
   }
 
   ast::Node* ParserState::import(String* name) {
-    return new ast::Import(name);
+    return new ast::Import(S, name);
   }
 
   ast::Node* ParserState::ast_try(ast::Node* b, ast::Node* h) {

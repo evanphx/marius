@@ -49,7 +49,24 @@ namespace marius {
         return handle(S, *val);
       }
 
-      const char* path = find_path(S, name);
+      const char* c_name = name->c_str();
+
+      const char* path;
+
+      if(strrchr(c_name, '.')) {
+        char buf[128];
+        buf[0] = 0;
+
+        strncpy(buf, c_name, 128);
+
+        char* last_dot = strrchr(buf, '.');
+
+        *last_dot = '/';
+
+        path = find_path(S, String::internalize(S, buf));
+      } else {
+        path = find_path(S, name);
+      }
 
       if(!path) {
         return handle(S, OOP::make_unwind(

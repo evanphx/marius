@@ -469,15 +469,18 @@ namespace marius {
     };
 
     class Import : public Node {
+      String* path_;
       String* name_;
 
     public:
-      Import(String* n)
-        : name_(n)
-      {}
+      Import(marius::State& S, String* n);
 
       String* name() {
         return name_;
+      }
+
+      String* path() {
+        return path_;
       }
 
       int drive(State& S, int t);

@@ -208,6 +208,10 @@ namespace marius {
     ast::Node* dict();
 
     ast::Node* and_(ast::Node* a, ast::Node* b);
+
+    void import_start();
+    void import_end();
+
   };
 }
 

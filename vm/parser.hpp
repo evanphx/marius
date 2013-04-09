@@ -40,6 +40,8 @@ namespace marius {
 
     Code* code_;
 
+    bool import_name_;
+
   public:
     Parser(State& S, char* buf, int sz=-1)
       : S(S)
@@ -52,6 +54,7 @@ namespace marius {
       , column_(1)
       , line_(1)
       , code_(0)
+      , import_name_(false)
     {
       value_.i = 0;
     }
@@ -67,6 +70,7 @@ namespace marius {
       , column_(1)
       , line_(1)
       , code_(0)
+      , import_name_(false)
     {
       value_.i = 0;
     }
@@ -95,6 +99,9 @@ namespace marius {
     bool parse(bool debug=false);
     static void init_keywords();
 
+    void import_start();
+    void import_end();
+
   private:
     char next_c();
     const char* next_str(int count);
@@ -105,6 +112,8 @@ namespace marius {
     int str_match();
     int sym_match();
     bool match_operator();
+
+    int import_name_match();
   };
 }
 

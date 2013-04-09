@@ -13,6 +13,14 @@
 
 namespace marius {
 
+  void Parser::import_start() {
+    import_name_ = true;
+  }
+
+  void Parser::import_end() {
+    import_name_ = false;
+  }
+
   char Parser::next_c() {
     const char* s = next_str(1);
     if(!s) return 0;
@@ -67,6 +75,10 @@ namespace marius {
 
   int Parser::next_token() {
     value_.i = 0;
+
+    if(import_name_) {
+      return import_name_match();
+    }
 
 again:
 
@@ -271,6 +283,24 @@ again:
 
 
     return -1;
+  }
+
+  int Parser::import_name_match() {
+    import_name_ = false;
+    ScratchBuffer buf;
+
+    while(next_c() == ' ' ||
+          next_c() == '\t') advance(1);
+
+    while(isalnum(next_c()) ||
+          next_c() == '_' ||
+          next_c() == '.') {
+      buf.append(next_c());
+      advance(1);
+    }
+
+    value_.s = String::internalize(S, buf.copy_out());
+    return TK_DOT_NAME;
   }
 
   bool Parser::match_operator() {
@@ -511,6 +541,8 @@ again:
     for(;;) {
       int token = next_token();
       if(token == -1) break;
+
+      if(token == TK_IMPORT) import_start();
 
       mariusParser(engine_, token, value_, &PS);
 

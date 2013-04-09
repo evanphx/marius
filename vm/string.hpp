@@ -53,6 +53,7 @@ namespace marius {
     static std::map<std::string, String*>& internal();
 
     static String* internalize(State& S, std::string str);
+    static String* internalize(State& S, char* str, unsigned len);
 
     static String* convert(State& S, OOP obj);
   };

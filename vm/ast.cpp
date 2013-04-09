@@ -1,8 +1,21 @@
 #include "ast.hpp"
+#include "state.hpp"
 #include <assert.h>
 
 namespace marius {
 namespace ast {
+
+
+  Import::Import(marius::State& S, String* n)
+    : path_(n)
+  {
+    char* last_dot = strrchr(n->c_str(), '.');
+    if(last_dot) {
+      name_ = String::internalize(S, last_dot+1);
+    } else {
+      name_ = path_;
+    }
+  }
 
   Arguments* Arguments::wrap(ast::Node* n) {
     ast::Nodes nodes;
@@ -583,7 +596,7 @@ namespace ast {
 
     S.push(LOADS);
     S.push(t+1);
-    S.push(S.string(name_));
+    S.push(S.string(path_));
 
     S.push(CALL);
     S.push(t);

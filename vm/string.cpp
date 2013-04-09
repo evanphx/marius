@@ -17,6 +17,15 @@ namespace marius {
     return mapping_;
   }
 
+  String* String::internalize(State& S, char* str, unsigned len) {
+    char* cstr = new(S) char[len+1];
+    memcpy(cstr, str, len);
+    cstr[len] = 0;
+
+    String* obj = new(S) String(cstr);
+    return obj;
+  }
+
   String* String::internalize(State& S, std::string str) {
     char* cstr = new(S) char[str.size()+1];
     memcpy(cstr, str.c_str(), str.size());
