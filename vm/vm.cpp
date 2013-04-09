@@ -338,11 +338,9 @@ namespace marius {
     Method* meth = recv.find_method(name);
 
     if(!meth) {
-      printf("NO METHOD :%s on ", name->c_str());
-      recv.print();
       return OOP::make_unwind(
           Exception::create(S, "NoMethodError",
-                               "Unable to method '%s'", name->c_str()));
+                               "Unable to find method '%s'", name->c_str()));
     }
 
     S.last_fp = fp;
@@ -387,7 +385,6 @@ namespace marius {
     Method* meth = recv.find_method(name);
 
     if(!meth) {
-      printf("NO METHOD :%s\n", name->c_str());
       return OOP::make_unwind(
           Exception::create(S, "NoMethodError",
                                "Unable to method '%s'", name->c_str()));

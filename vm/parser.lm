@@ -12,7 +12,8 @@
 
 %token_prefix TK_
 
-%left OP0 CAST NEQUAL.
+%left AND.
+%left OP0 LT CAST NEQUAL.
 %left OP1.
 %left OP2.
 %left NOT.
@@ -41,7 +42,7 @@ fin_m ::= NL.
 fin_m ::= SEMI.
 
 opt_fin ::= .
-opt_fin ::= opt_fin fin_m.
+opt_fin ::= fin.
 
 last_fin ::= EOF.
 last_fin ::= fin EOF.
@@ -54,6 +55,8 @@ comma ::= COMMA.
 
 seq(A) ::= seq(B) fin stmt(C). { A.a = S->seq(B.a, C.a); }
 seq(A) ::= stmt(B). { A.a = B.a; }
+
+delim_seq(A) ::= seq(B) opt_fin. { A.a = B.a; }
 
 class_start ::= CLASS. { S->start_class(); }
 class_body(A) ::= l1(B) fin END. { A.a = B.a; }
@@ -78,10 +81,11 @@ id_list ::= arg.
 def_args ::= .
 def_args ::= LP id_list RP.
 
-def_name(A) ::= ID(B).  { A.s = B.s; }
-def_name(A) ::= OP0(B). { A.s = B.s; }
-def_name(A) ::= OP1(B). { A.s = B.s; }
-def_name(A) ::= OP2(B). { A.s = B.s; }
+def_name(A) ::= ID(B).     { A.s = B.s; }
+def_name(A) ::= OP0(B).    { A.s = B.s; }
+def_name(A) ::= LT(B).     { A.s = B.s; }
+def_name(A) ::= OP1(B).    { A.s = B.s; }
+def_name(A) ::= OP2(B).    { A.s = B.s; }
 def_name(A) ::= SQUARE(B). { A.s = B.s; }
 
 
@@ -108,6 +112,11 @@ np_arg(A) ::= np_arg(B) OP0(O) np_arg(C).
 np_arg(A) ::= np_arg(B) OP0(O) LP s2(C) RP.
                 { A.a = S->ast_binop(O.s, B.a, C.a); }
 
+np_arg(A) ::= np_arg(B) LT(O) np_arg(C).
+                { A.a = S->ast_binop(O.s, B.a, C.a); }
+np_arg(A) ::= np_arg(B) LT(O) LP s2(C) RP.
+                { A.a = S->ast_binop(O.s, B.a, C.a); }
+
 np_arg(A) ::= np_arg(B) OP1(O) np_arg(C).
                 { A.a = S->ast_binop(O.s, B.a, C.a); }
 np_arg(A) ::= np_arg(B) OP1(O) LP s2(C) RP.
@@ -122,11 +131,12 @@ np_arg(A) ::= np_arg(B) CAST np_arg(C).
                 { A.a = S->cast(B.a, C.a); }
 np_arg(A) ::= np_arg(B) NEQUAL np_arg(C).
                 { A.a = S->not_(S->ast_binop("==", B.a, C.a)); }
-np_arg(A) ::= np_arg(B) DOT ID(C). { A.a = S->call(B.a, C.s); }
-np_arg(A) ::= np_arg(B) DOT ID(C) LP RP. { A.a = S->call(B.a, C.s); }
-np_arg(A) ::= np_arg(B) DOT ID(C) LP np_arg_list RP.
+np_arg(A) ::= np_arg(B) DOT(C). { A.a = S->call(B.a, C.s); }
+np_arg(A) ::= np_arg(B) DOT(C) LP RP. { A.a = S->call(B.a, C.s); }
+np_arg(A) ::= np_arg(B) DOT(C) LP np_arg_list RP.
                 { A.a = S->call_args(B.a, C.s); }
 np_arg(A) ::= np_arg(B) DCOLON(C) ID(D). { A.a = S->dcolon(B.a, C.s, D.s); }
+
 np_arg(A) ::= np_arg(B) DOT_DOLLAR lit(C).
                  { A.a = S->send_indirect(B.a, C.a); }
 np_arg(A) ::= np_arg(B) DOT_DOLLAR lit(C) LP RP.
@@ -137,6 +147,9 @@ np_arg(A) ::= NOT np_arg(B). { A.a = S->not_(B.a); }
 np_arg(A) ::= lambda(B). { A.a = B.a; }
 np_arg(A) ::= np_arg(B) LSB np_arg_list RSB.
                { A.a = S->call_args(B.a, "[]"); }
+
+np_arg(A) ::= TUPLE_START np_arg_list RP. { A.a = S->tuple(); }
+np_arg(A) ::= DICT_START np_arg_list RB. { A.a = S->dict(); }
 
 np_arg_list_start ::= . { S->start_arg_list(); }
 np_arg_list_elems ::= np_arg_list_elems comma np_arg(A). { S->add_arg(A.a); }
@@ -156,9 +169,9 @@ np_arg_list ::= np_arg_list_start np_kw_arg_list_elems.
 np_recv(A) ::= lit(B). { A.a = B.a; }
 np_recv(A) ::= ID(C) LP RP. { A.a = S->call(S->self(), C.s); }
 np_recv(A) ::= ID(C) LP np_arg_list RP. { A.a = S->call_args(S->self(), C.s); }
-np_recv(A) ::= np_recv(B) DOT ID(C). { A.a = S->call(B.a, C.s); }
-np_recv(A) ::= np_recv(B) DOT ID(C) LP RP. { A.a = S->call(B.a, C.s); }
-np_recv(A) ::= np_recv(B) DOT ID(C) LP np_arg_list RP. { A.a = S->call_args(B.a, C.s); }
+np_recv(A) ::= np_recv(B) DOT(C). { A.a = S->call(B.a, C.s); }
+np_recv(A) ::= np_recv(B) DOT(C) LP RP. { A.a = S->call(B.a, C.s); }
+np_recv(A) ::= np_recv(B) DOT(C) LP np_arg_list RP. { A.a = S->call_args(B.a, C.s); }
 np_recv(A) ::= np_recv(B) DCOLON(C) ID(D). { A.a = S->dcolon(B.a, C.s, D.s); }
 np_recv(A) ::= np_recv(B) DOT_DOLLAR lit(C).
                  { A.a = S->send_indirect(B.a, C.a); }
@@ -173,13 +186,15 @@ np_recv(A) ::= np_recv(B) LSB np_arg_list RSB.
                { A.a = S->call_args(B.a, "[]"); }
 np_recv(A) ::= LP s2(B) RP. { A.a = B.a; }
 
-s2(A) ::= np_recv(B) DOT ID(C) np_arg_list. { A.a = S->call_args(B.a, C.s); }
+s2(A) ::= np_recv(B) DOT(C) np_arg_list. { A.a = S->call_args(B.a, C.s); }
 s2(A) ::= np_recv(B) DOT_DOLLAR lit(C) np_arg_list.
             { A.a = S->send_indirect_args(B.a, C.a); }
 s2(A) ::= ID(C) np_arg_list. { A.a = S->call_args(S->self(), C.s); }
 s2(A) ::= np_recv(B) CAST np_arg(C).   { A.a = S->cast(B.a, C.a); }
 s2(A) ::= np_recv(B) OP0(O) np_arg(C). { A.a = S->ast_binop(O.s, B.a, C.a); }
 s2(A) ::= np_recv(B) OP0(O) LP s2(C) RP. { A.a = S->ast_binop(O.s, B.a, C.a); }
+s2(A) ::= np_recv(B) LT(O)  np_arg(C). { A.a = S->ast_binop(O.s, B.a, C.a); }
+s2(A) ::= np_recv(B) LT(O)  LP s2(C) RP. { A.a = S->ast_binop(O.s, B.a, C.a); }
 s2(A) ::= np_recv(B) OP1(O) np_arg(C). { A.a = S->ast_binop(O.s, B.a, C.a); }
 s2(A) ::= np_recv(B) OP1(O) LP s2(C) RP. { A.a = S->ast_binop(O.s, B.a, C.a); }
 s2(A) ::= np_recv(B) OP2(O) np_arg(C). { A.a = S->ast_binop(O.cs, B.a, C.a); }
@@ -190,6 +205,7 @@ s2(A) ::= np_recv(B). { A.a = B.a; }
 s2(A) ::= NOT s2(B). { A.a = S->not_(B.a); }
 
 stmt(A) ::= s2(B). { A.a = B.a; }
+stmt(A) ::= stmt(B) AND s2(C). { A.a = S->and_(B.a, C.a); }
 
 /* Lambda */
 
@@ -198,7 +214,7 @@ lambda_start ::= LB. { S->start_lambda(); }
 lambda_args ::= PIPE ID(B) PIPE. { S->def_arg(B.s); }
 lambda_args ::= .
 
-lambda(A) ::= lambda_start lambda_args seq(B) RB. { A.a = S->lambda(B.a); }
+lambda(A) ::= lambda_start lambda_args opt_fin delim_seq(B) RB. { A.a = S->lambda(B.a); }
 
 /* Conditions */
 

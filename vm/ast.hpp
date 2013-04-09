@@ -654,6 +654,20 @@ namespace marius {
       void accept(Visitor* V);
     };
 
+    class And : public Node {
+      Node* left_;
+      Node* right_;
+
+    public:
+      And(Node* a, Node* b)
+        : left_(a)
+        , right_(b)
+      {}
+
+      int drive(State& S, int t);
+      void accept(Visitor* V);
+    };
+
     class Visitor {
     public:
       virtual void before_visit(Scope* n) { };
@@ -693,6 +707,7 @@ namespace marius {
       virtual void visit(Tuple* t) {}
       virtual void visit(While* t) {}
       virtual void visit(Dictionary* t) {}
+      virtual void visit(And* a) {}
     };
 
   }

@@ -801,6 +801,27 @@ namespace ast {
     V->visit(this);
   }
 
+  int And::drive(State& S, int t) {
+    left_->drive(S, t);
+    S.push(JMPIF);
+    S.push(t);
+
+    Label l = S.label();
+    S.push(0);
+
+    right_->drive(S, t);
+
+    S.set_label(l);
+
+    return t;
+  }
+
+  void And::accept(Visitor* V) {
+    left_->accept(V);
+    right_->accept(V);
+    V->visit(this);
+  }
+
   int Dictionary::drive(State& S, int t) {
     Local* l = S.lm().get(this);
     assert(l);

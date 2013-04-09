@@ -19,6 +19,8 @@ namespace marius {
 
     OOP attribute(String* name, bool* found=0);
     void set_attribute(State& S, String* name, OOP val);
+    OOP keys(State& S);
+    OOP values(State& S);
   };
 }
 

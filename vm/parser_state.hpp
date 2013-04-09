@@ -206,6 +206,8 @@ namespace marius {
     ast::Node* not_(ast::Node* v);
     ast::Node* tuple();
     ast::Node* dict();
+
+    ast::Node* and_(ast::Node* a, ast::Node* b);
   };
 }
 

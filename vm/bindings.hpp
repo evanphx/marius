@@ -37,6 +37,8 @@ namespace marius {
     Bindings(State& S);
     option<OOP> find(String* name);
     void set(State& S, String* name, OOP val);
+    OOP keys(State& S);
+    OOP values(State& S);
   };
 }
 

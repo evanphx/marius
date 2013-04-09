@@ -25,7 +25,26 @@ namespace marius {
       return loc_;
     }
 
+    OOP* indirection() {
+      return loc_;
+    }
+
     friend class HandleScope;
+  };
+
+  template <typename T, int type>
+  class TypedHandle {
+    OOP* loc_;
+
+  public:
+    TypedHandle(Handle hndl)
+      : loc_(hndl.indirection())
+    {}
+
+    T* operator->() const {
+      check(loc_->type() == type);
+      return (T*)(loc_->heap_address());
+    }
   };
 
   class HandleScope {

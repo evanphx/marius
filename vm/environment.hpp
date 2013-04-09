@@ -15,10 +15,15 @@ namespace marius {
   class Module;
   class Closure;
   class GCImpl;
+  class Dictionary;
+  class List;
 
   class Environment {
     Module* top_;
     Closure* globals_;
+    Dictionary* modules_;
+    List* args_;
+    Dictionary* sys_;
 
     friend class GCImpl;
   public:
@@ -35,6 +40,14 @@ namespace marius {
       return top_;
     }
 
+    Dictionary* modules() {
+      return modules_;
+    }
+
+    List* args() {
+      return args_;
+    }
+
     OOP lookup(String* name);
     OOP lookup(State& S, const char* str);
 
@@ -45,6 +58,8 @@ namespace marius {
     void print();
 
     void bind(State& S, String* name, OOP val);
+
+    void import_args(State& S, char** args, int count);
 
   };
 }

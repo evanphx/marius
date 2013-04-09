@@ -308,6 +308,10 @@ namespace marius {
     return new ast::Not(v);
   }
 
+  ast::Node* ParserState::and_(ast::Node* a, ast::Node* b) {
+    return new ast::And(a, b);
+  }
+
   /*
   int ParserState::start_cond(int c) {
     push(GOTO_IF_FALSE);

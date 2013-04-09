@@ -61,6 +61,7 @@ test: marius
 
 spec: test
 	./marius -Ilib spec/string_test.mr
+	./marius -Ilib spec/dictionary_test.mr
 
 .PHONY: test spec
 

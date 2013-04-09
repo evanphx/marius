@@ -15,4 +15,12 @@ namespace marius {
   void Attributes::set_attribute(State& S, String* name, OOP val) {
     attributes_.set(S, name, val);
   }
+
+  OOP Attributes::keys(State& S) {
+    return attributes_.keys(S);
+  }
+
+  OOP Attributes::values(State& S) {
+    return attributes_.values(S);
+  }
 }

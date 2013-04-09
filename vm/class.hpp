@@ -29,6 +29,10 @@ namespace marius {
       return name_;
     }
 
+    Class* superclass() {
+      return superclass_;
+    }
+
     static void init_base(Class** tbl);
 
     static Class* base_class(int idx);

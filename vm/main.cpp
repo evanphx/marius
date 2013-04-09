@@ -28,6 +28,7 @@ int main(int argc, char** argv) {
   bool check = false;
 
   char** opt = argv + 1;
+  char** fin = argv + argc;
 
   while(*opt) {
     const char* s = *opt;
@@ -86,6 +87,10 @@ int main(int argc, char** argv) {
     printf("Unable to open: %s\n", *opt);
     return 1;
   }
+
+  opt++;
+
+  env.import_args(S, opt, fin - opt); 
 
   Compiler compiler(debug);
 

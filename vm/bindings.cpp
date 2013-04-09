@@ -1,6 +1,7 @@
 #include "bindings.hpp"
 #include "string.hpp"
 #include "state.hpp"
+#include "tuple.hpp"
 
 namespace marius {
 
@@ -53,5 +54,39 @@ namespace marius {
       entries_[idx] = new(S) Entry(name, val);
       size_++;
     }
+  }
+
+  OOP Bindings::keys(State& S) {
+    Tuple* tup = new(S) Tuple(S, size_);
+
+    int idx = 0;
+
+    for(unsigned i = 0; i < capa_; i++) {
+      Entry* e = entries_[i];
+
+      while(e) {
+        tup->set(idx++, OOP(e->key));
+        e = e->next;
+      }
+    }
+
+    return OOP(tup);
+  }
+
+  OOP Bindings::values(State& S) {
+    Tuple* tup = new(S) Tuple(S, size_);
+
+    int idx = 0;
+
+    for(unsigned i = 0; i < capa_; i++) {
+      Entry* e = entries_[i];
+
+      while(e) {
+        tup->set(idx++, e->val);
+        e = e->next;
+      }
+    }
+
+    return OOP(tup);
   }
 }

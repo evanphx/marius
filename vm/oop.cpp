@@ -4,6 +4,7 @@
 #include "module.hpp"
 #include "attributes.hpp"
 #include "user.hpp"
+#include "method.hpp"
 
 #include <stdio.h>
 
@@ -14,8 +15,12 @@ namespace marius {
       return user_->klass();
     case eClass:
       return class_->klass();
+    case eModule:
+      return class_->klass();
     default:
-      return Class::base_class(type_);
+      Class* c = Class::base_class(type_);
+      check(c);
+      return c;
     }
   }
 
@@ -26,6 +31,20 @@ namespace marius {
     } else {
       return klass()->lookup(name);
     }
+  }
+
+  OOP OOP::call(State& S, String* name, OOP* vals, unsigned count) {
+    Method* meth = find_method(name);
+    check(meth);
+
+    OOP* fp = S.last_fp;
+
+    for(unsigned i = 0; i < count; i++) {
+      fp[i] = vals[i];
+    }
+
+    Arguments args(S, count, fp);
+    return meth->run(S, *this, args);
   }
 
   void OOP::print() {
@@ -78,6 +97,9 @@ namespace marius {
       return;
     case eDictionary:
       printf("<dict>\n");
+      return;
+    case eList:
+      printf("<list>\n");
       return;
     case TotalTypes:
       check(false);

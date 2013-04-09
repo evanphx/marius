@@ -21,6 +21,9 @@ class StringTest < testunit::TestCase
     assert "blah".prefix?("b")
     refute "blah".prefix?("l")
   end
-end
 
-StringTest.new.run
+  def test_equal
+    assert "blah" == "blah"
+    refute "blah" == "foo"
+  end
+end

@@ -11,6 +11,7 @@
 #include "state.hpp"
 #include "method.hpp"
 #include "closure.hpp"
+#include "dictionary.hpp"
 
 #include "exception.hpp"
 
@@ -23,10 +24,11 @@ namespace marius {
       std::vector<const char*>& lp = S.settings().load_path();
 
       char* path = new char[1024];
-
       for(std::vector<const char*>::iterator i = lp.begin();
           i != lp.end();
           ++i) {
+        path[0] = 0;
+
         strcat(path, *i);
         strcat(path, "/");
         strcat(path, req->c_str());
@@ -42,12 +44,17 @@ namespace marius {
     Handle import(State& S, Handle recv, Arguments& args) {
       String* name = args[0]->as_string();
 
+      option<OOP> val = S.env().modules()->get(name);
+      if(val.set_p()) {
+        return handle(S, *val);
+      }
+
       const char* path = find_path(S, name);
 
       if(!path) {
         return handle(S, OOP::make_unwind(
             Exception::create(S, "ImportError",
-                              "Unable to find '%s'", path)));
+                              "Unable to find '%s'", name->c_str())));
       }
 
       FILE* file = fopen(path, "r");
@@ -56,7 +63,7 @@ namespace marius {
       if(!file) {
         return handle(S, OOP::make_unwind(
             Exception::create(S, "ImportError",
-                              "Unable to open '%s'", path)));
+                              "Unable to open '%s'", name->c_str())));
       }
 
       Compiler compiler;
@@ -64,11 +71,13 @@ namespace marius {
       if(!compiler.compile(S, file)) {
         return handle(S, OOP::make_unwind(
             Exception::create(S, "ImportError",
-                              "Unable to compile '%s'", path)));
+                              "Unable to compile '%s'", name->c_str())));
       }
 
       Module* m = new(S) Module(S,
           S.env().lookup(S, "Module").as_class(), name);
+
+      S.env().modules()->set(S, name, m);
 
       OOP* fp = args.frame() + 1;
       fp[0] = m;

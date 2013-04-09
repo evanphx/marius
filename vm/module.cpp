@@ -21,12 +21,19 @@ namespace marius {
 
       return handle(S, recv->attribute(name, 0));
     }
+
+    Handle values_m(State& S, Handle recv, Arguments& args) {
+      Module* mod = recv->as_module();
+
+      return handle(S, mod->values(S));
+    }
   }
 
   Class* Module::init(State& S, Environment& env) {
     Class* mod = env.lookup(S, "Module").as_class();
     mod->add_method(S, "add_method", module_add, 2);
     mod->add_method(S, "::", module_access, 1);
+    mod->add_method(S, "values", values_m, 0);
     return mod;
   }
 

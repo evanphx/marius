@@ -133,7 +133,7 @@ again:
           return TK_DOT_DOLLAR;
         }
 
-        return TK_DOT;
+        return id_match(TK_DOT);
 
       case ',':
         advance(1);
@@ -231,6 +231,17 @@ again:
         }
 
         return TK_CAST;
+
+      case '&':
+        {
+          bool s = match_operator();
+
+          if(value_.s->equal("&&")) {
+            return TK_AND;
+          }
+
+          return s ? TK_OP0_SET : TK_OP0;
+        }
 
       case '"':
         advance(1);
@@ -387,7 +398,7 @@ again:
   }
 
   int Parser::keyword_match() {
-    Keyword* k = cKeywords[(int)pos_[0]];
+    Keyword* k = cKeywords[(int)next_c()];
 
     if(!k) return -1;
 
@@ -399,8 +410,14 @@ again:
         // Check that the data following it isn't an alpha
         // character, otherwise we're inside this string
         // as a subsequence.
-        const char n = pos_[len];
-        if(!n || !isalpha(n)) {
+        const char* str = next_str(len+1);
+        if(!str) {
+          advance(len);
+          return k->token;
+        }
+
+        const char n = str[len];
+        if(!n || (!isalpha(n) && n != '_')) {
           advance(len);
           return k->token;
         }

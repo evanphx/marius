@@ -19,6 +19,8 @@
 #include "vm.hpp"
 #include "stack_frame.hpp"
 
+#include "list.hpp"
+
 #include <iostream>
 
 namespace marius {
@@ -329,6 +331,24 @@ namespace marius {
 
         return;
 
+      case OOP::eList:
+        {
+          List* l = obj.list_;
+          if(l->head_) {
+            mark_raw(&l->head_);
+
+            List::Node* n = l->head_;
+
+            while(n) {
+              mark_obj(&n->val);
+              mark_raw(&n->next);
+              n = n->next;
+            }
+          }
+        }
+
+        return;
+
       case OOP::eModule:
         {
           Module* m = obj.module_;
@@ -417,6 +437,9 @@ namespace marius {
 
       mark_spec(&e.globals_);
       mark_spec(&e.top_);
+      mark_spec(&e.modules_);
+      mark_spec(&e.args_);
+      mark_spec(&e.sys_);
 
       VM& vm = S.vm();
 

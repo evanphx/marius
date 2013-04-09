@@ -8,6 +8,8 @@
 
 #include "gc_allocated.hpp"
 
+#include "handle.hpp"
+
 namespace marius {
   class GCImpl;
 
@@ -28,6 +30,8 @@ namespace marius {
     void set(size_t idx, OOP val);
     OOP get(size_t idx);
   };
+
+  typedef TypedHandle<Tuple, OOP::eTuple> HTuple;
 }
 
 #endif

@@ -43,11 +43,7 @@ namespace marius {
       return obj.as_string();
     }
 
-    Method* meth = obj.find_method(String::internalize(S, "to_s"));
-    check(meth);
-
-    Arguments args(S, 0, S.last_fp);
-    OOP ret = meth->run(S, obj, args);
+    OOP ret = obj.call(S, String::internalize(S, "to_s"), 0, 0);
     
     return ret.as_string();
   }
@@ -103,6 +99,14 @@ namespace marius {
         return handle(S, OOP::false_());
       }
     }
+
+    Handle equal_m(State& S, Handle recv, Arguments& args) {
+      String* s = recv->as_string();
+      String* s2 = args[0]->as_string();
+
+      OOP val = s->equal(s2) ? OOP::true_() : OOP::false_();
+      return handle(S, val);
+    }
   }
 
   void String::init(State& S) {
@@ -111,5 +115,6 @@ namespace marius {
     str->add_method(S, "bytesize", byte_size, 0);
     str->add_method(S, "size", char_size, 0);
     str->add_method(S, "prefix?", prefix_p, 1);
+    str->add_method(S, "==", equal_m, 1);
   }
 }

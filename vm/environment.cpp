@@ -10,6 +10,7 @@
 #include "closure.hpp"
 #include "tuple.hpp"
 #include "dictionary.hpp"
+#include "list.hpp"
 
 #include <iostream>
 #include <stdio.h>
@@ -98,6 +99,19 @@ namespace marius {
     return handle(S, OOP(new(S) User(S, cls)));
   }
 
+  static Handle class_subclass(State& S, Handle recv, Arguments& args) {
+    Class* cls = recv->as_class()->superclass();
+    Class* chk = args[0]->as_class();
+
+    while(cls) {
+      if(cls == chk) return handle(S, OOP::true_());
+      cls = cls->superclass();
+    }
+
+    return handle(S, OOP::false_());
+
+  }
+
   static Handle run_code(State& S, Handle recv, Arguments& args) {
     Method* m = recv->as_method();
 
@@ -154,6 +168,10 @@ namespace marius {
       fp[0] = tup->get(i);
       OOP t = S.vm().run(S, m, fp);
 
+      if(t.unwind_p()) {
+        return handle(S, t);
+      }
+
       if(t.true_condition_p()) {
         found.push_back(fp[0]);
       }
@@ -174,8 +192,6 @@ namespace marius {
     OOP* fp = args.frame() + 1;
     fp[-1] = OOP(m);
 
-    std::vector<OOP> found;
-
     for(size_t i = 0; i < tup->size(); i++) {
       fp[0] = tup->get(i);
       S.vm().run(S, m, fp);
@@ -184,9 +200,40 @@ namespace marius {
     return recv;
   }
 
+  static Handle tuple_equal(State& S, Handle recv, Arguments& args) {
+    HTuple tup(recv);
+    HTuple o(args[0]);
+
+    if(tup->size() != o->size()) {
+      return handle(S, OOP::false_());
+    }
+
+    size_t tot = tup->size();
+
+    for(size_t i = 0; i < tot; i++) {
+      OOP v = o->get(i);
+      OOP ret = tup->get(i).call(S, String::internalize(S, "=="), &v, 1);
+      if(!ret.true_condition_p()) return handle(S, OOP::false_());
+    }
+
+    return handle(S, OOP::true_());
+  }
+
   static Handle object_print(State& S, Handle recv, Arguments& args) {
     (*recv).print();
     return recv;
+  }
+
+  static Handle object_kind_of(State& S, Handle recv, Arguments& args) {
+    Class* chk = args[0]->as_class();
+    Class* cls = recv->klass();
+
+    while(cls) {
+      if(cls == chk) return handle(S, OOP::true_());
+      cls = cls->superclass();
+    }
+
+    return handle(S, OOP::false_());
   }
 
   Class* init_import(State& S);
@@ -225,12 +272,15 @@ namespace marius {
     bind(S, String::internalize(S, "Module"), mod);
 
     o->add_method(S, "print", object_print, 0);
+    o->add_method(S, "kind_of?", object_kind_of, 1);
 
     c->add_method(S, "new_subclass", class_new_subclass, 1);
     c->add_method(S, "run_body", run_class_body, 1);
 
     c->add_method(S, "add_method", add_method, 2);
     c->add_method(S, "new", new_instance, 0);
+
+    c->add_method(S, "<", class_subclass, 1);
 
     o->add_method(S, "methods", object_methods, 0);
 
@@ -254,13 +304,25 @@ namespace marius {
 
     Class* tuple = new_class(S, "Tuple");
     tuple->add_method(S, "find_all", tuple_find_all, 1);
+    tuple->add_method(S, "detect", tuple_find_all, 1);
     tuple->add_method(S, "each", tuple_each, 1);
+    tuple->add_method(S, "==", tuple_equal, 1);
 
     Class* dict = new_class(S, "Dictionary");
+    Class* list = new_class(S, "List");
+
+    modules_ = new(S) Dictionary(S);
+    args_ = new(S) List(S);
+
+    sys_ = new(S) Dictionary(S);
+
+    sys_->set(S, String::internalize(S, "modules"), modules_);
+    sys_->set(S, String::internalize(S, "args"), args_);
 
     new_class(S, "ArgumentError");
     new_class(S, "RuntimeError");
     new_class(S, "ImportError");
+    new_class(S, "NoMethodError");
 
     Class** tbl = new(S) Class*[OOP::TotalTypes];
 
@@ -276,6 +338,7 @@ namespace marius {
     tbl[OOP::eMethod] = mc;
     tbl[OOP::eTuple] = tuple;
     tbl[OOP::eDictionary] = dict;
+    tbl[OOP::eList] = list;
 
     Class::init_base(tbl);
 
@@ -294,13 +357,21 @@ namespace marius {
     String::init(S);
 
     Dictionary::init(S, dict);
+    List::init(S, list);
   
-    globals_ = new(S) Closure(6);
+    globals_ = new(S) Closure(7);
     globals_->set(0, o);
     globals_->set(1, io);
     globals_->set(2, c);
     globals_->set(3, importer);
     globals_->set(4, dict);
     globals_->set(5, i);
+    globals_->set(6, sys_);
+  }
+
+  void Environment::import_args(State& S, char** args, int count) {
+    for(int i = 0; i < count; i++) {
+      args_->push(S, String::internalize(S, args[i]));
+    }
   }
 }

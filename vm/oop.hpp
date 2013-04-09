@@ -24,6 +24,7 @@ namespace marius {
   class State;
   class Closure;
   class Dictionary;
+  class List;
 
   class GCImpl;
 
@@ -35,7 +36,7 @@ namespace marius {
       eTuple, eRaw, eInvokeInfo,
 
       // Mutable object types
-      eClass, eUser, eModule, eClosure, eDictionary, eException,
+      eClass, eUser, eModule, eClosure, eDictionary, eException, eList,
       TotalTypes
     };
 
@@ -63,6 +64,7 @@ namespace marius {
       User* user_;
       Closure* closure_;
       Dictionary* dict_;
+      List* list_;
       void* raw_;
     };
 
@@ -141,6 +143,11 @@ namespace marius {
       , tuple_(t)
     {}
 
+    OOP(List* l)
+      : type_(eList)
+      , list_(l)
+    {}
+
     Type type() {
       return type_;
     }
@@ -196,6 +203,11 @@ namespace marius {
     Dictionary* as_dictionary() {
       check(type_ == eDictionary);
       return dict_;
+    }
+
+    List* as_list() {
+      check(type_ == eList);
+      return list_;
     }
 
     String* as_string() {
@@ -302,6 +314,7 @@ namespace marius {
     Method* find_method(String* name);
     OOP set_attribute(State& S, String* name, OOP val);
     OOP attribute(String* name, bool* found=0);
+    OOP call(State& S, String* name, OOP* vals, unsigned count);
 
     void print();
   };
