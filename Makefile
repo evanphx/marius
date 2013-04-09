@@ -60,8 +60,7 @@ test: marius
 	test `./marius -p test/brackets.mr` = 7
 
 spec: test
-	./marius -Ilib spec/string_test.mr
-	./marius -Ilib spec/dictionary_test.mr
+	./marius -Ilib -I. test spec/string_test spec/dictionary_test
 
 .PHONY: test spec
 
