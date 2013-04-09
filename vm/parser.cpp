@@ -369,6 +369,11 @@ again:
 
   void Parser::init_keywords() {
     Keyword* k = new Keyword[2];
+    k[0] = Keyword("as", TK_AS);
+
+    cKeywords[(int)'a'] = k;
+
+    k = new Keyword[2];
     k[0] = Keyword("class", TK_CLASS);
 
     cKeywords[(int)'c'] = k;

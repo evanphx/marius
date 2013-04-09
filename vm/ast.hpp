@@ -474,6 +474,7 @@ namespace marius {
 
     public:
       Import(marius::State& S, String* n);
+      Import(marius::State& S, String* p, String* n);
 
       String* name() {
         return name_;

@@ -5,7 +5,6 @@
 namespace marius {
 namespace ast {
 
-
   Import::Import(marius::State& S, String* n)
     : path_(n)
   {
@@ -16,6 +15,11 @@ namespace ast {
       name_ = path_;
     }
   }
+
+  Import::Import(marius::State& S, String* p, String* n)
+    : path_(p)
+    , name_(n)
+  {}
 
   Arguments* Arguments::wrap(ast::Node* n) {
     ast::Nodes nodes;

@@ -252,6 +252,10 @@ namespace marius {
     return new ast::Import(S, name);
   }
 
+  ast::Node* ParserState::import(String* path, String* name) {
+    return new ast::Import(S, path, name);
+  }
+
   ast::Node* ParserState::ast_try(ast::Node* b, ast::Node* h) {
     return new ast::Try(b, h);
   }

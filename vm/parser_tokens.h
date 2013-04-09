@@ -40,9 +40,10 @@
 #define TK_WHILE                          40
 #define TK_IMPORT                         41
 #define TK_DOT_NAME                       42
-#define TK_TRY                            43
-#define TK_RESCUE                         44
-#define TK_OP2_SET                        45
-#define TK_OP1_SET                        46
-#define TK_OP0_SET                        47
-#define TK_RAISE                          48
+#define TK_AS                             43
+#define TK_TRY                            44
+#define TK_RESCUE                         45
+#define TK_OP2_SET                        46
+#define TK_OP1_SET                        47
+#define TK_OP0_SET                        48
+#define TK_RAISE                          49

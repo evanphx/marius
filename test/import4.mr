@@ -1,0 +1,3 @@
+import blah.foo as F
+
+F.show()

@@ -225,6 +225,7 @@ stmt(A) ::= WHILE s2(B) fin seq(C) fin END. { A.a = S->while_(B.a, C.a); }
 /* Import */
 
 stmt(A) ::= IMPORT DOT_NAME(B). { A.a = S->import(B.s); }
+stmt(A) ::= IMPORT DOT_NAME(B) AS ID(C). { A.a = S->import(B.s, C.s); }
 
 stmt(A) ::= TRY fin seq(C) fin RESCUE fin seq(D) fin END. {
               A.a = S->ast_try(C.a, D.a);
