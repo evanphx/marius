@@ -15,8 +15,12 @@
 #include "closure.hpp"
 #include "exception.hpp"
 
+#include "bug.hpp"
+
 #include <vector>
 #include <iostream>
+
+#include <sys/stat.h>
 
 using namespace marius;
 
@@ -82,30 +86,42 @@ int main(int argc, char** argv) {
 
   S.set_importer(new(S) User(S, env.lookup(S, "Importer").as_class()));
 
-  FILE* file = fopen(*opt, "r");
-  if(!file) {
-    printf("Unable to open: %s\n", *opt);
-    return 1;
-  }
-
-  opt++;
-
+  const char* script = *opt++;
   env.import_args(S, opt, fin - opt); 
 
-  Compiler compiler(debug);
+  OOP ret;
 
-  if(!compiler.compile(S, file)) return 1;
+  struct stat s;
+  stat(script, &s);
 
-  if(check) {
-    printf("syntax ok\n");
-    return 0;
+  if(S_ISREG(s.st_mode) || S_ISLNK(s.st_mode)) {
+    FILE* file = fopen(script, "r");
+    marius::check(file);
+
+    Compiler compiler(debug);
+
+    if(!compiler.compile(S, file)) return 1;
+
+    if(check) {
+      printf("syntax ok\n");
+      return 0;
+    }
+
+    Code& code = *compiler.code();
+
+    Method* top = new(S) Method(String::internalize(S, "__main__"), code, env.globals());
+
+    ret = vm.run(S, top);
+  } else {
+    char buf[128];
+    buf[0] = 0;
+    strcat(buf, "bin/");
+    strcat(buf, script);
+
+    OOP bin_path_o = String::internalize(S, buf);
+    ret = OOP(S.importer()).call(S, String::internalize(S, "import"),
+                                 &bin_path_o, 1);
   }
-
-  Code& code = *compiler.code();
-
-  Method* top = new(S) Method(String::internalize(S, "__main__"), code, env.globals());
-
-  OOP ret = vm.run(S, top);
 
   if(ret.unwind_p()) {
     Exception* exc = ret.unwind_value();

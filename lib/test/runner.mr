@@ -1,16 +1,12 @@
-import testunit
+import test
 
 class Runner
   def run(path)
     a = Importer.current.import(path)
     classes = a.values.detect { |t|
-               t.kind_of?(Class) && t < testunit::TestCase
+               t.kind_of?(Class) && t < test::TestCase
               }
 
     classes.each { |c| c.new.run }
   end
 end
-
-r = Runner.new
-
-sys::args.each { |n| r.run n }

@@ -1,6 +1,6 @@
-import testunit
+import test
 
-class StringTest < testunit::TestCase
+class StringTest < test::TestCase
   def test_bytesize
     assert_equal "blah".bytesize, 4
   end

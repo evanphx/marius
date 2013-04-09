@@ -37,6 +37,10 @@ namespace marius {
       return gc_;
     }
 
+    OOP* stack() {
+      return stack_;
+    }
+
     OOP run(State& S, Method* meth);
     OOP run(State& S, Method* meth, OOP* fp);
     OOP run_method(State& S, OOP recv,

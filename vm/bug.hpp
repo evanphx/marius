@@ -1,3 +1,6 @@
+#ifndef BUG_HPP
+#define BUG_HPP
+
 namespace marius {
   void abort();
   void bug(const char* message);
@@ -9,3 +12,5 @@ namespace marius {
     bug(msg);
   }
 }
+
+#endif

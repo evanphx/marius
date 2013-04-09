@@ -112,6 +112,11 @@ namespace marius {
 
   }
 
+  static Handle class_name(State& S, Handle recv, Arguments& args) {
+    Class* cls = recv->as_class();
+    return handle(S, cls->name());
+  }
+
   static Handle run_code(State& S, Handle recv, Arguments& args) {
     Method* m = recv->as_method();
 
@@ -194,7 +199,8 @@ namespace marius {
 
     for(size_t i = 0; i < tup->size(); i++) {
       fp[0] = tup->get(i);
-      S.vm().run(S, m, fp);
+      OOP t = S.vm().run(S, m, fp);
+      if(t.unwind_p()) return handle(S, t);
     }
 
     return recv;
@@ -281,6 +287,7 @@ namespace marius {
     c->add_method(S, "new", new_instance, 0);
 
     c->add_method(S, "<", class_subclass, 1);
+    c->add_method(S, "name", class_name, 0);
 
     o->add_method(S, "methods", object_methods, 0);
 

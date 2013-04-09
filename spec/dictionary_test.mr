@@ -1,6 +1,6 @@
-import testunit
+import test
 
-class DictionaryTest < testunit::TestCase
+class DictionaryTest < test::TestCase
   def test_aref
     d = %{ a=3 }
     assert_equal 3, d[%a]
@@ -12,5 +12,3 @@ class DictionaryTest < testunit::TestCase
     assert_equal %("a", "b"), d.keys
   end
 end
-
-DictionaryTest.new.run

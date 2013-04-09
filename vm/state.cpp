@@ -10,7 +10,7 @@ namespace marius {
     , importer_(0)
     , handles_(0)
     , gc_(vm.gc())
-    , last_fp(0)
+    , last_fp(vm.stack())
   {}
 
   void State::check() {

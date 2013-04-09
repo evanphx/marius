@@ -86,7 +86,8 @@ namespace marius {
 
       Method* top = new(S) Method(name, code, S.env().globals());
 
-      S.vm().run(S, top, fp + 1);
+      OOP t = S.vm().run(S, top, fp + 1);
+      if(t.unwind_p()) return handle(S, t);
 
       return handle(S, m);
     }

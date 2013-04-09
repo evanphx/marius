@@ -1,0 +1,5 @@
+import test
+
+r = test::Runner.new
+
+sys::args.each { |n| r.run n }

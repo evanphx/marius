@@ -30,6 +30,7 @@ class TestCase
   end
 
   def run_test(name)
+    io.print "  "
     io.print name
     io.print ": "
 
@@ -40,5 +41,19 @@ class TestCase
       io.puts "fail"
     end
 
+  end
+end
+
+class Runner
+  def run(path)
+    a = Importer.current.import(path)
+    classes = a.values.detect { |t|
+               t.kind_of?(Class) && t < TestCase
+              }
+
+    classes.each { |c|
+      io.puts c.name
+      c.new.run
+    }
   end
 end
