@@ -99,8 +99,8 @@ namespace marius {
     class Node {
     public:
       virtual int drive(State& S, int t) = 0;
-
       virtual void accept(Visitor* V) = 0;
+      virtual bool self_p() { return false; }
     };
 
     class Seq : public Node {
@@ -284,6 +284,14 @@ namespace marius {
         , args_(args)
       {}
 
+      Node* recv() {
+        return recv_;
+      }
+
+      String* name() {
+        return name_;
+      }
+
       int drive(State& S, int t);
       void accept(Visitor* V);
     };
@@ -360,6 +368,8 @@ namespace marius {
       String* name_;
       Scope* body_;
 
+      std::vector<String*> self_sends_;
+
     public:
       Trait(String* n, Scope* b)
         : name_(n)
@@ -372,6 +382,10 @@ namespace marius {
 
       Scope* body() {
         return body_;
+      }
+
+      void add_call(String* n) {
+        self_sends_.push_back(n);
       }
 
       int drive(State& S, int t);
@@ -490,6 +504,7 @@ namespace marius {
     public:
       int drive(State& S, int t);
       void accept(Visitor* V);
+      bool self_p() { return true; }
     };
 
     class Import : public Node {
@@ -700,6 +715,7 @@ namespace marius {
     public:
       virtual void before_visit(Scope* n) { };
       virtual void before_visit(Class* n) { };
+      virtual void before_visit(Trait* n) { };
 
       virtual void visit(Seq* n) { };
       virtual void visit(Scope* n) { };

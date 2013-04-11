@@ -182,7 +182,7 @@ namespace marius {
       return 3;
 
     case TUPLE:
-      printf("R(%d) := (R(%d)..R(%d))\n", seq[1], seq[2], seq[2] + seq[3]);
+      printf("R(%d) := (R(%d)..R(%d))\n", seq[1], seq[2], seq[2] + (seq[3] - 1));
       return 4;
 
     case TotalInstructions:

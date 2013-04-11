@@ -80,8 +80,9 @@ namespace marius {
 
   static Handle trait_new(State& S, Handle recv, Arguments& args) {
     String* name = args[0]->as_string();
+    Tuple* tup = args[1]->as_tuple();
 
-    return handle(S, OOP(new(S) Trait(S, name)));
+    return handle(S, OOP(new(S) Trait(S, name, tup)));
   }
 
   static Handle class_new_subclass(State& S, Handle recv, Arguments& args) {
@@ -158,7 +159,15 @@ namespace marius {
                   String::internalize(S, n + "." + cls->name()->c_str()),
                   *m->code(), m->closure());
 
-    return handle(S, S.vm().run(S, m, args.frame()));
+    Handle ret = handle(S, S.vm().run(S, m, args.frame()));
+
+    if(ret->unwind_p()) return ret;
+
+    OOP chk = cls->check_traits(S);
+
+    if(chk.unwind_p()) return handle(S, chk);
+
+    return ret;
   }
 
   static Handle run_trait_body(State& S, Handle recv, Arguments& args) {
@@ -316,6 +325,7 @@ namespace marius {
     bind(S, String::internalize(S, "Module"), mod);
 
     Class* trait = new_class(S, "Trait");
+    new_class(S, "TraitError");
 
     o->add_method(S, "print", object_print, 0);
     o->add_method(S, "kind_of?", object_kind_of, 1);
@@ -332,7 +342,7 @@ namespace marius {
 
     trait->add_method(S, "run_body", run_trait_body, 1);
     trait->add_method(S, "add_method", trait_add_method, 2);
-    trait->add_class_method(S, "new", trait_new, 1);
+    trait->add_class_method(S, "new", trait_new, 2);
 
     o->add_method(S, "methods", object_methods, 0);
 

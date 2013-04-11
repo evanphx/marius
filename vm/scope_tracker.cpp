@@ -17,6 +17,8 @@ namespace marius {
     ArgMap& globals_;
     LocalMap& locals_;
 
+    std::list<ast::Trait*> trait_stack_;
+
   public:
     ScopeTracker(marius::State& S, ArgMap& globals, LocalMap& locals)
       : S(S)
@@ -40,6 +42,10 @@ namespace marius {
       scope_->insert(LocalScope::value_type(imp->name(), lv));
     }
 
+    void before_visit(ast::Trait* trait) {
+      trait_stack_.push_back(trait);
+    }
+
     void visit(ast::Trait* trait) {
       int depth = stack_.size();
 
@@ -53,6 +59,21 @@ namespace marius {
       lv->set_extra(l);
 
       scope_->insert(LocalScope::value_type(trait->name(), lv));
+
+      trait_stack_.pop_back();
+    }
+
+    bool in_trait_p() {
+      return !trait_stack_.empty();
+    }
+
+    void visit(ast::Call* call) {
+      if(in_trait_p()) {
+        if(call->recv()->self_p()) {
+          ast::Trait* t = trait_stack_.back();
+          t->add_call(call->name());
+        }
+      }
     }
 
     void visit(ast::Dictionary* dict) {

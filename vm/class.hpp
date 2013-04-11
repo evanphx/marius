@@ -6,6 +6,7 @@
 #include "method_table.hpp"
 #include "memory_object.hpp"
 #include "attributes.hpp"
+#include "list.hpp"
 
 namespace marius {
   class Method;
@@ -18,6 +19,7 @@ namespace marius {
     String* name_;
     Class* superclass_;
     MethodTable* method_table_;
+    List* traits_;
 
     friend class GCImpl;
 
@@ -45,7 +47,11 @@ namespace marius {
     void add_native_method(State& S, const char* name, Method* meth);
 
     void add_class_method(State& S, const char* name, SimpleFunc func, int arity);
+
+    bool instance_method_p(String* name);
+
     OOP uses_trait(State& S, Trait* t);
+    OOP check_traits(State& S);
 
     OOP methods(State& S);
   };

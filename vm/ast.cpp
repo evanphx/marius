@@ -372,11 +372,26 @@ namespace ast {
     S.push(t+1);
     S.push(si);
 
+    int j = t + 2;
+
+    for(std::vector<String*>::iterator i = self_sends_.begin();
+        i != self_sends_.end();
+        ++i) {
+      S.push(LOADS);
+      S.push(j++);
+      S.push(S.string(*i));
+    }
+
+    S.push(TUPLE);
+    S.push(t+2);
+    S.push(t+2);
+    S.push(self_sends_.size());
+
     S.push(CALL);
     S.push(t);
     S.push(S.string(String::internalize(S.MS, "new")));
     S.push(t);
-    S.push(1);
+    S.push(2);
 
     S.push(IVA);
     S.push(si);
@@ -406,6 +421,7 @@ namespace ast {
   }
 
   void Trait::accept(Visitor* V) {
+    V->before_visit(this);
     body_->accept(V);
     V->visit(this);
   }

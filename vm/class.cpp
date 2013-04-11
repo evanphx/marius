@@ -3,6 +3,9 @@
 #include "method.hpp"
 #include "string.hpp"
 #include "trait.hpp"
+#include "list.hpp"
+#include "tuple.hpp"
+#include "exception.hpp"
 
 namespace marius {
   Class::Class(State& S, enum Boot, Class* cls, Class* sup, String* name)
@@ -11,6 +14,7 @@ namespace marius {
     , name_(name)
     , superclass_(sup)
     , method_table_(new(S) MethodTable(S))
+    , traits_(new(S) List(S))
   {}
 
   Class::Class(State& S, Class* sup, String* name)
@@ -21,6 +25,7 @@ namespace marius {
     , name_(name)
     , superclass_(sup)
     , method_table_(new(S) MethodTable(S))
+    , traits_(new(S) List(S))
   {}
 
   String* Class::metaclass_name(State& S, String* name) {
@@ -64,11 +69,35 @@ namespace marius {
     klass()->add_method(S, name, func, arity);
   }
 
+  bool Class::instance_method_p(String* name) {
+    return lookup(name) != 0;
+  }
+
   OOP Class::uses_trait(State& S, Trait* trait) {
     MethodTable::Iterator i = trait->iterator();
 
     while(i.next()) {
       method_table_->add(S, i.key(), i.method());
+    }
+
+    traits_->push(S, trait);
+
+    return OOP::nil();
+  }
+
+  OOP Class::check_traits(State& S) {
+    for(unsigned i = 0; i < traits_->size(); i++) {
+      Trait* t = traits_->get(i).as_trait();
+      Tuple* s = t->sends();
+
+      for(size_t j = 0; j < s->size(); j++) {
+        String* name = s->get(j).as_string();
+        if(!instance_method_p(name)) {
+          return OOP::make_unwind(
+                  Exception::create(S, "TraitError",
+                    "Missing required method '%s'", name->c_str()));
+        }
+      }
     }
 
     return OOP::nil();

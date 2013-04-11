@@ -62,6 +62,7 @@ test: marius
 	test `./marius -p test/brackets.mr` = 7
 	test `./marius test/trait.mr` = 7
 	test `./marius -p test/if_else.mr` = 7
+	(! ./marius scratch/bad_trait.mr) > /dev/null 2>&1
 
 spec: test
 	./marius -Ilib -I. test spec/string_test spec/dictionary_test
