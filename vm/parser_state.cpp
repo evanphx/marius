@@ -244,6 +244,12 @@ namespace marius {
     return new ast::IfCond(cond, body);
   }
 
+  ast::Node* ParserState::if_else(ast::Node* cond, ast::Node* body,
+                                  ast::Node* ebody)
+  {
+    return new ast::IfCond(cond, body, ebody);
+  }
+
   ast::Node* ParserState::unless(ast::Node* cond, ast::Node* body) {
     return new ast::Unless(cond, body);
   }

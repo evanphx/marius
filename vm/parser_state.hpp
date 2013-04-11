@@ -182,6 +182,7 @@ namespace marius {
     ast::Call* ast_binop(const char* s, ast::Node* a, ast::Node* b);
     ast::Call* ast_binop(String* op, ast::Node* a, ast::Node* b);
     ast::Node* if_cond(ast::Node* cond, ast::Node* body);
+    ast::Node* if_else(ast::Node* cond, ast::Node* body, ast::Node* ebody);
     ast::Node* unless(ast::Node* cond, ast::Node* body);
     ast::Node* while_(ast::Node* cond, ast::Node* body);
 

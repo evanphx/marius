@@ -8,7 +8,7 @@ namespace ast {
   Import::Import(marius::State& S, String* n)
     : path_(n)
   {
-    char* last_dot = strrchr(n->c_str(), '.');
+    char* last_dot = strrchr((char*)n->c_str(), '.');
     if(last_dot) {
       name_ = String::internalize(S, last_dot+1);
     } else {
@@ -555,7 +555,20 @@ namespace ast {
 
     body_->drive(S, t);
 
-    S.set_label(l);
+    if(ebody_) {
+      S.push(JMPF);
+
+      Label e = S.label();
+      S.push(0);
+
+      S.set_label(l);
+
+      ebody_->drive(S, t);
+
+      S.set_label(e);
+    } else {
+      S.set_label(l);
+    }
 
     return t;
   }
@@ -563,6 +576,8 @@ namespace ast {
   void IfCond::accept(Visitor* V) {
     recv_->accept(V);
     body_->accept(V);
+
+    if(ebody_) ebody_->accept(V);
 
     V->visit(this);
   }

@@ -227,6 +227,8 @@ lambda(A) ::= lambda_start lambda_args opt_fin delim_seq(B) RB. { A.a = S->lambd
 /* Conditions */
 
 stmt(A) ::= IF s2(B) fin seq(C) fin END. { A.a = S->if_cond(B.a, C.a); }
+stmt(A) ::= IF s2(B) fin seq(C) fin ELSE fin seq(D) fin END.
+               { A.a = S->if_else(B.a, C.a, D.a); }
 stmt(A) ::= UNLESS s2(B) fin seq(C) fin END. { A.a = S->unless(B.a, C.a); }
 stmt(A) ::= WHILE s2(B) fin seq(C) fin END. { A.a = S->while_(B.a, C.a); }
 

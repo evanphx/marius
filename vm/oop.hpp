@@ -262,7 +262,7 @@ namespace marius {
     Attributes* as_attributes();
 
     bool true_condition_p() {
-      return type_ != eFalse;
+      return type_ != eFalse && type_ != eNil;
     }
 
     bool unwind_p() {

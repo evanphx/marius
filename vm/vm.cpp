@@ -266,7 +266,7 @@ namespace marius {
 
       case JMPIT:
         if(fp[seq[0]].true_condition_p()) {
-          seq += (seq[1] + 1);
+          seq += (seq[1] + 2);
         } else {
           seq += 2;
         }
@@ -275,7 +275,7 @@ namespace marius {
 
       case JMPIF:
         if(!fp[seq[0]].true_condition_p()) {
-          seq += (seq[1] + 1);
+          seq += (seq[1] + 2);
         } else {
           seq += 2;
         }

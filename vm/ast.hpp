@@ -427,11 +427,13 @@ namespace marius {
     class IfCond : public Node {
       ast::Node* recv_;
       ast::Node* body_;
+      ast::Node* ebody_;
 
     public:
-      IfCond(ast::Node* r, ast::Node* b)
+      IfCond(ast::Node* r, ast::Node* b, ast::Node* ebody = 0)
         : recv_(r)
         , body_(b)
+        , ebody_(ebody)
       {}
 
       int drive(State& S, int t);

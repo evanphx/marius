@@ -383,8 +383,9 @@ again:
 
     cKeywords[(int)'d'] = k;
 
-    k = new Keyword[2];
+    k = new Keyword[3];
     k[0] = Keyword("end", TK_END);
+    k[1] = Keyword("else", TK_ELSE);
 
     cKeywords[(int)'e'] = k;
 
