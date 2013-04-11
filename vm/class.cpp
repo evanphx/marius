@@ -77,7 +77,9 @@ namespace marius {
     MethodTable::Iterator i = trait->iterator();
 
     while(i.next()) {
-      method_table_->add(S, i.key(), i.method());
+      if(!instance_method_p(i.key())) {
+        method_table_->add(S, i.key(), i.method());
+      }
     }
 
     traits_->push(S, trait);

@@ -65,7 +65,7 @@ test: marius
 	(! ./marius scratch/bad_trait.mr) > /dev/null 2>&1
 
 spec: test
-	./marius -Ilib -I. test spec/string_test spec/dictionary_test
+	./marius -Ilib -I. test spec/string_test spec/dictionary_test spec/trait_test
 
 .PHONY: test spec
 

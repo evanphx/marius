@@ -1,0 +1,25 @@
+import test
+
+class TraitTest < test::TestCase
+  trait Show
+    def show
+      answer
+    end
+
+    def answer
+      8
+    end
+  end
+
+  class Blah
+    def answer
+      7
+    end
+
+    uses Show
+  end
+
+  def test_override
+    assert_equal 7, Blah.new.show
+  end
+end
