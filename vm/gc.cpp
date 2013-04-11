@@ -20,6 +20,7 @@
 #include "stack_frame.hpp"
 
 #include "list.hpp"
+#include "trait.hpp"
 
 #include <iostream>
 
@@ -322,6 +323,17 @@ namespace marius {
           mark_attributes(c->attributes_);
         }
         return;
+
+      case OOP::eTrait:
+        {
+          Trait* t = obj.trait_;
+          mark_spec(&t->name_);
+
+          mark_method_table(t->method_table_);
+          mark_attributes(t->attributes_);
+        }
+        return;
+
 
       case OOP::eDictionary:
         {

@@ -5,6 +5,7 @@
 #include "attributes.hpp"
 #include "user.hpp"
 #include "method.hpp"
+#include "trait.hpp"
 
 #include <stdio.h>
 
@@ -23,7 +24,6 @@ namespace marius {
       return c;
     }
   }
-
 
   Method* OOP::find_method(String* name) {
     if(type_ == eModule) {
@@ -54,6 +54,9 @@ namespace marius {
       return;
     case eClass:
       printf("%s\n", class_->name()->c_str());
+      return;
+    case eTrait:
+      printf("<Trait %s>\n", trait_->name()->c_str());
       return;
     case eNil:
       printf("nil\n");

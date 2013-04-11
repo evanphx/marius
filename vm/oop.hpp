@@ -25,6 +25,7 @@ namespace marius {
   class Closure;
   class Dictionary;
   class List;
+  class Trait;
 
   class GCImpl;
 
@@ -37,6 +38,8 @@ namespace marius {
 
       // Mutable object types
       eClass, eUser, eModule, eClosure, eDictionary, eException, eList,
+      eTrait,
+
       TotalTypes
     };
 
@@ -65,6 +68,7 @@ namespace marius {
       Closure* closure_;
       Dictionary* dict_;
       List* list_;
+      Trait* trait_;
       void* raw_;
     };
 
@@ -148,6 +152,11 @@ namespace marius {
       , list_(l)
     {}
 
+    OOP(Trait* t)
+      : type_(eTrait)
+      , trait_(t)
+    {}
+
     Type type() {
       return type_;
     }
@@ -208,6 +217,11 @@ namespace marius {
     List* as_list() {
       check(type_ == eList);
       return list_;
+    }
+
+    Trait* as_trait() {
+      check(type_ == eTrait);
+      return trait_;
     }
 
     String* as_string() {

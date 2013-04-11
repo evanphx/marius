@@ -147,6 +147,9 @@ namespace marius {
     void start_class();
     int new_class(String* s);
 
+    void start_trait();
+    ast::Node* trait(String* s, ast::Node* body);
+
     void start_def();
     void def_arg(String* s);
     void def_arg_cast(String* s, ast::Node* c);

@@ -35,6 +35,7 @@ l1(A) ::= l1(B) fin l1e(C). { A.a = S->seq(B.a, C.a); }
 l1(A) ::= l1e(B).    { A.a = B.a; }
 
 l1e(A) ::= class(B). { A.a = B.a; }
+l1e(A) ::= trait(B). { A.a = B.a; }
 l1e(A) ::= def(B).   { A.a = B.a; }
 l1e(A) ::= stmt(B).  { A.a = B.a; }
 
@@ -67,6 +68,13 @@ class(A) ::= class_start ID(B) fin class_body(C). {
 
 class(A) ::= class_start ID(B) LT s2(C) fin class_body(D). {
                A.a = S->ast_class(B.s, C.a, D.a);
+             }
+
+trait_start ::= TRAIT. { S->start_trait(); }
+trait_body(A) ::= l1(B) fin END. { A.a = B.a; }
+
+trait(A) ::= trait_start ID(B) fin trait_body(C). {
+               A.a = S->trait(B.s, C.a);
              }
 
 def_start ::= DEF. { S->start_def(); }

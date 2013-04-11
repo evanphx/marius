@@ -44,6 +44,20 @@ namespace marius {
     return n;
   }
 
+  ast::Node* ParserState::trait(String* name, ast::Node* body) {
+    ast::Argument* a = new ast::Argument(String::internalize(S, "self"), -1);
+
+    ast::Node* n = new ast::Trait(name,
+                     new ast::Scope(body, context_->local_names, a));
+
+    delete context_;
+
+    context_ = stack_.back();
+    stack_.pop_back();
+
+    return n;
+  }
+
   void ParserState::start_def() {
     stack_.push_back(context_);
 
@@ -117,6 +131,12 @@ namespace marius {
   }
 
   void ParserState::start_class() {
+    stack_.push_back(context_);
+
+    context_ = new Context();
+  }
+
+  void ParserState::start_trait() {
     stack_.push_back(context_);
 
     context_ = new Context();

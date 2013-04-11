@@ -60,6 +60,7 @@ test: marius
 	test `./marius -p test/dict.mr` = 7
 	test `./marius -p test/cast_arg.mr` = 7
 	test `./marius -p test/brackets.mr` = 7
+	test `./marius test/trait.mr` = 7
 
 spec: test
 	./marius -Ilib -I. test spec/string_test spec/dictionary_test

@@ -40,6 +40,21 @@ namespace marius {
       scope_->insert(LocalScope::value_type(imp->name(), lv));
     }
 
+    void visit(ast::Trait* trait) {
+      int depth = stack_.size();
+
+      ArgMap::iterator i = globals_.find(String::internalize(S, "Trait"));
+
+      assert(i != globals_.end());
+      Local* l = new Local;
+      l->make_global(i->second, depth);
+
+      Local* lv = locals_.add(trait);
+      lv->set_extra(l);
+
+      scope_->insert(LocalScope::value_type(trait->name(), lv));
+    }
+
     void visit(ast::Dictionary* dict) {
       int depth = stack_.size();
 

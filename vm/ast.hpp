@@ -356,6 +356,28 @@ namespace marius {
       void accept(Visitor* V);
     };
 
+    class Trait : public Node {
+      String* name_;
+      Scope* body_;
+
+    public:
+      Trait(String* n, Scope* b)
+        : name_(n)
+        , body_(b)
+      {}
+
+      String* name() {
+        return name_;
+      }
+
+      Scope* body() {
+        return body_;
+      }
+
+      int drive(State& S, int t);
+      void accept(Visitor* V);
+    };
+
     class Def : public Node {
       String* name_;
       Scope* body_;
@@ -712,6 +734,7 @@ namespace marius {
       virtual void visit(While* t) {}
       virtual void visit(Dictionary* t) {}
       virtual void visit(And* a) {}
+      virtual void visit(Trait* t) {}
     };
 
   }

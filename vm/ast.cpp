@@ -360,6 +360,56 @@ namespace ast {
     V->visit(this);
   }
 
+  int Trait::drive(State& S, int t) {
+    int si = S.string(name_);
+
+    Local* l = S.lm().get(this);
+    assert(l);
+
+    S.get_local(l->extra(), t);
+
+    S.push(LOADS);
+    S.push(t+1);
+    S.push(si);
+
+    S.push(CALL);
+    S.push(t);
+    S.push(S.string(String::internalize(S.MS, "new")));
+    S.push(t);
+    S.push(1);
+
+    S.push(IVA);
+    S.push(si);
+    S.push(t);
+
+    S.set_local(l, t);
+
+    ast::State subS(S.MS, S.lm());
+    int r = body_->drive(subS, body_->locals().size());
+    subS.push(RET);
+    subS.push(r);
+
+    ArgMap args;
+
+    S.push(LOADC);
+    S.push(t+1);
+    S.push(S.code(subS.to_code(String::internalize(S.MS, "__body__"),
+                               args, body_->cov())));
+
+    S.push(CALL);
+    S.push(t);
+    S.push(S.string(String::internalize(S.MS, "run_body")));
+    S.push(t);
+    S.push(1);
+
+    return t;
+  }
+
+  void Trait::accept(Visitor* V) {
+    body_->accept(V);
+    V->visit(this);
+  }
+
   int Class::drive(State& S, int t) {
     super_->drive(S, t);
 

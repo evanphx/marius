@@ -2,6 +2,7 @@
 #include "method_table.hpp"
 #include "method.hpp"
 #include "string.hpp"
+#include "trait.hpp"
 
 namespace marius {
   Class::Class(State& S, enum Boot, Class* cls, Class* sup, String* name)
@@ -61,6 +62,16 @@ namespace marius {
                                SimpleFunc func, int arity)
   {
     klass()->add_method(S, name, func, arity);
+  }
+
+  OOP Class::include_trait(State& S, Trait* trait) {
+    MethodTable::Iterator i = trait->iterator();
+
+    while(i.next()) {
+      method_table_->add(S, i.key(), i.method());
+    }
+
+    return OOP::nil();
   }
 
   static Class** base_classes_;

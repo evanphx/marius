@@ -11,6 +11,7 @@
 #include "tuple.hpp"
 #include "dictionary.hpp"
 #include "list.hpp"
+#include "trait.hpp"
 
 #include <iostream>
 #include <stdio.h>
@@ -77,6 +78,12 @@ namespace marius {
     return handle(S, q ? OOP::true_() : OOP::false_());
   }
 
+  static Handle trait_new(State& S, Handle recv, Arguments& args) {
+    String* name = args[0]->as_string();
+
+    return handle(S, OOP(new(S) Trait(S, name)));
+  }
+
   static Handle class_new_subclass(State& S, Handle recv, Arguments& args) {
     String* name = args[0]->as_string();
 
@@ -89,6 +96,24 @@ namespace marius {
     Method* m = args[1]->as_method();
 
     recv->as_class()->add_native_method(S, name->c_str(), m);
+
+    return handle(S, OOP::nil());
+  }
+
+  static Handle include_trait(State& S, Handle recv, Arguments& args) {
+    Trait* trait = args[0]->as_trait();
+
+    recv->as_class()->include_trait(S, trait);
+
+    return handle(S, OOP::nil());
+  }
+
+  static Handle trait_add_method(State& S, Handle recv, Arguments& args) {
+    String* name = args[0]->as_string();
+
+    Method* m = args[1]->as_method();
+
+    recv->as_trait()->add_native_method(S, name, m);
 
     return handle(S, OOP::nil());
   }
@@ -131,6 +156,19 @@ namespace marius {
 
     m = new(S) Method(
                   String::internalize(S, n + "." + cls->name()->c_str()),
+                  *m->code(), m->closure());
+
+    return handle(S, S.vm().run(S, m, args.frame()));
+  }
+
+  static Handle run_trait_body(State& S, Handle recv, Arguments& args) {
+    Trait* trt = recv->as_trait();
+    Method* m =  args[0]->as_method();
+
+    std::string n = m->scope()->c_str();
+
+    m = new(S) Method(
+                  String::internalize(S, n + "." + trt->name()->c_str()),
                   *m->code(), m->closure());
 
     return handle(S, S.vm().run(S, m, args.frame()));
@@ -277,6 +315,8 @@ namespace marius {
     bind(S, mn, m);
     bind(S, String::internalize(S, "Module"), mod);
 
+    Class* trait = new_class(S, "Trait");
+
     o->add_method(S, "print", object_print, 0);
     o->add_method(S, "kind_of?", object_kind_of, 1);
 
@@ -284,10 +324,15 @@ namespace marius {
     c->add_method(S, "run_body", run_class_body, 1);
 
     c->add_method(S, "add_method", add_method, 2);
+    c->add_method(S, "include", include_trait, 1);
     c->add_method(S, "new", new_instance, 0);
 
     c->add_method(S, "<", class_subclass, 1);
     c->add_method(S, "name", class_name, 0);
+
+    trait->add_method(S, "run_body", run_trait_body, 1);
+    trait->add_method(S, "add_method", trait_add_method, 2);
+    trait->add_class_method(S, "new", trait_new, 1);
 
     o->add_method(S, "methods", object_methods, 0);
 
@@ -346,6 +391,7 @@ namespace marius {
     tbl[OOP::eTuple] = tuple;
     tbl[OOP::eDictionary] = dict;
     tbl[OOP::eList] = list;
+    tbl[OOP::eTrait] = trait;
 
     Class::init_base(tbl);
 
@@ -366,7 +412,7 @@ namespace marius {
     Dictionary::init(S, dict);
     List::init(S, list);
   
-    globals_ = new(S) Closure(7);
+    globals_ = new(S) Closure(8);
     globals_->set(0, o);
     globals_->set(1, io);
     globals_->set(2, c);
@@ -374,6 +420,7 @@ namespace marius {
     globals_->set(4, dict);
     globals_->set(5, i);
     globals_->set(6, sys_);
+    globals_->set(7, trait);
   }
 
   void Environment::import_args(State& S, char** args, int count) {

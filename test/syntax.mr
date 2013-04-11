@@ -153,4 +153,8 @@ a.detect {
 b
 }
 
+trait Blah
+  def foo
+  end
+end
 
