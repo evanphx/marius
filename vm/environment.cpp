@@ -100,10 +100,10 @@ namespace marius {
     return handle(S, OOP::nil());
   }
 
-  static Handle include_trait(State& S, Handle recv, Arguments& args) {
+  static Handle uses_trait(State& S, Handle recv, Arguments& args) {
     Trait* trait = args[0]->as_trait();
 
-    recv->as_class()->include_trait(S, trait);
+    recv->as_class()->uses_trait(S, trait);
 
     return handle(S, OOP::nil());
   }
@@ -324,7 +324,7 @@ namespace marius {
     c->add_method(S, "run_body", run_class_body, 1);
 
     c->add_method(S, "add_method", add_method, 2);
-    c->add_method(S, "include", include_trait, 1);
+    c->add_method(S, "uses", uses_trait, 1);
     c->add_method(S, "new", new_instance, 0);
 
     c->add_method(S, "<", class_subclass, 1);

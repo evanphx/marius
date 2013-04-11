@@ -45,7 +45,7 @@ namespace marius {
     void add_native_method(State& S, const char* name, Method* meth);
 
     void add_class_method(State& S, const char* name, SimpleFunc func, int arity);
-    OOP include_trait(State& S, Trait* t);
+    OOP uses_trait(State& S, Trait* t);
 
     OOP methods(State& S);
   };

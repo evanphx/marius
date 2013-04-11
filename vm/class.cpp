@@ -64,7 +64,7 @@ namespace marius {
     klass()->add_method(S, name, func, arity);
   }
 
-  OOP Class::include_trait(State& S, Trait* trait) {
+  OOP Class::uses_trait(State& S, Trait* trait) {
     MethodTable::Iterator i = trait->iterator();
 
     while(i.next()) {

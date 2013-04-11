@@ -5,7 +5,7 @@ trait Comparable
 end
 
 class Blah
-  include Comparable
+  uses Comparable
 
   def <=>(o)
     o
