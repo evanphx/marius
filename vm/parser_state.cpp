@@ -286,6 +286,12 @@ namespace marius {
     return new ast::Try(b, h);
   }
 
+  ast::Node* ParserState::ast_try(ast::Node* b, String* id, ast::Node* t,
+                                  ast::Node* h)
+  {
+    return new ast::Try(b, h, id, t);
+  }
+
   ast::Node* ParserState::assign(String* name, ast::Node* n) {
     return new ast::Assign(name, n);
   }

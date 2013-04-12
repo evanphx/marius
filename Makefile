@@ -62,6 +62,8 @@ test: marius
 	test `./marius -p test/brackets.mr` = 7
 	test `./marius test/trait.mr` = 7
 	test `./marius -p test/if_else.mr` = 7
+	test `./marius test/try_specific.mr` = 7
+	test `./marius test/try_specific2.mr` = 7
 	(! ./marius scratch/bad_trait.mr) > /dev/null 2>&1
 
 spec: test

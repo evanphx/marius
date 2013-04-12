@@ -716,7 +716,43 @@ namespace ast {
 
     S.set_label_abs(h);
 
-    handler_->drive(S, t);
+    if(id_ && type_) {
+      type_->drive(S, t+1);
+      S.push(MOVR);
+      S.push(t+2);
+      S.push(t);
+
+      S.push(CALL);
+      S.push(t+1);
+      S.push(S.string("==="));
+      S.push(t+1);
+      S.push(1);
+
+      S.push(JMPIF);
+      S.push(t+1);
+
+      Label p = S.label();
+      S.push(0);
+
+      Local* l = S.lm().get(this);
+      assert(l);
+
+      S.set_local(l, t);
+      handler_->drive(S, t);
+
+      S.push(JMPF);
+      Label a = S.label();
+      S.push(0);
+
+      S.set_label(p);
+      S.push(RAISE);
+      S.push(t);
+
+      S.set_label(a);
+
+    } else {
+      handler_->drive(S, t);
+    }
 
     S.set_label(b);
 
@@ -725,8 +761,12 @@ namespace ast {
 
   void Try::accept(Visitor* V) {
     body_->accept(V);
-    handler_->accept(V);
 
+    V->start_try_body(this);
+
+    if(type_) type_->accept(V);
+
+    handler_->accept(V);
     V->visit(this);
   }
 

@@ -530,12 +530,20 @@ namespace marius {
     class Try : public Node {
       Node* body_;
       Node* handler_;
+      String* id_;
+      Node* type_;
 
     public:
-      Try(Node* b, Node* h)
+      Try(Node* b, Node* h, String* i=0, Node* t=0)
         : body_(b)
         , handler_(h)
+        , id_(i)
+        , type_(t)
       {}
+
+      String* id() {
+        return id_;
+      }
 
       int drive(State& S, int t);
       void accept(Visitor* V);
@@ -713,6 +721,9 @@ namespace marius {
 
     class Visitor {
     public:
+
+      virtual void start_try_body(Try* t) { };
+
       virtual void before_visit(Scope* n) { };
       virtual void before_visit(Class* n) { };
       virtual void before_visit(Trait* n) { };

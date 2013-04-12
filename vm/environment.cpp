@@ -12,6 +12,7 @@
 #include "dictionary.hpp"
 #include "list.hpp"
 #include "trait.hpp"
+#include "exception.hpp"
 
 #include <iostream>
 #include <stdio.h>
@@ -289,6 +290,24 @@ namespace marius {
     return handle(S, OOP::false_());
   }
 
+  static Handle class_tequal(State& S, Handle recv, Arguments& args) {
+    Class* cls = args[0]->klass();
+    Class* chk = recv->as_class();
+
+    while(cls) {
+      if(cls == chk) return handle(S, OOP::true_());
+      cls = cls->superclass();
+    }
+
+    return handle(S, OOP::false_());
+  }
+
+  static Handle exc_message(State& S, Handle recv, Arguments& args) {
+    Exception* exc = recv->exception();
+
+    return handle(S, exc->message());
+  }
+
   Class* init_import(State& S);
 
   void Environment::init_ontology(State& S) {
@@ -338,6 +357,7 @@ namespace marius {
     c->add_method(S, "new", new_instance, 0);
 
     c->add_method(S, "<", class_subclass, 1);
+    c->add_method(S, "===", class_tequal, 1);
     c->add_method(S, "name", class_name, 0);
 
     trait->add_method(S, "run_body", run_trait_body, 1);
@@ -381,10 +401,14 @@ namespace marius {
     sys_->set(S, String::internalize(S, "modules"), modules_);
     sys_->set(S, String::internalize(S, "args"), args_);
 
-    new_class(S, "ArgumentError");
-    new_class(S, "RuntimeError");
-    new_class(S, "ImportError");
-    new_class(S, "NoMethodError");
+    Class* exc = new_class(S, "Exception");
+
+    Class* rte = new_class(S, "RuntimeError", exc);
+    Class* arg_err = new_class(S, "ArgumentError", rte);
+    new_class(S, "ImportError", rte);
+    Class* nme = new_class(S, "NoMethodError", rte);
+
+    exc->add_method(S, "message", exc_message, 0);
 
     Class** tbl = new(S) Class*[OOP::TotalTypes];
 
@@ -422,7 +446,7 @@ namespace marius {
     Dictionary::init(S, dict);
     List::init(S, list);
   
-    globals_ = new(S) Closure(8);
+    globals_ = new(S) Closure(10);
     globals_->set(0, o);
     globals_->set(1, io);
     globals_->set(2, c);
@@ -431,6 +455,8 @@ namespace marius {
     globals_->set(5, i);
     globals_->set(6, sys_);
     globals_->set(7, trait);
+    globals_->set(8, arg_err);
+    globals_->set(9, nme);
   }
 
   void Environment::import_args(State& S, char** args, int count) {

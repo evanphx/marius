@@ -13,6 +13,7 @@ namespace marius {
   Class* OOP::klass() {
     switch(type_) {
     case eUser:
+    case eException:
       return user_->klass();
     case eClass:
       return class_->klass();

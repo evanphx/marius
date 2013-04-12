@@ -1,0 +1,9 @@
+try
+  try
+    io.puts
+  rescue e : NoMethodError
+    io.puts 0
+  end
+rescue e : ArgumentError
+  io.puts 7
+end

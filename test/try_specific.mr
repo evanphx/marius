@@ -1,0 +1,9 @@
+try
+  io.puts
+rescue e : ArgumentError
+  if e.message == "Expected 1, got 0"
+    io.puts 7
+  else
+    io.puts 0
+  end
+end

@@ -304,7 +304,18 @@ namespace marius {
         break;
       case RAISE:
         top_frame_->ip = (seq - start) - 1;
-        return OOP::make_unwind(Exception::wrap(S, fp[seq[0]]));
+
+        if(es.size() == 0) {
+          return OOP::make_unwind(Exception::wrap(S, fp[seq[0]]));
+        }
+
+        te = es.back();
+        es.pop_back();
+
+        fp[te.reg] = Exception::wrap(S, fp[seq[0]]);
+
+        seq = code.code() + te.ip;
+        break;
 
       case NOT:
         if(fp[seq[1]].true_condition_p()) {

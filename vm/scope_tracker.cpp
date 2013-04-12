@@ -182,6 +182,33 @@ namespace marius {
       scope_->insert(LocalScope::value_type(a->name(), locals_.add(a)));
     }
 
+    void start_try_body(Try* t) {
+      if(!t->id()) return;
+
+      LocalScope::iterator j = scope_->find(t->id());
+      if(j != scope_->end()) {
+        locals_.add(t, j->second);
+        return;
+      }
+
+      int d = 0;
+      for(std::list<LocalScope*>::reverse_iterator i = stack_.rbegin();
+          i != stack_.rend();
+          ++i, d++)
+      {
+        LocalScope* s = *i;
+
+        LocalScope::iterator j = s->find(t->id());
+        if(j != s->end()) {
+          j->second->make_closure();
+          Local* l = locals_.add(t);
+          l->make_closure_access(j->second, d);
+        }
+      }
+
+      scope_->insert(LocalScope::value_type(t->id(), locals_.add(t)));
+    }
+
     void visit(AssignOp* a) {
       LocalScope::iterator j = scope_->find(a->name());
       if(j != scope_->end()) {
