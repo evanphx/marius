@@ -43,8 +43,6 @@ namespace marius {
 
     code_ = AS.to_code(String::internalize(S, "__main__"), args, top->cov());
 
-    optimize();
-
     if(debug_) code_->print();
 
     return true;
