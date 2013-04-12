@@ -25,7 +25,7 @@ namespace marius {
       return loc_;
     }
 
-    OOP* indirection() {
+    OOP* indirection() const {
       return loc_;
     }
 
@@ -34,16 +34,29 @@ namespace marius {
 
   template <typename T, int type>
   class TypedHandle {
-    OOP* loc_;
+    Handle hndl_;
+
+    OOP* loc() const {
+      return hndl_.indirection();
+    }
 
   public:
     TypedHandle(Handle hndl)
-      : loc_(hndl.indirection())
-    {}
+      : hndl_(hndl)
+    {
+      check(loc()->type() == type);
+    }
 
     T* operator->() const {
-      check(loc_->type() == type);
-      return (T*)(loc_->heap_address());
+      return (T*)(loc()->heap_address());
+    }
+
+    T* operator*() const {
+      return (T*)loc()->heap_address();
+    }
+
+    operator Handle() {
+      return hndl_;
     }
   };
 

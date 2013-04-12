@@ -99,7 +99,7 @@ namespace marius {
       OOP* fp = args.frame() + 1;
       fp[0] = m;
 
-      Code& code = *compiler.code();
+      Code* code = compiler.code();
 
       Method* top = new(S) Method(name, code, S.env().globals());
 

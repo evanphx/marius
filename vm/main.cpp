@@ -30,6 +30,7 @@ int main(int argc, char** argv) {
   bool debug = false;
   bool print = false;
   bool check = false;
+  bool write_bc = false;
 
   char** opt = argv + 1;
   char** fin = argv + argc;
@@ -46,6 +47,9 @@ int main(int argc, char** argv) {
         break;
       case 'c':
         check = true;
+        break;
+      case 'b':
+        write_bc = true;
         break;
       case 'I':
         if(s[2]) {
@@ -95,19 +99,33 @@ int main(int argc, char** argv) {
   stat(script, &s);
 
   if(S_ISREG(s.st_mode) || S_ISLNK(s.st_mode)) {
-    FILE* file = fopen(script, "r");
-    marius::check(file);
+    Code* code = Code::load_file(S, script);
 
-    Compiler compiler(debug);
+    if(!code) {
+      FILE* file = fopen(script, "r");
+      marius::check(file);
 
-    if(!compiler.compile(S, file)) return 1;
+      Compiler compiler(debug);
 
-    if(check) {
-      printf("syntax ok\n");
-      return 0;
+      if(!compiler.compile(S, file)) return 1;
+
+      if(check) {
+        printf("syntax ok\n");
+        return 0;
+      }
+
+      code = compiler.code();
+
+      if(write_bc) {
+        char buf[1024];
+        buf[0] = 0;
+        strcat(buf, script);
+        strcat(buf, "c");
+
+        code->save(buf);
+        return 0;
+      }
     }
-
-    Code& code = *compiler.code();
 
     Method* top = new(S) Method(String::internalize(S, "__main__"), code, env.globals());
 

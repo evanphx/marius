@@ -3,6 +3,8 @@ OBJ=$(patsubst %.cpp,%.o,$(SRC))
 
 CXXFLAGS := -ggdb -Wall -Ivm
 
+LDFLAGS := -lprotobuf
+
 all: marius
 
 dep:
@@ -23,7 +25,7 @@ vm/parser.cpp: vm/parser.c.inc
 vm/parser.o: vm/parser.c.inc
 
 marius: $(OBJ)
-	c++ -ggdb -o marius $(OBJ)
+	c++ -ggdb $(LDFLAGS) -o marius $(OBJ)
 
 test: marius
 	./marius -c test/syntax.mr

@@ -81,9 +81,9 @@ namespace marius {
 
   static Handle trait_new(State& S, Handle recv, Arguments& args) {
     String* name = args[0]->as_string();
-    Tuple* tup = args[1]->as_tuple();
+    HTuple tup = args[1];
 
-    return handle(S, OOP(new(S) Trait(S, name, tup)));
+    return handle(S, OOP(new(S) Trait(S, name, *tup)));
   }
 
   static Handle class_new_subclass(State& S, Handle recv, Arguments& args) {
@@ -158,7 +158,7 @@ namespace marius {
 
     m = new(S) Method(
                   String::internalize(S, n + "." + cls->name()->c_str()),
-                  *m->code(), m->closure());
+                  m->code(), m->closure());
 
     Handle ret = handle(S, S.vm().run(S, m, args.frame()));
 
@@ -179,7 +179,7 @@ namespace marius {
 
     m = new(S) Method(
                   String::internalize(S, n + "." + trt->name()->c_str()),
-                  *m->code(), m->closure());
+                  m->code(), m->closure());
 
     return handle(S, S.vm().run(S, m, args.frame()));
   }
@@ -209,7 +209,7 @@ namespace marius {
   }
 
   static Handle tuple_find_all(State& S, Handle recv, Arguments& args) {
-    Tuple* tup = recv->as_tuple();
+    HTuple tup = recv;
     Method* m = args[0]->as_method();
 
     OOP* fp = args.frame() + 1;
@@ -230,16 +230,16 @@ namespace marius {
       }
     }
 
-    Tuple* out = new(S) Tuple(S, found.size());
+    HTuple out = handle(S, new(S) Tuple(S, found.size()));
     for(size_t i = 0; i < found.size(); i++) {
       out->set(i, found[i]);
     }
 
-    return handle(S, OOP(out));
+    return out;
   }
 
   static Handle tuple_each(State& S, Handle recv, Arguments& args) {
-    Tuple* tup = recv->as_tuple();
+    HTuple tup = recv;
     Method* m = args[0]->as_method();
 
     OOP* fp = args.frame() + 1;
@@ -255,8 +255,8 @@ namespace marius {
   }
 
   static Handle tuple_equal(State& S, Handle recv, Arguments& args) {
-    HTuple tup(recv);
-    HTuple o(args[0]);
+    HTuple tup = recv;
+    HTuple o = args[0];
 
     if(tup->size() != o->size()) {
       return handle(S, OOP::false_());
@@ -446,7 +446,7 @@ namespace marius {
     Dictionary::init(S, dict);
     List::init(S, list);
   
-    globals_ = new(S) Closure(10);
+    globals_ = new(S) Closure(11);
     globals_->set(0, o);
     globals_->set(1, io);
     globals_->set(2, c);
@@ -457,6 +457,7 @@ namespace marius {
     globals_->set(7, trait);
     globals_->set(8, arg_err);
     globals_->set(9, nme);
+    globals_->set(10, exc);
   }
 
   void Environment::import_args(State& S, char** args, int count) {

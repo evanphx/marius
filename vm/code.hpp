@@ -11,6 +11,10 @@
 
 #include "gc_allocated.hpp"
 
+namespace serialize {
+  class Code;
+}
+
 namespace marius {
   class GCImpl;
 
@@ -98,8 +102,8 @@ namespace marius {
       return strings_.at(idx);
     }
 
-    Code& code(int idx) {
-      return *codes_.at(idx);
+    Code* code(int idx) {
+      return codes_.at(idx);
     }
 
     int codes_size() {
@@ -123,6 +127,10 @@ namespace marius {
     }
 
     void print();
+    void fill(serialize::Code* ser);
+    void save(const char* path);
+    static Code* load_file(State& S, const char* path);
+    static Code* load(State& S, serialize::Code* ser);
   };
 }
 

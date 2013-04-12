@@ -13,11 +13,11 @@ namespace marius {
     , closure_(closure)
   {}
 
-  Method::Method(String* scope, Code& code, Closure* closure)
+  Method::Method(String* scope, Code* code, Closure* closure)
     : scope_(scope)
     , func_(0)
-    , code_(&code)
-    , arity_(code.arity())
+    , code_(code)
+    , arity_(code->arity())
     , closure_(closure)
   {}
 

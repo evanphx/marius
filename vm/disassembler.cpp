@@ -75,7 +75,7 @@ namespace marius {
       printf("R(%d) := R(%d).$R(%d) ",
               seq[1], seq[3], seq[2]);
 
-      print_keywords(code_.keywords(seq[5]), seq[3]+1);
+      print_keywords(code_->keywords(seq[5]), seq[3]+1);
       printf("\n");
       return 6;
 
@@ -84,20 +84,20 @@ namespace marius {
       case 0:
         printf("R(%d) := R(%d).%s\n",
                 seq[1], seq[3],
-                code_.string(seq[2])->c_str());
+                code_->string(seq[2])->c_str());
         break;
 
       case 1:
         printf("R(%d) := R(%d).%s R(%d)\n",
                 seq[1], seq[3],
-                code_.string(seq[2])->c_str(),
+                code_->string(seq[2])->c_str(),
                 seq[3] + 1);
 
         break;
       default:
         printf("R(%d) := R(%d).%s R(%d)..R(%d)\n",
                 seq[1], seq[3],
-                code_.string(seq[2])->c_str(),
+                code_->string(seq[2])->c_str(),
                 seq[3] + 1, seq[3] + seq[4]);
       }
       return 5;
@@ -105,32 +105,32 @@ namespace marius {
     case CALL_KW:
       printf("R(%d) := R(%d).%s ",
               seq[1], seq[3],
-              code_.string(seq[2])->c_str());
+              code_->string(seq[2])->c_str());
 
-      print_keywords(code_.keywords(seq[5]), seq[3]+1);
+      print_keywords(code_->keywords(seq[5]), seq[3]+1);
       printf("\n");
       return 6;
 
     case IVA:
       printf("@%s = R(%d)\n",
-             code_.string(seq[1])->c_str(), seq[2]);
+             code_->string(seq[1])->c_str(), seq[2]);
       return 3;
 
     case IVR:
       printf("R(%d) := @%s\n",
              seq[1],
-             code_.string(seq[2])->c_str());
+             code_->string(seq[2])->c_str());
       return 3;
 
     case LATTR:
       printf("R(%d) := R(%d)::%s\n", seq[1], seq[3],
-             code_.string(seq[2])->c_str());
+             code_->string(seq[2])->c_str());
       return 4;
 
     case LOADS:
       printf("R(%d) := \"%s\"\n",
                 seq[1],
-                code_.string(seq[2])->c_str());
+                code_->string(seq[2])->c_str());
       return 3;
 
     case RET:
@@ -193,9 +193,9 @@ namespace marius {
   }
 
   void Disassembler::print(int indent) {
-    Instruction* seq = code_.code();
+    Instruction* seq = code_->code();
 
-    for(int ip = 0; ip < code_.size();) {
+    for(int ip = 0; ip < code_->size();) {
       for(int j = 0; j < indent; j++) printf(" ");
 
       printf("[%02d] ", ip);
@@ -205,12 +205,12 @@ namespace marius {
 
     indent += 4;
 
-    for(int i = 0; i < code_.codes_size(); i++) {
+    for(int i = 0; i < code_->codes_size(); i++) {
       printf("\n");
       for(int j = 0; j < indent; j++) printf(" ");
       printf("== CODE[%d] ==\n", i);
 
-      Disassembler dis(code_.code(i));
+      Disassembler dis(code_->code(i));
       dis.print(indent);
     }
   }

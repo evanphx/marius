@@ -331,6 +331,7 @@ namespace marius {
 
           mark_method_table(t->method_table_);
           mark_attributes(t->attributes_);
+          mark_spec(&t->sends_);
         }
         return;
 

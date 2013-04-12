@@ -7,10 +7,10 @@ namespace marius {
   class Code;
 
   class Disassembler {
-    Code& code_;
+    Code* code_;
 
   public:
-    Disassembler(Code& code)
+    Disassembler(Code* code)
       : code_(code)
     {}
 

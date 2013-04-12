@@ -27,6 +27,7 @@ namespace marius {
     globals[String::internalize(S, "Trait")] = 7;
     globals[String::internalize(S, "ArgumentError")] = 8;
     globals[String::internalize(S, "NoMethodError")] = 9;
+    globals[String::internalize(S, "Exception")] = 10;
 
     LocalMap locals;
 

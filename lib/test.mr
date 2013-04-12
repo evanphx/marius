@@ -37,8 +37,9 @@ class TestCase
     try
       self.$name
       io.puts "pass"
-    rescue
-      io.puts "fail"
+    rescue e : Exception
+      io.print "error: "
+      io.puts e.message
     end
 
   end
