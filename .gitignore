@@ -1,6 +1,7 @@
 debug.out
 .vagrant
 *.o
+*.mrc
 vm/parser.out
 tools/lemon
 scratch
