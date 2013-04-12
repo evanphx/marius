@@ -126,6 +126,11 @@ namespace marius {
       return closed_over_vars_;
     }
 
+    void update(Instruction* i, int s) {
+      code_ = i;
+      size_ = s;
+    }
+
     void print();
     void fill(serialize::Code* ser);
     void save(const char* path);

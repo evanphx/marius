@@ -5,6 +5,8 @@
 #include "scope_tracker.hpp"
 #include "local.hpp"
 
+#include <iostream>
+
 namespace marius {
   bool Compiler::compile(State& S, FILE* f) {
     Parser parser(S, f);
@@ -41,8 +43,151 @@ namespace marius {
 
     code_ = AS.to_code(String::internalize(S, "__main__"), args, top->cov());
 
+    optimize();
+
     if(debug_) code_->print();
 
     return true;
+  }
+
+  static int insn_len(InstructionTypes op) {
+    switch(op) {
+    case MOVR:
+      return 3;
+
+    case MOVN:
+      return 2;
+
+    case MOVT:
+      return 2;
+
+    case MOVF:
+      return 2;
+
+    case MOVI8:
+      return 3;
+
+    case LOADC:
+      return 3;
+
+    case MOVI32:
+      return 6;
+
+    case SENDI:
+      return 5;
+
+    case SENDI_KW:
+      return 6;
+
+    case CALL:
+      return 5;
+
+    case CALL_KW:
+      return 6;
+
+    case IVA:
+      return 3;
+
+    case IVR:
+      return 3;
+
+    case LATTR:
+      return 4;
+
+    case LOADS:
+      return 3;
+
+    case RET:
+      return 2;
+
+    case SELF:
+      return 2;
+
+    case JMPF:
+      return 2;
+
+    case JMPB:
+      return 2;
+
+    case JMPIT:
+      return 3;
+
+    case JMPIF:
+      return 3;
+
+    case REGE:
+      return 3;
+
+    case POPE:
+      return 1;
+
+    case LVAR:
+      return 4;
+
+    case SVAR:
+      return 4;
+
+    case RAISE:
+      return 2;
+
+    case NOT:
+      return 3;
+
+    case TUPLE:
+      return 4;
+
+    case TotalInstructions:
+      assert(0);
+    }
+  }
+
+  void Compiler::optimize() {
+    int size = code_->size();
+    Instruction* insns = code_->code();
+
+    int ip = 0;
+    int out_ip = 0;
+
+    Instruction* out = new Instruction[size];
+
+    bool skip_next = false;
+
+    while(ip < size) {
+      InstructionTypes op = (InstructionTypes)insns[ip];
+
+      bool skip = skip_next;
+      skip_next = false;
+
+      switch(op) {
+      case MOVR:
+        {
+          int to   = insns[ip+1];
+          int from = insns[ip+2];
+
+          if(insns[ip+3] == MOVR &&
+             insns[ip+4] == from &&
+             insns[ip+5] == to) {
+            skip_next = true;
+          }
+        }
+        break;
+      default:
+        skip = false;
+      }
+
+      int len = insn_len(op);
+
+      if(!skip) {
+        for(int i = 0; i < insn_len(op); i++) {
+          out[out_ip++] = insns[ip++];
+        }
+      } else {
+        ip += len;
+      }
+    }
+
+    code_->update(out, out_ip);
+
+    delete insns;
   }
 }

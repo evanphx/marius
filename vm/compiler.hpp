@@ -22,6 +22,7 @@ namespace marius {
     }
 
     bool compile(State& S, FILE* f);
+    void optimize();
   };
 }
 
