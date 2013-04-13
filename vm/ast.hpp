@@ -296,11 +296,14 @@ namespace marius {
       Node* recv_;
       Arguments* args_;
 
+      bool self_less_;
+
     public:
-      Call(String* name, Node* recv, Arguments* args=0)
+      Call(String* name, Node* recv, Arguments* args=0, bool self=false)
         : name_(name)
         , recv_(recv)
         , args_(args)
+        , self_less_(self)
       {}
 
       Node* recv() {
@@ -309,6 +312,10 @@ namespace marius {
 
       String* name() {
         return name_;
+      }
+
+      bool self_less_p() {
+        return self_less_;
       }
 
       int drive(State& S, int t);

@@ -97,6 +97,10 @@ namespace marius {
     return new ast::Call(n, recv);
   }
 
+  ast::Node* ParserState::self_call(String* n) {
+    return new ast::Call(n, self(), 0, true);
+  }
+
   ast::Node* ParserState::send_indirect(ast::Node* recv, ast::Node* n) {
     return new ast::SendIndirect(n, recv);
   }
@@ -198,6 +202,21 @@ namespace marius {
     ast::Arguments* args = new ast::Arguments(arg_info_.nodes, arg_info_.keywords);
 
     n = new ast::Call(id, recv, args);
+
+    arg_info_ = arg_infos_.back();
+    arg_infos_.pop_back();
+
+    assert(n);
+
+    return n;
+  }
+
+  ast::Node* ParserState::self_call_args(String* id) {
+    ast::Node* n = 0;
+
+    ast::Arguments* args = new ast::Arguments(arg_info_.nodes, arg_info_.keywords);
+
+    n = new ast::Call(id, self(), args, true);
 
     arg_info_ = arg_infos_.back();
     arg_infos_.pop_back();

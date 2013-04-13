@@ -68,6 +68,11 @@ namespace marius {
     }
 
     void visit(ast::Call* call) {
+      // This implements half of the the Markov rule
+      if(call->self_less_p()) {
+        if(find_scoped(call, call->name())) return;
+      }
+
       if(in_trait_p()) {
         if(call->recv()->self_p()) {
           ast::Trait* t = trait_stack_.back();
@@ -235,11 +240,11 @@ namespace marius {
       scope_->insert(LocalScope::value_type(a->name(), locals_.add(a)));
     }
 
-    void find_scoped(Node* n, String* name) {
+    bool find_scoped(Node* n, String* name) {
       LocalScope::iterator j = scope_->find(name);
       if(j != scope_->end()) {
         locals_.add(n, j->second);
-        return;
+        return true;
       }
 
       int depth = 1;
@@ -254,7 +259,7 @@ namespace marius {
           j->second->make_closure();
           Local* l = locals_.add(n);
           l->make_closure_access(j->second, depth);
-          return;
+          return true;
         }
       }
 
@@ -262,7 +267,10 @@ namespace marius {
       if(i != globals_.end()) {
         Local* l = locals_.add(n);
         l->make_global(i->second, depth-1);
+        return true;
       }
+
+      return false;
     }
 
     void visit(Named* n) {

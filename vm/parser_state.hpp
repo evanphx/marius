@@ -159,6 +159,7 @@ namespace marius {
     ast::Node* send_indirect_args(ast::Node* recv, ast::Node* n);
 
     ast::Node* call(ast::Node* recv, String* id);
+    ast::Node* self_call(String* id);
     ast::Node* attr(ast::Node* recv, String* id);
 
     void start_cascade(ast::Node* n);
@@ -171,6 +172,8 @@ namespace marius {
     ast::Node* call_args(ast::Node* n, String* id);
     ast::Node* call_args(ast::Node* n, const char* id);
     ast::Node* call_kw_args(ast::Node* n, String* id);
+
+    ast::Node* self_call_args(String* id);
 
     ast::Node* dcolon(ast::Node* r, String* id, String* arg);
     ast::Node* lit_str(String* s);

@@ -247,12 +247,42 @@ namespace ast {
   }
 
   int Call::drive(State& S, int t) {
-    recv_->drive(S, t);
-
     int j = t+1;
 
     int count = 0;
     bool kw = false;
+
+    Local* markov_local = 0;
+
+    // This implements the call half of the Markov rule
+    if(self_less_p() && (markov_local = S.lm().get(this))) {
+      S.get_local(markov_local, t);
+
+      if(args_) {
+        for(Nodes::iterator i = args_->positional.begin();
+            i != args_->positional.end();
+            ++i) {
+          (*i)->drive(S,j++);
+        }
+
+        count = args_->positional.size();
+        kw = args_->keywords.size() > 0;
+      }
+
+      S.push(kw ? CALL_KW : CALL);
+      S.push(t);
+      S.push(S.string(String::internalize(S.MS, "call")));
+      S.push(t);
+      S.push(count);
+
+      if(kw) {
+        S.push(S.keyword(args_->keywords));
+      }
+
+      return t;
+    }
+
+    recv_->drive(S, t);
 
     if(args_) {
       for(Nodes::iterator i = args_->positional.begin();
@@ -274,7 +304,6 @@ namespace ast {
     if(kw) {
       S.push(S.keyword(args_->keywords));
     }
-
 
     return t;
   }

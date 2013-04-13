@@ -181,8 +181,8 @@ np_arg_list ::= np_arg_list_start np_arg_list_elems np_opt_kw_arg_list.
 np_arg_list ::= np_arg_list_start np_kw_arg_list_elems.
 
 np_recv(A) ::= lit(B). { A.a = B.a; }
-np_recv(A) ::= ID(C) LP RP. { A.a = S->call(S->self(), C.s); }
-np_recv(A) ::= ID(C) LP np_arg_list RP. { A.a = S->call_args(S->self(), C.s); }
+np_recv(A) ::= ID(C) LP RP. { A.a = S->self_call(C.s); }
+np_recv(A) ::= ID(C) LP np_arg_list RP. { A.a = S->self_call_args(C.s); }
 np_recv(A) ::= np_recv(B) DOT(C). { A.a = S->call(B.a, C.s); }
 np_recv(A) ::= np_recv(B) DOT(C) LP RP. { A.a = S->call(B.a, C.s); }
 np_recv(A) ::= np_recv(B) DOT(C) LP np_arg_list RP. { A.a = S->call_args(B.a, C.s); }
@@ -204,7 +204,7 @@ np_recv(A) ::= LP s2(B) RP. { A.a = B.a; }
 s2(A) ::= np_recv(B) DOT(C) np_arg_list. { A.a = S->call_args(B.a, C.s); }
 s2(A) ::= np_recv(B) DOT_DOLLAR lit(C) np_arg_list.
             { A.a = S->send_indirect_args(B.a, C.a); }
-s2(A) ::= ID(C) np_arg_list. { A.a = S->call_args(S->self(), C.s); }
+s2(A) ::= ID(C) np_arg_list. { A.a = S->self_call_args(C.s); }
 s2(A) ::= np_recv(B) CAST np_arg(C).   { A.a = S->cast(B.a, C.a); }
 s2(A) ::= np_recv(B) OP0(O) np_arg(C). { A.a = S->ast_binop(O.s, B.a, C.a); }
 s2(A) ::= np_recv(B) OP0(O) LP s2(C) RP. { A.a = S->ast_binop(O.s, B.a, C.a); }

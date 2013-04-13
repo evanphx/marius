@@ -1632,12 +1632,12 @@ static void yy_reduce(
         break;
       case 88: /* np_recv ::= ID LP RP */
 #line 184 "vm/parser.lm"
-{ yygotominor.yy80.a = S->call(S->self(), yymsp[-2].minor.yy0.s); }
+{ yygotominor.yy80.a = S->self_call(yymsp[-2].minor.yy0.s); }
 #line 1637 "vm/parser.c.inc"
         break;
       case 89: /* np_recv ::= ID LP np_arg_list RP */
 #line 185 "vm/parser.lm"
-{ yygotominor.yy80.a = S->call_args(S->self(), yymsp[-3].minor.yy0.s); }
+{ yygotominor.yy80.a = S->self_call_args(yymsp[-3].minor.yy0.s); }
 #line 1642 "vm/parser.c.inc"
         break;
       case 103: /* s2 ::= np_recv DOT np_arg_list */
@@ -1652,7 +1652,7 @@ static void yy_reduce(
         break;
       case 105: /* s2 ::= ID np_arg_list */
 #line 207 "vm/parser.lm"
-{ yygotominor.yy80.a = S->call_args(S->self(), yymsp[-1].minor.yy0.s); }
+{ yygotominor.yy80.a = S->self_call_args(yymsp[-1].minor.yy0.s); }
 #line 1657 "vm/parser.c.inc"
         break;
       case 120: /* s2 ::= np_recv AND np_arg */
