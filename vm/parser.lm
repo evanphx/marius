@@ -148,6 +148,9 @@ np_arg(A) ::= np_arg(B) DOT(C). { A.a = S->call(B.a, C.s); }
 np_arg(A) ::= np_arg(B) DOT(C) LP RP. { A.a = S->call(B.a, C.s); }
 np_arg(A) ::= np_arg(B) DOT(C) LP np_arg_list RP.
                 { A.a = S->call_args(B.a, C.s); }
+np_arg(A) ::= ID(B) LP RP. { A.a = S->self_call(B.s); }
+np_arg(A) ::= ID(B) LP np_arg_list RP.
+                { A.a = S->self_call_args(B.s); }
 np_arg(A) ::= np_arg(B) DCOLON(C) ID(D). { A.a = S->dcolon(B.a, C.s, D.s); }
 
 np_arg(A) ::= np_arg(B) DOT_DOLLAR lit(C).

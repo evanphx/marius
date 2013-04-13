@@ -168,3 +168,5 @@ end
 
 a if b
 pat === x
+
+l << b(x)
