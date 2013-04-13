@@ -1,0 +1,8 @@
+class Blah
+  def blah
+    { return 7 }.call
+    return 0
+  end
+end
+
+io.puts Blah.new.blah

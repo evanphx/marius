@@ -35,7 +35,8 @@ namespace marius {
       "RAISE",
       "NOT",
       "TUPLE",
-      "LIST"
+      "LIST",
+      "LRET"
     };
 
   void Code::print() {

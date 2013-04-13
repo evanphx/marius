@@ -137,6 +137,10 @@ namespace marius {
       printf("<- R(%d)\n", seq[1]);
       return 2;
 
+    case LRET:
+      printf("<@ R(%d)\n", seq[1]);
+      return 2;
+
     case SELF:
       printf("R(%d) := R(-1)\n", seq[1]);
       return 2;

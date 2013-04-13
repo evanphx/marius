@@ -10,6 +10,7 @@
 #include "tuple.hpp"
 #include "exception.hpp"
 #include "invoke_info.hpp"
+#include "long_return.hpp"
 
 #include <stdio.h>
 
@@ -71,6 +72,7 @@ namespace marius {
 
     std::vector<ExceptionHandler> es;
 
+    LongReturn* lr;
     OOP t;
     ExceptionHandler te(0,0);
 
@@ -122,6 +124,16 @@ namespace marius {
                        seq[3],     fp + (seq[2] + 1));
 
         if(t.unwind_p()) {
+          if(t.long_return_p()) {
+            lr = t.as_long_return();
+            return lr->val();
+            // if(lr->target() == clos) {
+              // return lr->value();
+            // } else {
+              // return t;
+            // }
+          }
+
           if(es.size() == 0) return t;
           te = es.back();
           es.pop_back();
@@ -167,6 +179,16 @@ namespace marius {
                        seq[3],     fp + (seq[2] + 1));
 
         if(t.unwind_p()) {
+          if(t.long_return_p()) {
+            lr = t.as_long_return();
+            return lr->val();
+            // if(lr->target() == clos) {
+              // return lr->value();
+            // } else {
+              // return t;
+            // }
+          }
+
           if(es.size() == 0) return t;
           te = es.back();
           es.pop_back();
@@ -254,6 +276,9 @@ namespace marius {
 
       case RET:
         return fp[*seq++];
+
+      case LRET:
+        return LongReturn::make(S, fp[*seq++], meth);
 
       case JMPF:
         seq += (seq[0] + 1);

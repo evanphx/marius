@@ -48,6 +48,7 @@ namespace marius {
     NOT,
     TUPLE,
     LIST,
+    LRET,
     TotalInstructions
   };
 

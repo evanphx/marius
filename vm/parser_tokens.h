@@ -50,3 +50,4 @@
 #define TK_OP1_SET                        50
 #define TK_OP0_SET                        51
 #define TK_RAISE                          52
+#define TK_RETURN                         53

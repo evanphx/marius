@@ -26,6 +26,7 @@ namespace marius {
   class Dictionary;
   class List;
   class Trait;
+  class LongReturn;
 
   class GCImpl;
 
@@ -34,7 +35,7 @@ namespace marius {
     enum Type {
       // Value object types
       eNil, eTrue, eFalse, eInteger, eString, eUnwind, eCode, eMethod,
-      eTuple, eRaw, eInvokeInfo,
+      eTuple, eRaw, eInvokeInfo, eLongReturn,
 
       // Mutable object types
       eClass, eUser, eModule, eClosure, eDictionary, eException, eList,
@@ -69,6 +70,7 @@ namespace marius {
       Dictionary* dict_;
       List* list_;
       Trait* trait_;
+      LongReturn* return_;
       void* raw_;
     };
 
@@ -156,6 +158,11 @@ namespace marius {
     OOP(Trait* t)
       : type_(eTrait)
       , trait_(t)
+    {}
+
+    OOP(LongReturn* lr)
+      : type_(eLongReturn)
+      , return_(lr)
     {}
 
     Type type() {
@@ -260,6 +267,15 @@ namespace marius {
       return tuple_;
     }
 
+    bool long_return_p() {
+      return type_ == eLongReturn;
+    }
+
+    LongReturn* as_long_return() {
+      check(type_ == eLongReturn);
+      return return_;
+    }
+
     Attributes* as_attributes();
 
     bool true_condition_p() {
@@ -267,7 +283,7 @@ namespace marius {
     }
 
     bool unwind_p() {
-      return type_ == eUnwind;
+      return type_ == eUnwind || type_ == eLongReturn;
     }
 
     Exception* exception() {

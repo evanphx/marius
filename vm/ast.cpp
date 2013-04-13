@@ -516,7 +516,11 @@ namespace ast {
   int Return::drive(State& S, int t) {
     val_->drive(S, t);
 
-    S.push(RET);
+    if(S.lambda_p()) {
+      S.push(LRET);
+    } else {
+      S.push(RET);
+    }
     S.push(t);
 
     return t;
@@ -925,7 +929,7 @@ namespace ast {
   }
 
   int Lambda::drive(State& S, int t) {
-    ast::State subS(S.MS, S.lm());
+    ast::State subS(S.MS, S.lm(), true);
 
     int r = body_->drive(subS, body_->locals().size());
 

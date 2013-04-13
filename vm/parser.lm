@@ -266,3 +266,4 @@ stmt(A) ::= IVAR(B) OP1_SET(D) s2(C).
 stmt(A) ::= IVAR(B) OP0_SET(D) s2(C).
               { A.a = S->ivar_assign_op(B.s, D.s, C.a); }
 stmt(A) ::= RAISE s2(B). { A.a = S->raise(B.a); }
+stmt(A) ::= RETURN s2(B). { A.a = S->ret(B.a); }

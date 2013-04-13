@@ -96,6 +96,7 @@ namespace marius {
     case LOADS:
       return 3;
 
+    case LRET:
     case RET:
       return 2;
 

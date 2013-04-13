@@ -33,16 +33,23 @@ namespace marius {
 
       LocalMap& lm_;
 
+      bool lambda_;
+
     public:
       marius::State& MS;
 
-      State(marius::State& ms, LocalMap& lm)
+      State(marius::State& ms, LocalMap& lm, bool lamb=false)
         : lm_(lm)
+        , lambda_(lamb)
         , MS(ms)
       {}
 
       LocalMap& lm() {
         return lm_;
+      }
+
+      bool lambda_p() {
+        return lambda_;
       }
 
       void push(Instruction op) {

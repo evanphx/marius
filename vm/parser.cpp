@@ -411,9 +411,10 @@ again:
 
     cKeywords[(int)'n'] = k;
 
-    k = new Keyword[3];
+    k = new Keyword[4];
     k[0] = Keyword("rescue", TK_RESCUE);
     k[1] = Keyword("raise", TK_RAISE);
+    k[2] = Keyword("return", TK_RETURN);
 
     cKeywords[(int)'r'] = k;
 

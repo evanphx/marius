@@ -208,6 +208,7 @@ namespace marius {
 
     ast::Node* cast(ast::Node* e, ast::Node* type);
     ast::Node* raise(ast::Node* v);
+    ast::Node* return_(ast::Node* v);
 
     ast::Node* not_(ast::Node* v);
     ast::Node* tuple();

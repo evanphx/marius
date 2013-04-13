@@ -15,6 +15,7 @@
 #include "dictionary.hpp"
 #include "exception.hpp"
 #include "invoke_info.hpp"
+#include "long_return.hpp"
 
 #include "vm.hpp"
 #include "stack_frame.hpp"
@@ -410,6 +411,12 @@ namespace marius {
           }
         }
 
+        return;
+      case OOP::eLongReturn:
+        {
+          LongReturn* lr = obj.return_;
+          mark_obj(&lr->val_);
+        }
         return;
 
       case OOP::TotalTypes:
