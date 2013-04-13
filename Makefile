@@ -8,7 +8,7 @@ LDFLAGS := -lprotobuf
 all: marius
 
 linux-dep:
-	apt-get install libprotobuf-dev
+	sudo apt-get install libprotobuf-dev
 
 dep:
 	: > depend
