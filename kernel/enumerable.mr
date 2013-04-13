@@ -6,7 +6,7 @@ trait Enumerable
 
   def detect(b)
     l = List.new
-    each { |x| l << x if b.call(x) }
+    each { |x| l << x if b(x) }
     l
   end
 
@@ -18,7 +18,7 @@ trait Enumerable
 
   def map(b)
     l = List.new
-    each { |x| l << (b|x) }
+    each { |x| l << b(x) }
     l
   end
 
