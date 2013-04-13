@@ -40,7 +40,7 @@ namespace marius {
     class Iterator {
       MethodTable* tbl_;
       MethodTable::Entry* entry_;
-      unsigned idx_;
+      int idx_;
 
     public:
       Iterator(MethodTable* t)
