@@ -165,3 +165,5 @@ x && !f
 if x && !f
   1
 end
+
+a if b

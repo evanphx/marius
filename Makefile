@@ -32,6 +32,7 @@ marius: $(OBJ)
 
 rebuild_kernel: marius
 	for i in kernel/*; do ./marius -bc $$i; mv $${i%.mr}.mrc vm/kernel/; done
+	$(MAKE) marius
 
 rebuild_pb:
 	protoc -Ivm --cpp_out=vm vm/code.proto

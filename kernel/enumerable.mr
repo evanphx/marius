@@ -6,12 +6,7 @@ trait Enumerable
   end
 
   def any?
-    each { |x|
-      if x
-        return true;
-      end
-    }
-
+    each { |x| return true if x }
     false
   end
 end
