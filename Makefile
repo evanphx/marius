@@ -7,6 +7,9 @@ LDFLAGS := -lprotobuf
 
 all: marius
 
+linux-dep:
+	apt-get install libprotobuf-dev
+
 dep:
 	: > depend
 	for i in $(SRC); do $(CC) $(CXXFLAGS) -MM -MT $${i%.cpp}.o $$i >> depend; done
