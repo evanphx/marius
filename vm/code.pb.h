@@ -351,6 +351,13 @@ class Code : public ::google::protobuf::Message {
   inline ::google::protobuf::int32 closed_over_vars() const;
   inline void set_closed_over_vars(::google::protobuf::int32 value);
   
+  // optional int32 return_to = 8;
+  inline bool has_return_to() const;
+  inline void clear_return_to();
+  static const int kReturnToFieldNumber = 8;
+  inline ::google::protobuf::int32 return_to() const;
+  inline void set_return_to(::google::protobuf::int32 value);
+  
   // @@protoc_insertion_point(class_scope:serialize.Code)
  private:
   inline void set_has_name();
@@ -359,6 +366,8 @@ class Code : public ::google::protobuf::Message {
   inline void clear_has_args();
   inline void set_has_closed_over_vars();
   inline void clear_has_closed_over_vars();
+  inline void set_has_return_to();
+  inline void clear_has_return_to();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
@@ -369,9 +378,10 @@ class Code : public ::google::protobuf::Message {
   ::serialize::ArgMap* args_;
   ::google::protobuf::RepeatedPtrField< ::serialize::ArgMap > keywords_;
   ::google::protobuf::int32 closed_over_vars_;
+  ::google::protobuf::int32 return_to_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(7 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(8 + 31) / 32];
   
   friend void  protobuf_AddDesc_code_2eproto();
   friend void protobuf_AssignDesc_code_2eproto();
@@ -726,6 +736,28 @@ inline ::google::protobuf::int32 Code::closed_over_vars() const {
 inline void Code::set_closed_over_vars(::google::protobuf::int32 value) {
   set_has_closed_over_vars();
   closed_over_vars_ = value;
+}
+
+// optional int32 return_to = 8;
+inline bool Code::has_return_to() const {
+  return (_has_bits_[0] & 0x00000080u) != 0;
+}
+inline void Code::set_has_return_to() {
+  _has_bits_[0] |= 0x00000080u;
+}
+inline void Code::clear_has_return_to() {
+  _has_bits_[0] &= ~0x00000080u;
+}
+inline void Code::clear_return_to() {
+  return_to_ = 0;
+  clear_has_return_to();
+}
+inline ::google::protobuf::int32 Code::return_to() const {
+  return return_to_;
+}
+inline void Code::set_return_to(::google::protobuf::int32 value) {
+  set_has_return_to();
+  return_to_ = value;
 }
 
 

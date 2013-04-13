@@ -13,14 +13,25 @@ namespace marius {
     unsigned size_;
     OOP* values_;
 
+    bool return_to_;
+
     friend class GCImpl;
 
   public:
-    Closure(int size, Closure* parent=0)
+    Closure(int size, Closure* parent=0, bool return_to=false)
       : parent_(parent)
       , size_(size)
       , values_(new OOP[size])
+      , return_to_(return_to)
     {}
+
+    bool return_to_p() {
+      return return_to_;
+    }
+
+    Closure* parent() {
+      return parent_;
+    }
 
     OOP get(unsigned int idx) {
       check(idx < size_);

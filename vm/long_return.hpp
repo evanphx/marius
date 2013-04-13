@@ -5,18 +5,25 @@
 
 namespace marius {
   class Method;
+  class Closure;
 
   class LongReturn {
     OOP val_;
+    Closure* target_;
 
     friend class GCImpl;
   public:
-    LongReturn(OOP v)
+    LongReturn(OOP v, Closure* t)
       : val_(v)
+      , target_(t)
     {}
 
     OOP val() {
       return val_;
+    }
+
+    Closure* target() {
+      return target_;
     }
 
     static OOP make(State& S, OOP val, Method* meth);

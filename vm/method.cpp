@@ -29,6 +29,16 @@ namespace marius {
     }
   }
 
+  Closure* Method::return_to() {
+    Closure* c = closure_;
+    while(!c->return_to_p()) {
+      c = c->parent();
+      check(c);
+    }
+
+    return c;
+  }
+
   OOP Method::closed_over_variable(int depth, int idx) {
     return closure_->get_at_depth(depth, idx);
   }

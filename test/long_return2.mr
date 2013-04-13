@@ -1,0 +1,12 @@
+class Blah
+  def foo(b)
+    b.call
+  end
+
+  def blah
+    foo { return 7 }
+    return 0
+  end
+end
+
+io.puts Blah.new.blah

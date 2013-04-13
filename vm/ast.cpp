@@ -28,7 +28,7 @@ namespace ast {
     return new Arguments(nodes);
   }
 
-  Code* State::to_code(String* name, ArgMap& args, int cov) {
+  Code* State::to_code(String* name, ArgMap& args, int cov, bool ret) {
     size_t sz = buffer.size();
     Instruction* seq = new Instruction[sz];
 
@@ -37,7 +37,7 @@ namespace ast {
     }
 
     return new(MS) Code(name, seq, buffer.size(), strings, codes,
-                    args, keywords, cov);
+                        args, keywords, cov, ret);
   }
 
   void State::set_local(Local* l, int t) {
@@ -379,7 +379,7 @@ namespace ast {
 
     S.push(LOADC);
     S.push(t+2);
-    S.push(S.code(subS.to_code(name_, args_, body_->cov())));
+    S.push(S.code(subS.to_code(name_, args_, body_->cov(), true)));
 
     S.push(CALL);
     S.push(t);

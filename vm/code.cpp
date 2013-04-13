@@ -91,6 +91,7 @@ namespace marius {
     }
 
     c->set_closed_over_vars(closed_over_vars_);
+    c->set_return_to(return_to_);
   }
 
   const unsigned magic = 0xdecafbad;
@@ -206,6 +207,7 @@ namespace marius {
     }
 
     return new(S) Code(name, insn, size, strings, codes,
-                       args, keywords, ser->closed_over_vars());
+                       args, keywords, ser->closed_over_vars(),
+                       ser->return_to());
   }
 }

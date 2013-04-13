@@ -33,6 +33,10 @@ marius: $(OBJ)
 rebuild_kernel: marius
 	for i in kernel/*; do ./marius -bc $$i; mv $${i%.mr}.mrc vm/kernel/; done
 
+rebuild_pb:
+	protoc -Ivm --cpp_out=vm vm/code.proto
+	mv vm/code.pb.cc vm/code.pb.cpp
+
 test: marius
 	./marius -c test/syntax.mr
 	test `./marius -p test/simp.mr` = 7

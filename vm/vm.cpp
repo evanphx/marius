@@ -62,7 +62,8 @@ namespace marius {
 
     Code* code = meth->code();
 
-    Closure* clos = new(S) Closure(code->closed_over_vars(), meth->closure());
+    Closure* clos = new(S) Closure(code->closed_over_vars(), meth->closure(),
+                                   code->return_to_p());
 
     top_frame_->closure = clos;
 
@@ -74,6 +75,8 @@ namespace marius {
 
     LongReturn* lr;
     OOP t;
+    int seq_skip;
+
     ExceptionHandler te(0,0);
 
 #ifdef TRACE
@@ -123,30 +126,8 @@ namespace marius {
                        fp[seq[2]], as_string(fp[seq[1]]),
                        seq[3],     fp + (seq[2] + 1));
 
-        if(t.unwind_p()) {
-          if(t.long_return_p()) {
-            lr = t.as_long_return();
-            return lr->val();
-            // if(lr->target() == clos) {
-              // return lr->value();
-            // } else {
-              // return t;
-            // }
-          }
-
-          if(es.size() == 0) return t;
-          te = es.back();
-          es.pop_back();
-
-          fp[te.reg] = t.unwind_value();
-
-          seq = code->code() + te.ip;
-        } else {
-          fp[seq[0]] = t;
-          seq += 4;
-        }
-
-        break;
+        seq_skip = 4;
+        goto check_unwind;
 
       case SENDI_KW:
         top_frame_->ip = (seq - start) - 1;
@@ -156,20 +137,8 @@ namespace marius {
                           seq[3],     fp + (seq[2] + 1),
                           code->keywords(seq[4]));
 
-        if(t.unwind_p()) {
-          if(es.size() == 0) return t;
-          te = es.back();
-          es.pop_back();
-
-          fp[te.reg] = t.unwind_value();
-
-          seq = code->code() + te.ip;
-        } else {
-          fp[seq[0]] = t;
-          seq += 5;
-        }
-
-        break;
+        seq_skip = 5;
+        goto check_unwind;
 
       case CALL:
         top_frame_->ip = (seq - start) - 1;
@@ -178,15 +147,17 @@ namespace marius {
                        fp[seq[2]], code->string(seq[1]),
                        seq[3],     fp + (seq[2] + 1));
 
+        seq_skip = 4;
+
+check_unwind:
         if(t.unwind_p()) {
           if(t.long_return_p()) {
             lr = t.as_long_return();
-            return lr->val();
-            // if(lr->target() == clos) {
-              // return lr->value();
-            // } else {
-              // return t;
-            // }
+            if(lr->target() == clos) {
+              return lr->val();
+            } else {
+              return t;
+            }
           }
 
           if(es.size() == 0) return t;
@@ -198,7 +169,7 @@ namespace marius {
           seq = code->code() + te.ip;
         } else {
           fp[seq[0]] = t;
-          seq += 4;
+          seq += seq_skip;
         }
 
         break;
@@ -210,20 +181,8 @@ namespace marius {
                           seq[3],     fp + (seq[2] + 1),
                           code->keywords(seq[4]));
 
-        if(t.unwind_p()) {
-          if(es.size() == 0) return t;
-          te = es.back();
-          es.pop_back();
-
-          fp[te.reg] = t.unwind_value();
-
-          seq = code->code() + te.ip;
-        } else {
-          fp[seq[0]] = t;
-          seq += 5;
-        }
-
-        break;
+        seq_skip = 5;
+        goto check_unwind;
 
       case LATTR:
         top_frame_->ip = (seq - start) - 1;
@@ -231,20 +190,8 @@ namespace marius {
         t = load_attr(S, code->string(seq[1]), fp[seq[2]],
                       fp + (seq[2] + 1));
 
-        if(t.unwind_p()) {
-          if(es.size() == 0) return t;
-          te = es.back();
-          es.pop_back();
-
-          fp[te.reg] = t.unwind_value();
-
-          seq = code->code() + te.ip;
-        } else {
-          fp[seq[0]] = t;
-          seq += 3;
-        }
-
-        break;
+        seq_skip = 3;
+        goto check_unwind;
 
       case IVA:
         fp[-1].set_attribute(S, code->string(seq[0]), fp[seq[1]]);

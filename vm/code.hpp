@@ -67,6 +67,7 @@ namespace marius {
     ArgMap args_;
     std::vector<ArgMap> keywords_;
     int closed_over_vars_;
+    bool return_to_;
 
     friend class GCImpl;
 
@@ -77,7 +78,7 @@ namespace marius {
          std::vector<Code*> codes,
          ArgMap args,
          std::vector<ArgMap> keywords,
-         int cov=0)
+         int cov, bool ret=false)
       : name_(name)
       , code_(buf)
       , size_(size)
@@ -86,6 +87,7 @@ namespace marius {
       , args_(args)
       , keywords_(keywords)
       , closed_over_vars_(cov)
+      , return_to_(ret)
     {}
 
     String* name() {
@@ -126,6 +128,10 @@ namespace marius {
 
     int closed_over_vars() {
       return closed_over_vars_;
+    }
+
+    bool return_to_p() {
+      return return_to_;
     }
 
     void update(Instruction* i, int s) {

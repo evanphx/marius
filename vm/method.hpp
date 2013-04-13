@@ -52,6 +52,8 @@ namespace marius {
     OOP closed_over_variable(int depth, int idx);
     void set_closed_over_variable(int depth, int idx, OOP val);
 
+    Closure* return_to();
+
     OOP run(State& S, OOP recv, Arguments& args);
   };
 }
