@@ -422,7 +422,7 @@ again:
 
     cKeywords[(int)'s'] = k;
 
-    k = new Keyword[3];
+    k = new Keyword[4];
     k[0] = Keyword("true", TK_TRUE);
     k[1] = Keyword("try", TK_TRY);
     k[2] = Keyword("trait", TK_TRAIT);

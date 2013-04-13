@@ -25,7 +25,7 @@ vm/parser.cpp: vm/parser.c.inc
 vm/parser.o: vm/parser.c.inc
 
 marius: $(OBJ)
-	c++ -ggdb $(LDFLAGS) -o marius $(OBJ)
+	c++ -ggdb $(LDFLAGS) -o marius $(OBJ) -lprotobuf
 
 rebuild_kernel: marius
 	for i in kernel/*; do ./marius -bc $$i; mv $${i%.mr}.mrc vm/kernel/; done
