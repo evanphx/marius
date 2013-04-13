@@ -47,6 +47,7 @@ namespace marius {
     RAISE,
     NOT,
     TUPLE,
+    LIST,
     TotalInstructions
   };
 
@@ -133,8 +134,9 @@ namespace marius {
 
     void print();
     void fill(serialize::Code* ser);
-    void save(const char* path);
+    void save(const char* path, bool as_c=false);
     static Code* load_file(State& S, const char* path);
+    static Code* load_raw(State& S, void* ary, int size);
     static Code* load(State& S, serialize::Code* ser);
   };
 }

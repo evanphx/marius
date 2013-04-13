@@ -135,6 +135,11 @@ again:
           return TK_DICT_START;
         }
 
+        if(next_c() == '[') {
+          advance(1);
+          return TK_LIST;
+        }
+
         return sym_match();
 
       case '.':
@@ -153,6 +158,7 @@ again:
 
       case '|':
         advance(1);
+        value_.s = String::internalize(S, "|");
         return TK_PIPE;
 
       case '}':

@@ -30,6 +30,7 @@ namespace marius {
     globals[String::internalize(S, "ArgumentError")] = 8;
     globals[String::internalize(S, "NoMethodError")] = 9;
     globals[String::internalize(S, "Exception")] = 10;
+    globals[String::internalize(S, "List")] = 11;
 
     LocalMap locals;
 
@@ -132,6 +133,9 @@ namespace marius {
       return 3;
 
     case TUPLE:
+      return 4;
+
+    case LIST:
       return 4;
 
     case TotalInstructions:

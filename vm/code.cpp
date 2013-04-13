@@ -34,7 +34,8 @@ namespace marius {
       "SENDI",
       "RAISE",
       "NOT",
-      "TUPLE"
+      "TUPLE",
+      "LIST"
     };
 
   void Code::print() {
@@ -93,20 +94,44 @@ namespace marius {
 
   const unsigned magic = 0xdecafbad;
 
-  void Code::save(const char* path) {
+  void Code::save(const char* path, bool as_c) {
     GOOGLE_PROTOBUF_VERIFY_VERSION;
 
     serialize::Code c;
 
     fill(&c);
 
-    std::fstream output(path, std::ios::out | std::ios::trunc |
-                              std::ios::binary);
+    if(as_c) {
+      std::string out = c.SerializeAsString();
 
-    output.write("\001", 1);
-    output.write((char*)&magic, 4);
+      std::fstream output(path, std::ios::out | std::ios::trunc);
 
-    c.SerializeToOstream(&output);
+      output << "static int data_size = " << out.size() << ";\n";
+      output << "static unsigned char data[] = {";
+
+      for(size_t i = 0; i < out.size(); i++) {
+        output << (int)(unsigned char)(out.data()[i]) << ", ";
+      }
+
+      output << "0 };\n";
+
+    } else {
+      std::fstream output(path, std::ios::out | std::ios::trunc |
+                                std::ios::binary);
+
+      output.write("\001", 1);
+      output.write((char*)&magic, 4);
+
+      c.SerializeToOstream(&output);
+    }
+  }
+
+  Code* Code::load_raw(State& S, void* ary, int size) {
+    serialize::Code c;
+
+    c.ParseFromArray(ary, size);
+
+    return load(S, &c);
   }
 
   Code* Code::load_file(State& S, const char* path) {

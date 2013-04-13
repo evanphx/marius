@@ -25,11 +25,15 @@ namespace marius {
     List* args_;
     Dictionary* sys_;
 
+    static bool cDefaultDev;
+    bool dev_;
+
     friend class GCImpl;
   public:
-    Environment(Module* m=0)
+    Environment(Module* m=0, bool d=cDefaultDev)
       : top_(m)
       , globals_(0)
+      , dev_(d)
     {}
 
     Closure* globals() {
@@ -60,6 +64,7 @@ namespace marius {
     void bind(State& S, String* name, OOP val);
 
     void import_args(State& S, char** args, int count);
+    Code* frozen_enumerable(State& S);
 
   };
 }

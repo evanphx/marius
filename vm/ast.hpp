@@ -259,6 +259,18 @@ namespace marius {
       void accept(Visitor* V);
     };
 
+    class List: public Node {
+      Arguments* args_;
+
+    public:
+      List(Arguments* a)
+        : args_(a)
+      {}
+
+      int drive(State& S, int t);
+      void accept(Visitor* V);
+    };
+
     class Dictionary : public Node {
       Arguments* args_;
 
@@ -760,6 +772,7 @@ namespace marius {
       virtual void visit(Raise* r) {}
       virtual void visit(Not* r) {}
       virtual void visit(Tuple* t) {}
+      virtual void visit(List* t) {}
       virtual void visit(While* t) {}
       virtual void visit(Dictionary* t) {}
       virtual void visit(And* a) {}

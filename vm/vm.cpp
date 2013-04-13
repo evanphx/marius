@@ -333,6 +333,11 @@ namespace marius {
         seq += 3;
         break;
 
+      case LIST:
+        fp[seq[0]] = List::make(S, &fp[seq[1]], seq[2]);
+        seq += 3;
+        break;
+
 
       default:
         printf("UNKNOWN INSTRUCTION: %d\n", seq[-1]);

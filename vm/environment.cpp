@@ -13,11 +13,14 @@
 #include "list.hpp"
 #include "trait.hpp"
 #include "exception.hpp"
+#include "compiler.hpp"
 
 #include <iostream>
 #include <stdio.h>
 
 namespace marius {
+  bool Environment::cDefaultDev = false;
+
   OOP Environment::lookup(String* name) {
     return top_->attribute(name);
   }
@@ -380,6 +383,7 @@ namespace marius {
     Class* d = new_class(S, "Code");
     mc->add_method(S, "eval", run_code, -1);
     mc->add_method(S, "call", method_call, -1);
+    mc->add_method(S, "|", method_call, -1);
 
     Class* t = new_class(S, "TrueClass");
     Class* f = new_class(S, "FalseClass");
@@ -445,8 +449,8 @@ namespace marius {
 
     Dictionary::init(S, dict);
     List::init(S, list);
-  
-    globals_ = new(S) Closure(11);
+
+    globals_ = new(S) Closure(12);
     globals_->set(0, o);
     globals_->set(1, io);
     globals_->set(2, c);
@@ -458,11 +462,44 @@ namespace marius {
     globals_->set(8, arg_err);
     globals_->set(9, nme);
     globals_->set(10, exc);
+    globals_->set(11, list);
+
+    Code* enum_code = 0;
+
+    if(dev_) {
+      FILE* file = fopen("kernel/enumerable.mr", "r");
+      check(file);
+
+      Compiler compiler;
+
+      check(compiler.compile(S, file));
+
+      enum_code = compiler.code();
+      fclose(file);
+    } else {
+      enum_code = frozen_enumerable(S);
+    }
+
+    OOP* fp = S.vm().stack();
+    fp[0] = top_;
+
+    Method* mtop = new(S) Method(String::internalize(S, "__init__"),
+                                 enum_code, S.env().globals());
+    S.vm().run(S, mtop, fp + 1);
+
+    Trait* enum_ = lookup(S, "Enumerable").as_trait();
+
+    tuple->uses_trait(S, enum_);
   }
 
   void Environment::import_args(State& S, char** args, int count) {
     for(int i = 0; i < count; i++) {
       args_->push(S, String::internalize(S, args[i]));
     }
+  }
+
+  Code* Environment::frozen_enumerable(State& S) {
+#include "kernel/enumerable.mrc"
+    return Code::load_raw(S, (unsigned char*)data, data_size);
   }
 }

@@ -1,0 +1,7 @@
+trait Enumerable
+  def map(b)
+    l = List.new
+    each { |x| l << (b|x) }
+    l
+  end
+end

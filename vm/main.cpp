@@ -31,6 +31,7 @@ int main(int argc, char** argv) {
   bool print = false;
   bool check = false;
   bool write_bc = false;
+  bool write_bc_as_c = false;
 
   char** opt = argv + 1;
   char** fin = argv + argc;
@@ -50,6 +51,7 @@ int main(int argc, char** argv) {
         break;
       case 'b':
         write_bc = true;
+        write_bc_as_c = (s[2] == 'c');
         break;
       case 'I':
         if(s[2]) {
@@ -122,7 +124,7 @@ int main(int argc, char** argv) {
         strcat(buf, script);
         strcat(buf, "c");
 
-        code->save(buf);
+        code->save(buf, write_bc_as_c);
         return 0;
       }
     }

@@ -211,6 +211,41 @@ namespace ast {
     V->visit(this);
   }
 
+  int List::drive(State& S, int t) {
+    int count = 0;
+
+    int j = t;
+
+    if(args_) {
+      for(Nodes::iterator i = args_->positional.begin();
+          i != args_->positional.end();
+          ++i) {
+        (*i)->drive(S,j++);
+      }
+
+      count = args_->positional.size();
+    }
+
+    S.push(LIST);
+    S.push(t);
+    S.push(t);
+    S.push(count);
+
+    return t;
+  }
+
+  void List::accept(Visitor* V) {
+    if(args_) {
+      for(Nodes::iterator i = args_->positional.begin();
+          i != args_->positional.end();
+          ++i) {
+        (*i)->accept(V);
+      }
+    }
+
+    V->visit(this);
+  }
+
   int Call::drive(State& S, int t) {
     recv_->drive(S, t);
 

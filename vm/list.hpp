@@ -2,6 +2,7 @@
 #define LIST_HPP
 
 #include "oop.hpp"
+#include "handle.hpp"
 
 namespace marius {
   class GCImpl;
@@ -39,9 +40,13 @@ namespace marius {
 
     static void init(State& S, Class* list);
 
+    static List* make(State& S, OOP* fp, int size);
+
     OOP get(int idx);
     void push(State& S, OOP val);
   };
+
+  typedef TypedHandle<List, OOP::eList> HList;
 }
 
 #endif

@@ -27,6 +27,9 @@ vm/parser.o: vm/parser.c.inc
 marius: $(OBJ)
 	c++ -ggdb $(LDFLAGS) -o marius $(OBJ)
 
+rebuild_kernel: marius
+	for i in kernel/*; do ./marius -bc $$i; mv $${i%.mr}.mrc vm/kernel/; done
+
 test: marius
 	./marius -c test/syntax.mr
 	test `./marius -p test/simp.mr` = 7
@@ -69,7 +72,7 @@ test: marius
 	(! ./marius scratch/bad_trait.mr) > /dev/null 2>&1
 
 spec: test
-	./marius -Ilib -I. test spec/string_test spec/dictionary_test spec/trait_test
+	./marius -Ilib -I. test spec/string_test spec/dictionary_test spec/trait_test spec/enumerable_test
 
 .PHONY: test spec
 
