@@ -44,6 +44,8 @@ namespace marius {
 
     static Exception* create(State& S, const char* cls, const char* fmt, ...);
     static Exception* wrap(State& S, OOP val);
+  
+    void show(State& S, const char* context);
   };
 }
 

@@ -159,3 +159,9 @@ trait Blah
 end
 
 a|b
+
+x && !f
+
+if x && !f
+  1
+end

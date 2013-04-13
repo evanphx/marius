@@ -281,6 +281,10 @@ namespace marius {
     return recv;
   }
 
+  static Handle object_equal(State& S, Handle recv, Arguments& args) {
+    return handle(S, recv->equal(*args[0]) ? OOP::true_() : OOP::false_());
+  }
+
   static Handle object_kind_of(State& S, Handle recv, Arguments& args) {
     Class* chk = args[0]->as_class();
     Class* cls = recv->klass();
@@ -309,6 +313,30 @@ namespace marius {
     Exception* exc = recv->exception();
 
     return handle(S, exc->message());
+  }
+
+  static Handle exc_show(State& S, Handle recv, Arguments& args) {
+    Exception* exc = recv->exception();
+
+    exc->show(S, "Error has occured: ");
+
+    return recv;
+  }
+
+  static Handle true_to_s(State& S, Handle recv, Arguments& args) {
+    return handle(S, String::internalize(S, "true"));
+  }
+
+  static Handle false_to_s(State& S, Handle recv, Arguments& args) {
+    return handle(S, String::internalize(S, "false"));
+  }
+
+  static Handle object_to_s(State& S, Handle recv, Arguments& args) {
+    char buf[512];
+    buf[0] = 0;
+    sprintf(buf, "#<%s>", recv->klass()->name()->c_str());
+
+    return handle(S, String::internalize(S, buf));
   }
 
   Class* init_import(State& S);
@@ -351,6 +379,8 @@ namespace marius {
 
     o->add_method(S, "print", object_print, 0);
     o->add_method(S, "kind_of?", object_kind_of, 1);
+    o->add_method(S, "==", object_equal, 1);
+    o->add_method(S, "to_s", object_to_s, 0);
 
     c->add_method(S, "new_subclass", class_new_subclass, 1);
     c->add_method(S, "run_body", run_class_body, 1);
@@ -386,7 +416,10 @@ namespace marius {
     mc->add_method(S, "|", method_call, -1);
 
     Class* t = new_class(S, "TrueClass");
+    t->add_method(S, "to_s", true_to_s, 0);
+
     Class* f = new_class(S, "FalseClass");
+    f->add_method(S, "to_s", false_to_s, 0);
 
     Class* tuple = new_class(S, "Tuple");
     tuple->add_method(S, "find_all", tuple_find_all, 1);
@@ -413,6 +446,7 @@ namespace marius {
     Class* nme = new_class(S, "NoMethodError", rte);
 
     exc->add_method(S, "message", exc_message, 0);
+    exc->add_method(S, "show", exc_show, 0);
 
     Class** tbl = new(S) Class*[OOP::TotalTypes];
 

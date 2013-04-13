@@ -38,8 +38,8 @@ class TestCase
       self.$name
       io.puts "pass"
     rescue e : Exception
-      io.print "error: "
-      io.puts e.message
+      io.puts "error"
+      e.show
     end
 
   end

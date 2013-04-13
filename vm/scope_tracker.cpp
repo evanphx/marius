@@ -164,7 +164,7 @@ namespace marius {
         return;
       }
 
-      int d = 0;
+      int d = 1;
       for(std::list<LocalScope*>::reverse_iterator i = stack_.rbegin();
           i != stack_.rend();
           ++i, d++)
@@ -176,6 +176,7 @@ namespace marius {
           j->second->make_closure();
           Local* l = locals_.add(a);
           l->make_closure_access(j->second, d);
+          return;
         }
       }
 

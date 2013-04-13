@@ -5,4 +5,9 @@ class EnumerableTest < test::TestCase
     ret = %(1, 2, 3).map { |i| i + 3 }
     assert_equal %[4, 5, 6], ret
   end
+
+  def test_any?
+    assert_equal false, %(nil).any?
+    assert_equal true,  %(1).any?
+  end
 end

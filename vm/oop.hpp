@@ -54,7 +54,7 @@ namespace marius {
     Type type_;
 
     union {
-      int int_;
+      long int_;
       String* string_;
       Code* code_;
       Exception* exception_;
@@ -110,6 +110,7 @@ namespace marius {
 
     OOP(enum ImmConstruct _, bool v)
       : type_(v ? eTrue : eFalse)
+      , int_(0)
     {}
 
     OOP(String* str)
@@ -284,6 +285,10 @@ namespace marius {
       o.type_ = eUnwind;
       o.exception_ = exc;
       return o;
+    }
+
+    bool equal(OOP t) {
+      return type_ == t.type_ && raw_ == t.raw_;
     }
 
     // template <typename T>

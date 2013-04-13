@@ -1,5 +1,5 @@
 trait Comparable
-  def ==(o)
+  def compare(o)
     self <=> o
   end
 end
@@ -13,6 +13,6 @@ class Blah
 end
 
 b = Blah.new
-if b == 1
+if b.compare(1)
   io.puts 7
 end
