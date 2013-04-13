@@ -167,3 +167,4 @@ if x && !f
 end
 
 a if b
+pat === x

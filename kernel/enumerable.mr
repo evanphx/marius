@@ -1,12 +1,25 @@
 trait Enumerable
+  def any?
+    each { |x| return true if x }
+    false
+  end
+
+  def detect(b)
+    l = List.new
+    each { |x| l << x if b.call(x) }
+    l
+  end
+
+  def grep(pat)
+    l = List.new
+    each { |x| l << x if pat === x }
+    l
+  end
+
   def map(b)
     l = List.new
     each { |x| l << (b|x) }
     l
   end
 
-  def any?
-    each { |x| return true if x }
-    false
-  end
 end

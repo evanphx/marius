@@ -1,13 +1,23 @@
 import test
 
 class EnumerableTest < test::TestCase
+  def test_any?
+    assert_equal false, %(nil).any?
+    assert_equal true,  %(1).any?
+  end
+
+  def test_detect
+    ret = %(1,2,10).detect { |x| x < 10 }
+    assert_equal %[1,2], ret
+  end
+
+  def test_grep
+    assert_equal %[1], %(1, "blah").grep(Integer)
+  end
+
   def test_map
     ret = %(1, 2, 3).map { |i| i + 3 }
     assert_equal %[4, 5, 6], ret
   end
 
-  def test_any?
-    assert_equal false, %(nil).any?
-    assert_equal true,  %(1).any?
-  end
 end

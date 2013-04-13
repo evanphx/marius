@@ -196,7 +196,14 @@ again:
 
         if(next_c() == '=') {
           advance(1);
-          value_.s = String::internalize(S, "==");
+
+          if(next_c() == '=') {
+            advance(1);
+            value_.s = String::internalize(S, "===");
+          } else {
+            value_.s = String::internalize(S, "==");
+          }
+
           return TK_OP0;
         }
 

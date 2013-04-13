@@ -82,6 +82,11 @@ namespace marius {
     return handle(S, q ? OOP::true_() : OOP::false_());
   }
 
+  static Handle int_lt(State& S, Handle recv, Arguments& args) {
+    bool q = recv->int_value() < args[0]->int_value();
+    return handle(S, q ? OOP::true_() : OOP::false_());
+  }
+
   static Handle trait_new(State& S, Handle recv, Arguments& args) {
     String* name = args[0]->as_string();
     HTuple tup = args[1];
@@ -404,6 +409,7 @@ namespace marius {
     i->add_method(S, "+", int_plus, 1);
     i->add_method(S, "to_s", int_to_s, 0);
     i->add_method(S, "==", int_equal, 1);
+    i->add_method(S, "<", int_lt, 1);
 
     Class* n = new_class(S, "NilClass");
 
@@ -423,7 +429,6 @@ namespace marius {
 
     Class* tuple = new_class(S, "Tuple");
     tuple->add_method(S, "find_all", tuple_find_all, 1);
-    tuple->add_method(S, "detect", tuple_find_all, 1);
     tuple->add_method(S, "each", tuple_each, 1);
     tuple->add_method(S, "==", tuple_equal, 1);
 
