@@ -46,10 +46,10 @@ namespace r5 {
     OOP run_method(State& S, OOP recv,
                            String* name, int argc, OOP* argv);
 
-    void reorg_args(OOP* fp, Method* meth, ArgMap& keywords);
+    void reorg_args(OOP* fp, Method* meth, STuple* keywords);
     OOP run_kw_method(State& S, OOP recv,
                               String* name, int argc, OOP* argv,
-                              ArgMap& keywords);
+                              STuple* keywords);
     OOP load_named(State& S, String* name);
     OOP load_attr(State& S, String* name, OOP recv, OOP* fp);
 

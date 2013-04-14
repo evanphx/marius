@@ -36,7 +36,7 @@ namespace ast {
       seq[i] = buffer[i];
     }
 
-    return new(MS) Code(name, seq, buffer.size(), strings, codes,
+    return new(MS) Code(MS, name, seq, buffer.size(), strings, codes,
                         args, req, keywords, cov, ret);
   }
 

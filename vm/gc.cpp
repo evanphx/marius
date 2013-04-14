@@ -267,6 +267,15 @@ namespace r5 {
       }
     }
 
+    template <typename P>
+      void mark_ltuple(P tup) {
+        mark_raw(tup);
+
+        for(int i = 0; (*tup)->size(); i++) {
+          mark_spec((*tup)->elems_ + i);
+        }
+      }
+
     void walk_pointers(OOP obj,
                        immix::Marker<GCImpl, OOP>& marker)
     {
@@ -288,6 +297,8 @@ namespace r5 {
         {
           Code* c = obj.code_;
           mark_spec(&c->name_);
+          mark_ltuple(&c->strings_);
+          mark_ltuple(&c->codes_);
         }
         return;
       case OOP::eClosure:

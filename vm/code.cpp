@@ -45,6 +45,60 @@ namespace r5 {
     dis.print();
   }
 
+  STuple* argmap_to_ltuple(State& S, ArgMap& map) {
+    unsigned max = 0;
+
+    for(ArgMap::iterator i = map.begin();
+        i != map.end();
+        ++i) {
+      if(i->second > max) max = i->second;
+    }
+
+    unsigned size = max + 1;
+
+    std::vector<String*> vec(size, 0);
+
+    for(ArgMap::iterator i = map.begin();
+        i != map.end();
+        ++i) {
+      vec[i->second] = i->first;
+    }
+
+    return new(S) STuple(S, vec);
+  }
+
+  LTuple<STuple*>* keywords_to_ltuple(State& S, std::vector<ArgMap>& keywords) {
+    std::vector<STuple*> vec;
+
+    for(std::vector<ArgMap>::iterator i = keywords.begin();
+        i != keywords.end();
+        ++i) {
+      vec.push_back(argmap_to_ltuple(S, *i));
+    }
+
+    return new(S) LTuple<STuple*>(S, vec);
+  }
+
+  Code::Code(State& S,
+       String* name,
+       Instruction* buf, int size,
+       std::vector<String*> strings,
+       std::vector<Code*> codes,
+       ArgMap args, int required_args,
+       std::vector<ArgMap> keywords,
+       int cov, bool ret)
+    : name_(name)
+    , code_(buf)
+    , size_(size)
+    , strings_(new(S) STuple(S, strings))
+    , codes_(new(S) LTuple<Code*>(S, codes))
+    , args_(argmap_to_ltuple(S, args))
+    , required_args_(required_args)
+    , keywords_(keywords_to_ltuple(S, keywords))
+    , closed_over_vars_(cov)
+    , return_to_(ret)
+  {}
+
   void Code::fill(serialize::Code* c) {
     c->set_name(name_->c_str());
 
@@ -52,42 +106,34 @@ namespace r5 {
       c->add_instructions(code_[i]);
     }
 
-    for(std::vector<String*>::iterator i = strings_.begin();
-        i != strings_.end();
-        ++i) {
-      c->add_strings((*i)->c_str());
+    for(int i = 0; i < strings_->size(); i++) {
+      c->add_strings(strings_->at(i)->c_str());
     }
 
-    for(std::vector<Code*>::iterator i = codes_.begin();
-        i != codes_.end();
-        ++i) {
+    for(int i = 0; i < codes_->size(); i++) {
       serialize::Code* sc = c->add_codes();
-      (*i)->fill(sc);
+      codes_->at(i)->fill(sc);
     }
 
-    if(args_.size() > 0) {
+    if(args_->size() > 0) {
       serialize::ArgMap* cam = c->mutable_args();
 
-      for(ArgMap::iterator i = args_.begin();
-          i != args_.end();
-          ++i) {
+      for(unsigned i = 0; i < args_->size(); i++) {
         serialize::ArgEntry* cae = cam->add_entries();
-        cae->set_key(i->first->c_str());
-        cae->set_value(i->second);
+        cae->set_key(args_->at(i)->c_str());
+        cae->set_value(i);
       }
     }
 
-    for(std::vector<ArgMap>::iterator i = keywords_.begin();
-        i != keywords_.end();
-        ++i) {
+    for(unsigned idx = 0; idx < keywords_->size(); idx++) {
       serialize::ArgMap* cam = c->add_keywords();
 
-      for(ArgMap::iterator j = i->begin();
-          j != i->end();
-          ++j) {
+      STuple* i = keywords_->at(idx);
+
+      for(unsigned j = 0; j < i->size(); j++) {
         serialize::ArgEntry* cae = cam->add_entries();
-        cae->set_key(j->first->c_str());
-        cae->set_value(j->second);
+        cae->set_key(i->at(j)->c_str());
+        cae->set_value(j);
       }
     }
 
@@ -208,7 +254,7 @@ namespace r5 {
       keywords.push_back(map);
     }
 
-    return new(S) Code(name, insn, size, strings, codes,
+    return new(S) Code(S, name, insn, size, strings, codes,
                        args, ser->required_args(),
                        keywords, ser->closed_over_vars(),
                        ser->return_to());

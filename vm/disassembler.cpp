@@ -7,11 +7,9 @@
 
 namespace r5 {
 
-  void Disassembler::print_keywords(ArgMap& kw, int r) {
-    for(ArgMap::iterator i = kw.begin();
-        i != kw.end();
-        ++i) {
-      printf("%s=R(%d) ", (*i).first->c_str(), r + i->second);
+  void Disassembler::print_keywords(STuple* kw, int r) {
+    for(unsigned i = 0; i < kw->size(); i++) {
+      printf("%s=R(%d) ", kw->at(i)->c_str(), r + i);
     }
   }
 

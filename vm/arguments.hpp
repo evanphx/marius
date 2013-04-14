@@ -11,11 +11,11 @@ namespace r5 {
     State& S_;
     OOP* fp_;
     int argc_;
-    option<ArgMap> keywords_;
+    option<STuple*> keywords_;
 
   public:
 
-    Arguments(State& S, int argc, OOP* fp, option<ArgMap> keys)
+    Arguments(State& S, int argc, OOP* fp, option<STuple*> keys)
       : S_(S)
       , fp_(fp)
       , argc_(argc)
@@ -40,7 +40,7 @@ namespace r5 {
       return handle(S_, fp_[-1]);
     }
 
-    option<ArgMap>& keywords() {
+    option<STuple*>& keywords() {
       return keywords_;
     }
 

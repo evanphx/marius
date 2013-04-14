@@ -14,7 +14,7 @@ namespace r5 {
       : code_(code)
     {}
 
-    void print_keywords(ArgMap& kw, int r);
+    void print_keywords(STuple* kw, int r);
     void print(int indent=0);
 
     int print_one(Instruction* seq);

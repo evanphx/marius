@@ -12,6 +12,8 @@
 #include "invoke_info.hpp"
 #include "long_return.hpp"
 
+#include <iostream>
+
 #include <stdio.h>
 
 #define TRACE
@@ -347,37 +349,38 @@ check_unwind:
     return meth->run(S, recv, args);
   }
 
-  void VM::reorg_args(OOP* fp, Method* meth, ArgMap& keywords) {
+  void VM::reorg_args(OOP* fp, Method* meth, STuple* keywords) {
     Code* code = meth->code();
     check(code);
 
-    ArgMap& args = code->args();
+    STuple* args = code->args();
 
-    OOP* temp = fp + args.size();
+    OOP* temp = fp + args->size();
 
-    for(ArgMap::iterator i = args.begin();
-        i != args.end();
-        ++i) {
-      int req = (*i).second;
+    for(unsigned i = 0; i < args->size(); i++) {
+      String* name = args->at(i);
+      if(!name) continue;
 
-      ArgMap::iterator f = keywords.find((*i).first);
+      int req = i;
 
-      if(f == keywords.end()) {
-        temp[req] = fp[req];
-      } else {
-        int is   = (*f).second;
+      option<int> f = keywords->find(name);
+
+      if(f.set_p()) {
+        int is   = *f;
         temp[req] = fp[is];
+      } else {
+        temp[req] = fp[req];
       }
     }
 
-    for(size_t i = 0; i < args.size(); i++) {
+    for(size_t i = 0; i < args->size(); i++) {
       fp[i] = temp[i];
     }
   }
 
   OOP VM::run_kw_method(State& S,
                         OOP recv, String* name, int argc, OOP* fp,
-                        ArgMap& keywords)
+                        STuple* keywords)
   {
     Method* meth = recv.find_method(name);
 

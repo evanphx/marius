@@ -23,14 +23,12 @@ namespace r5 {
     Handle literal(State& S, Handle recv, Arguments& args) {
       Dictionary* dict = new(S) Dictionary(S);
 
-      option<ArgMap>& keywords = args.keywords();
+      option<STuple*>& keywords = args.keywords();
       if(keywords.set_p()) {
-        ArgMap keys = *keywords;
+        STuple* keys = *keywords;
 
-        for(ArgMap::iterator i = keys.begin();
-            i != keys.end();
-            ++i) {
-          dict->set(S, i->first, *args[i->second]);
+        for(unsigned i = 0; i < keys->size(); i++) {
+          dict->set(S, keys->at(i), *args[i]);
         }
       }
 

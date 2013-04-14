@@ -11,6 +11,8 @@
 
 #include "gc_allocated.hpp"
 
+#include "ltuple.hpp"
+
 namespace serialize {
   class Code;
 }
@@ -59,39 +61,37 @@ namespace r5 {
 
   typedef StringMap<int>::type ArgMap;
 
+  struct STupleCompare {
+    static bool compare(String* a, String* b) {
+      return a && b && a->equal(b);
+    }
+  };
+
+  typedef LTuple<String*, STupleCompare> STuple;
+
   class Code : public GCAllocated {
     String* name_;
     Instruction* code_;
     int size_;
-    std::vector<String*> strings_;
-    std::vector<Code*> codes_;
-    ArgMap args_;
+    STuple* strings_;
+    LTuple<Code*>* codes_;
+    STuple* args_;
     int required_args_;
-    std::vector<ArgMap> keywords_;
+    LTuple<STuple*>* keywords_;
     int closed_over_vars_;
     bool return_to_;
 
     friend class GCImpl;
 
   public:
-    Code(String* name,
+    Code(State& S,
+         String* name,
          Instruction* buf, int size,
          std::vector<String*> strings,
          std::vector<Code*> codes,
          ArgMap args, int required_args,
          std::vector<ArgMap> keywords,
-         int cov, bool ret=false)
-      : name_(name)
-      , code_(buf)
-      , size_(size)
-      , strings_(strings)
-      , codes_(codes)
-      , args_(args)
-      , required_args_(required_args)
-      , keywords_(keywords)
-      , closed_over_vars_(cov)
-      , return_to_(ret)
-    {}
+         int cov, bool ret=false);
 
     String* name() {
       return name_;
@@ -106,18 +106,18 @@ namespace r5 {
     }
 
     String* string(int idx) {
-      return strings_.at(idx);
+      return strings_->at(idx);
     }
 
     Code* code(int idx) {
-      return codes_.at(idx);
+      return codes_->at(idx);
     }
 
     int codes_size() {
-      return codes_.size();
+      return codes_->size();
     }
 
-    ArgMap& args() {
+    STuple* args() {
       return args_;
     }
 
@@ -125,8 +125,8 @@ namespace r5 {
       return required_args_;
     }
 
-    ArgMap& keywords(int i) {
-      return keywords_.at(i);
+    STuple* keywords(int i) {
+      return keywords_->at(i);
     }
 
     int closed_over_vars() {
