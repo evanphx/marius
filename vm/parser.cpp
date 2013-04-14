@@ -536,7 +536,7 @@ again:
       advance(1);
     }
 
-    value_.s = String::internalize(S, strndup(start, pos_ - start));
+    value_.s = String::internalize(S, start, pos_ - start);
     return TK_LITSTR;
   }
 
