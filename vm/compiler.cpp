@@ -42,7 +42,7 @@ namespace marius {
 
     ArgMap args;
 
-    code_ = AS.to_code(String::internalize(S, "__main__"), args, top->cov());
+    code_ = AS.to_code(String::internalize(S, "__main__"), args, 0, top->cov());
 
     if(debug_) code_->print();
 
@@ -109,10 +109,9 @@ namespace marius {
     case JMPB:
       return 2;
 
-    case JMPIT:
-      return 3;
-
     case JMPIF:
+    case JMPIT:
+    case JMPHA:
       return 3;
 
     case REGE:

@@ -152,6 +152,7 @@ namespace marius {
 
     void start_def();
     void def_arg(String* s);
+    void def_opt_arg(String* s, ast::Node* val);
     void def_arg_cast(String* s, ast::Node* c);
     ast::Node* ast_def(String* name, ast::Node* b);
 

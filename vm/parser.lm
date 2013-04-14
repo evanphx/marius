@@ -81,6 +81,7 @@ def_start ::= DEF. { S->start_def(); }
 def_body(A) ::= seq(B) fin END. { A.a = B.a; }
 
 arg ::= ID(A). { S->def_arg(A.s); }
+arg ::= ID(A) EQUAL np_recv(B). { S->def_opt_arg(A.s, B.a); }
 arg ::= ID(A) CAST np_recv(B). { S->def_arg_cast(A.s, B.a); }
 
 id_list ::= id_list comma arg.

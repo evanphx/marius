@@ -68,7 +68,7 @@ void protobuf_AssignDesc_code_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(ArgMap));
   Code_descriptor_ = file->message_type(2);
-  static const int Code_offsets_[8] = {
+  static const int Code_offsets_[9] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Code, name_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Code, instructions_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Code, strings_),
@@ -77,6 +77,7 @@ void protobuf_AssignDesc_code_2eproto() {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Code, keywords_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Code, closed_over_vars_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Code, return_to_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Code, required_args_),
   };
   Code_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -129,12 +130,13 @@ void protobuf_AddDesc_code_2eproto() {
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
     "\n\ncode.proto\022\tserialize\"&\n\010ArgEntry\022\013\n\003k"
     "ey\030\001 \002(\t\022\r\n\005value\030\002 \002(\005\".\n\006ArgMap\022$\n\007ent"
-    "ries\030\001 \003(\0132\023.serialize.ArgEntry\"\316\001\n\004Code"
+    "ries\030\001 \003(\0132\023.serialize.ArgEntry\"\345\001\n\004Code"
     "\022\014\n\004name\030\001 \002(\t\022\024\n\014instructions\030\002 \003(\005\022\017\n\007"
     "strings\030\003 \003(\t\022\036\n\005codes\030\004 \003(\0132\017.serialize"
     ".Code\022\037\n\004args\030\005 \001(\0132\021.serialize.ArgMap\022#"
     "\n\010keywords\030\006 \003(\0132\021.serialize.ArgMap\022\030\n\020c"
-    "losed_over_vars\030\007 \002(\005\022\021\n\treturn_to\030\010 \001(\005", 320);
+    "losed_over_vars\030\007 \002(\005\022\021\n\treturn_to\030\010 \001(\005"
+    "\022\025\n\rrequired_args\030\t \001(\005", 343);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "code.proto", &protobuf_RegisterTypes);
   ArgEntry::default_instance_ = new ArgEntry();
@@ -635,6 +637,7 @@ const int Code::kArgsFieldNumber;
 const int Code::kKeywordsFieldNumber;
 const int Code::kClosedOverVarsFieldNumber;
 const int Code::kReturnToFieldNumber;
+const int Code::kRequiredArgsFieldNumber;
 #endif  // !_MSC_VER
 
 Code::Code()
@@ -658,6 +661,7 @@ void Code::SharedCtor() {
   args_ = NULL;
   closed_over_vars_ = 0;
   return_to_ = 0;
+  required_args_ = 0;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -706,6 +710,9 @@ void Code::Clear() {
     }
     closed_over_vars_ = 0;
     return_to_ = 0;
+  }
+  if (_has_bits_[8 / 32] & (0xffu << (8 % 32))) {
+    required_args_ = 0;
   }
   instructions_.Clear();
   strings_.Clear();
@@ -849,6 +856,22 @@ bool Code::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
+        if (input->ExpectTag(72)) goto parse_required_args;
+        break;
+      }
+      
+      // optional int32 required_args = 9;
+      case 9: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_required_args:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &required_args_)));
+          set_has_required_args();
+        } else {
+          goto handle_uninterpreted;
+        }
         if (input->ExpectAtEnd()) return true;
         break;
       }
@@ -923,6 +946,11 @@ void Code::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteInt32(8, this->return_to(), output);
   }
   
+  // optional int32 required_args = 9;
+  if (has_required_args()) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(9, this->required_args(), output);
+  }
+  
   if (!unknown_fields().empty()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
@@ -987,6 +1015,11 @@ void Code::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(8, this->return_to(), target);
   }
   
+  // optional int32 required_args = 9;
+  if (has_required_args()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(9, this->required_args(), target);
+  }
+  
   if (!unknown_fields().empty()) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         unknown_fields(), target);
@@ -1024,6 +1057,15 @@ int Code::ByteSize() const {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::Int32Size(
           this->return_to());
+    }
+    
+  }
+  if (_has_bits_[8 / 32] & (0xffu << (8 % 32))) {
+    // optional int32 required_args = 9;
+    if (has_required_args()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(
+          this->required_args());
     }
     
   }
@@ -1103,6 +1145,11 @@ void Code::MergeFrom(const Code& from) {
       set_return_to(from.return_to());
     }
   }
+  if (from._has_bits_[8 / 32] & (0xffu << (8 % 32))) {
+    if (from.has_required_args()) {
+      set_required_args(from.required_args());
+    }
+  }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
 
@@ -1143,6 +1190,7 @@ void Code::Swap(Code* other) {
     keywords_.Swap(&other->keywords_);
     std::swap(closed_over_vars_, other->closed_over_vars_);
     std::swap(return_to_, other->return_to_);
+    std::swap(required_args_, other->required_args_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);

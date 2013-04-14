@@ -49,6 +49,7 @@ namespace marius {
     TUPLE,
     LIST,
     LRET,
+    JMPHA,
     TotalInstructions
   };
 
@@ -65,6 +66,7 @@ namespace marius {
     std::vector<String*> strings_;
     std::vector<Code*> codes_;
     ArgMap args_;
+    int required_args_;
     std::vector<ArgMap> keywords_;
     int closed_over_vars_;
     bool return_to_;
@@ -76,7 +78,7 @@ namespace marius {
          Instruction* buf, int size,
          std::vector<String*> strings,
          std::vector<Code*> codes,
-         ArgMap args,
+         ArgMap args, int required_args,
          std::vector<ArgMap> keywords,
          int cov, bool ret=false)
       : name_(name)
@@ -85,6 +87,7 @@ namespace marius {
       , strings_(strings)
       , codes_(codes)
       , args_(args)
+      , required_args_(required_args)
       , keywords_(keywords)
       , closed_over_vars_(cov)
       , return_to_(ret)
@@ -119,7 +122,7 @@ namespace marius {
     }
 
     int arity() {
-      return args_.size();
+      return required_args_;
     }
 
     ArgMap& keywords(int i) {

@@ -131,7 +131,7 @@ int main(int argc, char** argv) {
 
     Method* top = new(S) Method(String::internalize(S, "__main__"), code, env.globals());
 
-    ret = vm.run(S, top);
+    ret = vm.run(S, top, 0);
   } else {
     char buf[128];
     buf[0] = 0;

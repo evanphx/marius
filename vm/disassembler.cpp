@@ -161,6 +161,10 @@ namespace marius {
       printf("IP += %d if !R(%d)\n", seq[2], seq[1]);
       return 3;
 
+    case JMPHA:
+      printf("IP += %d if R(%d).set?\n", seq[2], seq[1]);
+      return 3;
+
     case REGE:
       printf("R(E).push <reg:%d, ip:%d>\n", seq[1], seq[2]);
       return 3;

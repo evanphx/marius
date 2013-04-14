@@ -59,7 +59,7 @@ namespace marius {
 
       return *func_(S, handle(S, recv), args);
     } else if(code_) {
-      return S.vm().run(S, this, args.frame());
+      return S.vm().run(S, this, args.frame(), args.count());
     }
 
     return OOP::nil();

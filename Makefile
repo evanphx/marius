@@ -80,6 +80,7 @@ test: marius
 	(! ./marius scratch/bad_trait.mr) > /dev/null 2>&1
 	test `./marius test/long_return.mr` = 7
 	test `./marius test/markov_rule.mr` = 7
+	test `./marius -p test/opt_arg.mr` = 7
 
 spec: test
 	./marius -Ilib -I. test spec/string_test spec/dictionary_test spec/trait_test spec/enumerable_test

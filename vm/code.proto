@@ -18,4 +18,5 @@ message Code {
   repeated ArgMap keywords = 6;
   required int32 closed_over_vars = 7;
   optional int32 return_to = 8;
+  optional int32 required_args = 9;
 }

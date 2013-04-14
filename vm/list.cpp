@@ -28,7 +28,7 @@ namespace marius {
 
       for(size_t i = 0; i < l->size(); i++) {
         fp[0] = l->get(i);
-        OOP t = S.vm().run(S, m, fp);
+        OOP t = S.vm().run(S, m, fp, 1);
         if(t.unwind_p()) return handle(S, t);
       }
 

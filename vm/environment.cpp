@@ -155,7 +155,7 @@ namespace marius {
   static Handle run_code(State& S, Handle recv, Arguments& args) {
     Method* m = recv->as_method();
 
-    return handle(S, S.vm().run(S, m, args.frame() + 1));
+    return handle(S, S.vm().run(S, m, args.frame() + 1, args.count() - 1));
   }
 
   static Handle run_class_body(State& S, Handle recv, Arguments& args) {
@@ -168,7 +168,7 @@ namespace marius {
                   String::internalize(S, n + "." + cls->name()->c_str()),
                   m->code(), m->closure());
 
-    Handle ret = handle(S, S.vm().run(S, m, args.frame()));
+    Handle ret = handle(S, S.vm().run(S, m, args.frame(), 0));
 
     if(ret->unwind_p()) return ret;
 
@@ -189,7 +189,7 @@ namespace marius {
                   String::internalize(S, n + "." + trt->name()->c_str()),
                   m->code(), m->closure());
 
-    return handle(S, S.vm().run(S, m, args.frame()));
+    return handle(S, S.vm().run(S, m, args.frame(), 0));
   }
 
   static Handle method_call(State& S, Handle recv, Arguments& args) {
@@ -197,7 +197,7 @@ namespace marius {
 
     OOP* fp = args.frame();
 
-    return handle(S, S.vm().run(S, m, fp));
+    return handle(S, S.vm().run(S, m, fp, args.count()));
   }
 
   static Handle io_puts(State& S, Handle recv, Arguments& args) {
@@ -227,7 +227,7 @@ namespace marius {
 
     for(size_t i = 0; i < tup->size(); i++) {
       fp[0] = tup->get(i);
-      OOP t = S.vm().run(S, m, fp);
+      OOP t = S.vm().run(S, m, fp, 1);
 
       if(t.unwind_p()) {
         return handle(S, t);
@@ -255,7 +255,7 @@ namespace marius {
 
     for(size_t i = 0; i < tup->size(); i++) {
       fp[0] = tup->get(i);
-      OOP t = S.vm().run(S, m, fp);
+      OOP t = S.vm().run(S, m, fp, 1);
       if(t.unwind_p()) return handle(S, t);
     }
 
@@ -524,7 +524,7 @@ namespace marius {
 
     Method* mtop = new(S) Method(String::internalize(S, "__init__"),
                                  enum_code, S.env().globals());
-    S.vm().run(S, mtop, fp + 1);
+    S.vm().run(S, mtop, fp + 1, 1);
 
     Trait* enum_ = lookup(S, "Enumerable").as_trait();
 

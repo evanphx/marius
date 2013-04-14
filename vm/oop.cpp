@@ -51,7 +51,7 @@ namespace marius {
   void OOP::print() {
     switch(type_) {
     case eInteger:
-      printf("%d\n", int_);
+      printf("%ld\n", int_);
       return;
     case eClass:
       printf("%s\n", class_->name()->c_str());
@@ -104,6 +104,9 @@ namespace marius {
       return;
     case eList:
       printf("<list>\n");
+      return;
+    case eLongReturn:
+      printf("<longreturn>\n");
       return;
     case TotalTypes:
       check(false);

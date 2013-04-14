@@ -97,7 +97,15 @@ namespace marius {
       void set_local(Local* l, int t);
       void get_local(Local* l, int t);
 
-      Code* to_code(String* name, ArgMap& args, int cov, bool ret=false);
+      Code* to_code(String* name, ArgMap& args, int req, int cov, bool ret=false);
+
+      // Helpers
+
+      void movr(int to, int from) {
+        push(MOVR);
+        push(to);
+        push(from);
+      }
 
     };
 
@@ -128,18 +136,21 @@ namespace marius {
       String* name_;
       Node* cast_;
       int position_;
+      Node* opt_value_;
 
     public:
       Argument(String* n, int p)
         : name_(n)
         , cast_(0)
         , position_(p)
+        , opt_value_(0)
       {}
 
-      Argument(String* n, Node* c, int p)
+      Argument(String* n, Node* c, int p, Node* o)
         : name_(n)
         , cast_(c)
         , position_(p)
+        , opt_value_(o)
       {}
 
       String* name() {
@@ -152,6 +163,10 @@ namespace marius {
 
       Node* cast() {
         return cast_;
+      }
+
+      Node* opt_value() {
+        return opt_value_;
       }
 
       int drive(State& S, int t);

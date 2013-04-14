@@ -27,8 +27,8 @@ namespace marius {
     top_frame_ = frames_ - 1;
   }
 
-  OOP VM::run(State& S, Method* meth) {
-    return run(S, meth, stack_);
+  OOP VM::run(State& S, Method* meth, int arg_count) {
+    return run(S, meth, stack_, arg_count);
   }
 
   struct ExceptionHandler {
@@ -56,7 +56,7 @@ namespace marius {
     }
   };
 
-  OOP VM::run(State& S, Method* meth, OOP* fp) {
+  OOP VM::run(State& S, Method* meth, OOP* fp, int arg_count) {
     FrameTracker ft(this);
     top_frame_->method = meth;
 
@@ -247,6 +247,15 @@ check_unwind:
 
       case JMPIF:
         if(!fp[seq[0]].true_condition_p()) {
+          seq += (seq[1] + 2);
+        } else {
+          seq += 2;
+        }
+
+        break;
+
+      case JMPHA:
+        if(arg_count < seq[0]) {
           seq += (seq[1] + 2);
         } else {
           seq += 2;

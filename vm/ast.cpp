@@ -28,7 +28,7 @@ namespace ast {
     return new Arguments(nodes);
   }
 
-  Code* State::to_code(String* name, ArgMap& args, int cov, bool ret) {
+  Code* State::to_code(String* name, ArgMap& args, int req, int cov, bool ret) {
     size_t sz = buffer.size();
     Instruction* seq = new Instruction[sz];
 
@@ -37,7 +37,7 @@ namespace ast {
     }
 
     return new(MS) Code(name, seq, buffer.size(), strings, codes,
-                        args, keywords, cov, ret);
+                        args, req, keywords, cov, ret);
   }
 
   void State::set_local(Local* l, int t) {
@@ -384,10 +384,28 @@ namespace ast {
 
     int first_reg = args_.size() + body_->locals().size();
 
+    int req = 0;
+
     for(ArgumentList::iterator i = body_->arg_objs().begin();
         i != body_->arg_objs().end();
         ++i) {
       Argument* arg = *i;
+
+      if(ast::Node* o = arg->opt_value()) {
+        subS.push(JMPHA);
+        subS.push(arg->position());
+
+        Label l = S.label();
+        subS.push(0);
+
+        o->drive(subS, first_reg);
+        subS.movr(arg->position(), first_reg);
+
+        S.set_label(l);
+      } else {
+        req++;
+      }
+
       if(ast::Node* n = arg->cast()) {
         n->drive(subS, first_reg);
         subS.push(MOVR);
@@ -408,7 +426,7 @@ namespace ast {
 
     S.push(LOADC);
     S.push(t+2);
-    S.push(S.code(subS.to_code(name_, args_, body_->cov(), true)));
+    S.push(S.code(subS.to_code(name_, args_, req, body_->cov(), true)));
 
     S.push(CALL);
     S.push(t);
@@ -473,7 +491,7 @@ namespace ast {
     S.push(LOADC);
     S.push(t+1);
     S.push(S.code(subS.to_code(String::internalize(S.MS, "__body__"),
-                               args, body_->cov())));
+                               args, 0, body_->cov())));
 
     S.push(CALL);
     S.push(t);
@@ -524,7 +542,7 @@ namespace ast {
     S.push(LOADC);
     S.push(t+1);
     S.push(S.code(subS.to_code(String::internalize(S.MS, "__body__"),
-                               args, body_->cov())));
+                               args, 0, body_->cov())));
 
     S.push(CALL);
     S.push(t);
@@ -970,7 +988,7 @@ namespace ast {
     S.push(LOADC);
     S.push(t);
     S.push(S.code(subS.to_code(String::internalize(S.MS, "__lambda__"),
-                               args, body_->cov())));
+                               args, 0, body_->cov())));
 
     return t;
   }

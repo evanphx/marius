@@ -86,11 +86,18 @@ namespace marius {
     context_->arg_objs.push_back(new ast::Argument(name, num));
   }
 
+  void ParserState::def_opt_arg(String* name, ast::Node* val) {
+    int num = context_->args.size();
+
+    context_->args[name] = num;
+    context_->arg_objs.push_back(new ast::Argument(name, 0, num, val));
+  }
+
   void ParserState::def_arg_cast(String* name, ast::Node* c) {
     int num = context_->args.size();
 
     context_->args[name] = num;
-    context_->arg_objs.push_back(new ast::Argument(name, c, num));
+    context_->arg_objs.push_back(new ast::Argument(name, c, num, 0));
   }
 
   ast::Node* ParserState::call(ast::Node* recv, String* n) {

@@ -41,8 +41,8 @@ namespace marius {
       return stack_;
     }
 
-    OOP run(State& S, Method* meth);
-    OOP run(State& S, Method* meth, OOP* fp);
+    OOP run(State& S, Method* meth, int arg_count);
+    OOP run(State& S, Method* meth, OOP* fp, int arg_count);
     OOP run_method(State& S, OOP recv,
                            String* name, int argc, OOP* argv);
 

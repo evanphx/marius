@@ -358,6 +358,13 @@ class Code : public ::google::protobuf::Message {
   inline ::google::protobuf::int32 return_to() const;
   inline void set_return_to(::google::protobuf::int32 value);
   
+  // optional int32 required_args = 9;
+  inline bool has_required_args() const;
+  inline void clear_required_args();
+  static const int kRequiredArgsFieldNumber = 9;
+  inline ::google::protobuf::int32 required_args() const;
+  inline void set_required_args(::google::protobuf::int32 value);
+  
   // @@protoc_insertion_point(class_scope:serialize.Code)
  private:
   inline void set_has_name();
@@ -368,6 +375,8 @@ class Code : public ::google::protobuf::Message {
   inline void clear_has_closed_over_vars();
   inline void set_has_return_to();
   inline void clear_has_return_to();
+  inline void set_has_required_args();
+  inline void clear_has_required_args();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
@@ -379,9 +388,10 @@ class Code : public ::google::protobuf::Message {
   ::google::protobuf::RepeatedPtrField< ::serialize::ArgMap > keywords_;
   ::google::protobuf::int32 closed_over_vars_;
   ::google::protobuf::int32 return_to_;
+  ::google::protobuf::int32 required_args_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(8 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(9 + 31) / 32];
   
   friend void  protobuf_AddDesc_code_2eproto();
   friend void protobuf_AssignDesc_code_2eproto();
@@ -758,6 +768,28 @@ inline ::google::protobuf::int32 Code::return_to() const {
 inline void Code::set_return_to(::google::protobuf::int32 value) {
   set_has_return_to();
   return_to_ = value;
+}
+
+// optional int32 required_args = 9;
+inline bool Code::has_required_args() const {
+  return (_has_bits_[0] & 0x00000100u) != 0;
+}
+inline void Code::set_has_required_args() {
+  _has_bits_[0] |= 0x00000100u;
+}
+inline void Code::clear_has_required_args() {
+  _has_bits_[0] &= ~0x00000100u;
+}
+inline void Code::clear_required_args() {
+  required_args_ = 0;
+  clear_has_required_args();
+}
+inline ::google::protobuf::int32 Code::required_args() const {
+  return required_args_;
+}
+inline void Code::set_required_args(::google::protobuf::int32 value) {
+  set_has_required_args();
+  required_args_ = value;
 }
 
 
