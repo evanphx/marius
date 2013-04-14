@@ -81,14 +81,19 @@ def_start ::= DEF. { S->start_def(); }
 def_body(A) ::= seq(B) fin END. { A.a = B.a; }
 
 arg ::= ID(A). { S->def_arg(A.s); }
-arg ::= ID(A) EQUAL np_recv(B). { S->def_opt_arg(A.s, B.a); }
 arg ::= ID(A) CAST np_recv(B). { S->def_arg_cast(A.s, B.a); }
 
 id_list ::= id_list comma arg.
 id_list ::= arg.
 
+opt_arg ::= ID(A) EQUAL np_recv(B). { S->def_opt_arg(A.s, B.a); }
+
+opt_arg_list ::= opt_arg_list comma opt_arg.
+opt_arg_list ::= opt_arg.
+
 def_args ::= .
 def_args ::= LP id_list RP.
+def_args ::= LP id_list comma opt_arg_list RP.
 
 def_name(A) ::= ID(B).     { A.s = B.s; }
 def_name(A) ::= OP0(B).    { A.s = B.s; }
