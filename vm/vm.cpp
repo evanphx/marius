@@ -16,7 +16,7 @@
 
 #define TRACE
 
-namespace marius {
+namespace r5 {
 
   VM::VM(bool debug)
     : debug_(debug)

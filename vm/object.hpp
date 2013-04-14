@@ -1,7 +1,7 @@
 #ifndef OBJECT_HPP
 #define OBJECT_HPP
 
-namespace marius {
+namespace r5 {
   class Object {};
 }
 

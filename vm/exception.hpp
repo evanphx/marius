@@ -5,7 +5,7 @@
 #include "attributes.hpp"
 #include "class.hpp"
 
-namespace marius {
+namespace r5 {
   class String;
   class InvokeInfo;
   class VM;

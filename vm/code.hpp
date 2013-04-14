@@ -15,7 +15,7 @@ namespace serialize {
   class Code;
 }
 
-namespace marius {
+namespace r5 {
   class GCImpl;
 
   enum InstructionTypes {

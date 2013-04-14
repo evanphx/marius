@@ -1,7 +1,7 @@
 #ifndef STACK_FRAME_HPP
 #define STACK_FRAME_HPP
 
-namespace marius {
+namespace r5 {
   class Method;
 
   struct StackFrame {

@@ -5,7 +5,7 @@
 #include "arguments.hpp"
 #include "handle.hpp"
 
-namespace marius {
+namespace r5 {
   class State;
 
   typedef Handle (*SimpleFunc)(State& S, Handle recv, Arguments& args);

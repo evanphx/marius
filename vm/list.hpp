@@ -4,7 +4,7 @@
 #include "oop.hpp"
 #include "handle.hpp"
 
-namespace marius {
+namespace r5 {
   class GCImpl;
   class List;
 

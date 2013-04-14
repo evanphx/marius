@@ -5,7 +5,7 @@
 
 #include "bug.hpp"
 
-namespace marius {
+namespace r5 {
 
   const static uintptr_t cNil = 2;
   const static uintptr_t cFalse = 4;

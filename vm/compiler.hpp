@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-namespace marius {
+namespace r5 {
   class Code;
   class State;
 

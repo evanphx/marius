@@ -10,7 +10,7 @@
 
 #include <iostream>
 
-namespace marius {
+namespace r5 {
   Exception* Exception::create(State& S, const char* cls,
                                const char* fmt, ...)
   {

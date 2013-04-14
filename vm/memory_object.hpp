@@ -3,7 +3,7 @@
 
 #include "gc_allocated.hpp"
 
-namespace marius {
+namespace r5 {
   class Class;
   class Environment;
   class GCImpl;

@@ -1,7 +1,7 @@
 #ifndef REF_HPP
 #define REF_HPP
 
-namespace marius {
+namespace r5 {
   template <typename T>
     class ref {
       T* v_;

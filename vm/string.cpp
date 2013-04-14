@@ -8,7 +8,7 @@
 #include <map>
 #include <string>
 
-namespace marius {
+namespace r5 {
 
   std::map<std::string, String*> mapping_;
 

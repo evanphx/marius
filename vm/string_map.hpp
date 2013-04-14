@@ -5,7 +5,7 @@
 
 #include "string.hpp"
 
-namespace marius {
+namespace r5 {
   template <typename T>
     struct StringMap {
       struct less {

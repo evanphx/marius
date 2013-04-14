@@ -8,7 +8,7 @@
 #include "string_vector.hpp"
 #include "handle.hpp"
 
-namespace marius {
+namespace r5 {
   const static int cInitialStack = 4096;
 
   class Code;

@@ -8,7 +8,7 @@
 
 #include "util/option.hpp"
 
-namespace marius {
+namespace r5 {
   class String;
   class Method;
 

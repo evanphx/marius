@@ -7,7 +7,7 @@
 
 #include "gc_allocated.hpp"
 
-namespace marius {
+namespace r5 {
   class VM;
   class Environment;
   class Code;

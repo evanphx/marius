@@ -5,7 +5,7 @@
 
 #include "gc_allocated.hpp"
 
-namespace marius {
+namespace r5 {
   class GCImpl;
 
   class Closure : public GCAllocated {

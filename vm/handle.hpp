@@ -3,7 +3,7 @@
 
 #include "state.hpp"
 
-namespace marius {
+namespace r5 {
   class Handle {
     OOP* loc_;
 

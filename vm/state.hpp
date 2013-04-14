@@ -4,7 +4,7 @@
 #include "handle_sets.hpp"
 #include "gc.hpp"
 
-namespace marius {
+namespace r5 {
   class Environment;
   class VM;
   class Settings;
@@ -71,11 +71,11 @@ namespace marius {
   };
 }
 
-inline void* operator new(size_t size, marius::State& S) {
+inline void* operator new(size_t size, r5::State& S) {
   return S.allocate(size);
 }
 
-inline void* operator new[](size_t size, marius::State& S) {
+inline void* operator new[](size_t size, r5::State& S) {
   return S.allocate(size);
 }
 

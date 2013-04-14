@@ -1,7 +1,7 @@
 #include "tuple.hpp"
 #include "state.hpp"
 
-namespace marius {
+namespace r5 {
   Tuple::Tuple(State& S, size_t size)
     : data_(new(S) OOP[size])
     , size_(size)

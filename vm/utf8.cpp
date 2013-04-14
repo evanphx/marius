@@ -3,7 +3,7 @@
 
 #include "utf8.hpp"
 
-namespace marius {
+namespace r5 {
 
   static const uint32_t utf8_limits[] = {
       0x0,        /* 1 */

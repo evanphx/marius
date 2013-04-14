@@ -3,7 +3,7 @@
 
 #include <assert.h>
 
-namespace marius {
+namespace r5 {
   namespace ast {
     class Node;
   }

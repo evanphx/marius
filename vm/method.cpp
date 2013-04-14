@@ -4,7 +4,7 @@
 #include "closure.hpp"
 #include "exception.hpp"
 
-namespace marius {
+namespace r5 {
   Method::Method(String* scope, SimpleFunc func, int arity, Closure* closure)
     : scope_(scope)
     , func_(func)

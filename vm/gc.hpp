@@ -3,7 +3,7 @@
 
 #include "util/address.hpp"
 
-namespace marius {
+namespace r5 {
   class GCImpl;
   class State;
 

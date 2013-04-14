@@ -25,7 +25,7 @@
 
 #include <iostream>
 
-namespace marius {
+namespace r5 {
   class GCImpl;
 
   static bool cGCDebug = false;

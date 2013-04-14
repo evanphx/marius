@@ -5,7 +5,7 @@
 #include <stddef.h>
 #include <string.h>
 
-namespace marius {
+namespace r5 {
   struct Buffer {
     uint8_t* buf;
     size_t   len;

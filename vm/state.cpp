@@ -2,7 +2,7 @@
 
 #include "vm.hpp"
 
-namespace marius {
+namespace r5 {
   State::State(VM& vm, Environment& env, Settings& set)
     : vm_(vm)
     , env_(env)

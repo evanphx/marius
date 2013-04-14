@@ -11,7 +11,7 @@
 #include "buffer.hpp"
 #include "utf8.hpp"
 
-namespace marius {
+namespace r5 {
 
   void Parser::import_start() {
     import_name_ = true;
@@ -548,7 +548,7 @@ again:
     }
 
     next_c(); // prime the buffer
-    engine_ = mariusParserAlloc(malloc);
+    engine_ = r5ParserAlloc(malloc);
 
     ParserState PS(S, *this);
 
@@ -556,7 +556,7 @@ again:
 
     if(debug) {
       stream = fopen("debug.out", "wb");
-      mariusParserTrace(stream, (char*)">");
+      r5ParserTrace(stream, (char*)">");
     }
 
     for(;;) {
@@ -565,17 +565,17 @@ again:
 
       if(token == TK_IMPORT) import_start();
 
-      mariusParser(engine_, token, value_, &PS);
+      r5Parser(engine_, token, value_, &PS);
 
       if(PS.syntax_error_p()) break;
 
       if(token == TK_EOF) {
-        mariusParser(engine_, 0, value_, &PS);
+        r5Parser(engine_, 0, value_, &PS);
         break;
       }
     }
 
-    mariusParserFree(engine_, free);
+    r5ParserFree(engine_, free);
 
     if(debug) fclose(stream);
 

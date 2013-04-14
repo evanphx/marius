@@ -1,7 +1,7 @@
 #ifndef BUG_HPP
 #define BUG_HPP
 
-namespace marius {
+namespace r5 {
   void abort();
   void bug(const char* message);
   void bug(const char* message, const char* arg);

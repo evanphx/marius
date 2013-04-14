@@ -7,7 +7,7 @@
 #include "tuple.hpp"
 #include "exception.hpp"
 
-namespace marius {
+namespace r5 {
   Class::Class(State& S, enum Boot, Class* cls, Class* sup, String* name)
     : MemoryObject(cls)
     , Attributes(S)

@@ -3,7 +3,7 @@
 #include "state.hpp"
 #include "tuple.hpp"
 
-namespace marius {
+namespace r5 {
 
   Bindings::Bindings(State& S)
     : entries_(new(S) Entry*[cDefaultCapa])

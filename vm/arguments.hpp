@@ -6,7 +6,7 @@
 #include "code.hpp"
 #include "util/option.hpp"
 
-namespace marius {
+namespace r5 {
   class Arguments {
     State& S_;
     OOP* fp_;

@@ -13,7 +13,7 @@
 
 #include <map>
 
-namespace marius {
+namespace r5 {
   class State;
   class GCImpl;
 

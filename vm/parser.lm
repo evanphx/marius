@@ -5,10 +5,10 @@
 #include <iostream>
 }
 
-%name mariusParser
+%name r5Parser
 
-%token_type   { marius::ParserToken }
-%default_type { marius::ParserToken }
+%token_type   { r5::ParserToken }
+%default_type { r5::ParserToken }
 
 %token_prefix TK_
 
@@ -20,7 +20,7 @@
 %left DOT DCOLON DOT_DOLLAR.
 %left LSB.
 
-%extra_argument { marius::ParserState* S }
+%extra_argument { r5::ParserState* S }
 
 %syntax_error {
   S->set_syntax_error();

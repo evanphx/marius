@@ -18,7 +18,7 @@
 #include <iostream>
 #include <stdio.h>
 
-namespace marius {
+namespace r5 {
   bool Environment::cDefaultDev = false;
 
   OOP Environment::lookup(String* name) {

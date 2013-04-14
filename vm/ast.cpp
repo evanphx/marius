@@ -2,10 +2,10 @@
 #include "state.hpp"
 #include <assert.h>
 
-namespace marius {
+namespace r5 {
 namespace ast {
 
-  Import::Import(marius::State& S, String* n)
+  Import::Import(r5::State& S, String* n)
     : path_(n)
   {
     char* last_dot = strrchr((char*)n->c_str(), '.');
@@ -16,7 +16,7 @@ namespace ast {
     }
   }
 
-  Import::Import(marius::State& S, String* p, String* n)
+  Import::Import(r5::State& S, String* p, String* n)
     : path_(p)
     , name_(n)
   {}

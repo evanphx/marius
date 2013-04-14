@@ -5,7 +5,7 @@
 #include <assert.h>
 #include <stdio.h>
 
-namespace marius {
+namespace r5 {
 
   void Disassembler::print_keywords(ArgMap& kw, int r) {
     for(ArgMap::iterator i = kw.begin();

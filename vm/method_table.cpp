@@ -8,7 +8,7 @@
 
 #include <iostream>
 
-namespace marius {
+namespace r5 {
   MethodTable::MethodTable(State& S)
     : entries_(new(S) Entry*[cDefaultCapa])
     , capa_(cDefaultCapa)

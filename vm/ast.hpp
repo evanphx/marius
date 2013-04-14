@@ -7,7 +7,7 @@
 #include "string.hpp"
 #include "local.hpp"
 
-namespace marius {
+namespace r5 {
   class String;
 
   namespace ast {
@@ -36,9 +36,9 @@ namespace marius {
       bool lambda_;
 
     public:
-      marius::State& MS;
+      r5::State& MS;
 
-      State(marius::State& ms, LocalMap& lm, bool lamb=false)
+      State(r5::State& ms, LocalMap& lm, bool lamb=false)
         : lm_(lm)
         , lambda_(lamb)
         , MS(ms)
@@ -553,8 +553,8 @@ namespace marius {
       String* name_;
 
     public:
-      Import(marius::State& S, String* n);
-      Import(marius::State& S, String* p, String* n);
+      Import(r5::State& S, String* n);
+      Import(r5::State& S, String* p, String* n);
 
       String* name() {
         return name_;

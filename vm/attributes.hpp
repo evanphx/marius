@@ -5,7 +5,7 @@
 #include "string_map.hpp"
 #include "bindings.hpp"
 
-namespace marius {
+namespace r5 {
   class GCImpl;
 
   class Attributes {

@@ -4,7 +4,7 @@
 #include "class.hpp"
 #include "vm.hpp"
 
-namespace marius {
+namespace r5 {
 
   namespace {
 

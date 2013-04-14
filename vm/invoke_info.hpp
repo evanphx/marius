@@ -1,7 +1,7 @@
 #ifndef INVOKE_INFO_HPP
 #define INVOKE_INFO_HPP
 
-namespace marius {
+namespace r5 {
   class Method;
   class GCImpl;
 

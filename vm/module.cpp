@@ -3,7 +3,7 @@
 #include "class.hpp"
 #include "environment.hpp"
 
-namespace marius {
+namespace r5 {
   namespace {
     Handle module_add(State& S, Handle recv, Arguments& args) {
       String* name = args[0]->as_string();

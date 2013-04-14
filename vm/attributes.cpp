@@ -1,6 +1,6 @@
 #include "attributes.hpp"
 
-namespace marius {
+namespace r5 {
   OOP Attributes::attribute(String* name, bool* found) {
     option<OOP> v = attributes_.find(name);
     if(v.set_p()) {

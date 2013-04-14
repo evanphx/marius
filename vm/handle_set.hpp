@@ -3,7 +3,7 @@
 
 #include "oop.hpp"
 
-namespace marius {
+namespace r5 {
   class HandleSet {
     OOP* oops_;
     OOP* pos_;

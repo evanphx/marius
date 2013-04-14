@@ -5,7 +5,7 @@
 
 #include <string.h>
 
-namespace marius {
+namespace r5 {
   class String;
 
   namespace ast {

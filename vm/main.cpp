@@ -22,7 +22,7 @@
 
 #include <sys/stat.h>
 
-using namespace marius;
+using namespace r5;
 
 int main(int argc, char** argv) {
   Settings settings;
@@ -105,7 +105,7 @@ int main(int argc, char** argv) {
 
     if(!code) {
       FILE* file = fopen(script, "r");
-      marius::check(file);
+      r5::check(file);
 
       Compiler compiler(debug);
 

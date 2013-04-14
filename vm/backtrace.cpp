@@ -10,7 +10,7 @@
 #include <cxxabi.h>
 
 #include <execinfo.h>
-namespace marius {
+namespace r5 {
 
   static void squeeze_space(std::string& str) {
     std::string ws = "    ";

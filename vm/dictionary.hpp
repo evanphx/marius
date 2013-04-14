@@ -5,7 +5,7 @@
 #include "util/option.hpp"
 #include "handle.hpp"
 
-namespace marius {
+namespace r5 {
   class Dictionary {
     Bindings table_;
 

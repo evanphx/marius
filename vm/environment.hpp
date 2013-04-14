@@ -8,7 +8,7 @@
 
 #include "gc.hpp"
 
-namespace marius {
+namespace r5 {
   class String;
   class Class;
   class State;

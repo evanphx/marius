@@ -8,7 +8,7 @@
 #include "attributes.hpp"
 #include "list.hpp"
 
-namespace marius {
+namespace r5 {
   class Method;
   class String;
   class MethodTable;

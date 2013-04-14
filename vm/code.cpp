@@ -5,7 +5,7 @@
 
 #include <fstream>
 
-namespace marius {
+namespace r5 {
   const char* InstructionNames[] = {
       "MOVI8",
       "MOVI32",

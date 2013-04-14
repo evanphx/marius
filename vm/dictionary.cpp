@@ -4,7 +4,7 @@
 #include "class.hpp"
 #include "tuple.hpp"
 
-namespace marius {
+namespace r5 {
 
   namespace {
     Handle get_m(State& S, Handle recv, Arguments& args) {

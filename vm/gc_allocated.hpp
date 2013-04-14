@@ -3,7 +3,7 @@
 
 #include <stddef.h>
 
-namespace marius {
+namespace r5 {
   class State;
 
   class GCAllocated {

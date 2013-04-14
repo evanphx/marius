@@ -10,7 +10,7 @@
 
 #include "ast.hpp"
 
-namespace marius {
+namespace r5 {
   class Parser;
 
   class ParserState {

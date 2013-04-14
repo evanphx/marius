@@ -10,7 +10,7 @@
 
 #include "handle.hpp"
 
-namespace marius {
+namespace r5 {
   class GCImpl;
 
   class Tuple : public GCAllocated {

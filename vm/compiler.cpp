@@ -7,7 +7,7 @@
 
 #include <iostream>
 
-namespace marius {
+namespace r5 {
   bool Compiler::compile(State& S, FILE* f) {
     Parser parser(S, f);
 

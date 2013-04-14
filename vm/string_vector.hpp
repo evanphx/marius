@@ -5,7 +5,7 @@
 
 #include "ref.hpp"
 
-namespace marius {
+namespace r5 {
   typedef std::vector<ref<String> > StringVector;
 }
 

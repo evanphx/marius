@@ -6,7 +6,7 @@
 #include "memory_object.hpp"
 #include "attributes.hpp"
 
-namespace marius {
+namespace r5 {
   class GCImpl;
 
   class Module : public MemoryObject, public Attributes {

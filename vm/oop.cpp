@@ -9,7 +9,7 @@
 
 #include <stdio.h>
 
-namespace marius {
+namespace r5 {
   Class* OOP::klass() {
     switch(type_) {
     case eUser:

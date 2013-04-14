@@ -5,7 +5,7 @@
 #include "attributes.hpp"
 #include "class.hpp"
 
-namespace marius {
+namespace r5 {
   class GCImpl;
 
   class User : public MemoryObject, public Attributes {

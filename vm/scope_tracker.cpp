@@ -4,13 +4,13 @@
 
 #include <list>
 
-namespace marius {
+namespace r5 {
   using namespace ast;
 
   class ScopeTracker : public Visitor {
     typedef StringMap<Local*>::type LocalScope;
 
-    marius::State& S;
+    r5::State& S;
     LocalScope* scope_;
 
     std::list<LocalScope*> stack_;
@@ -20,7 +20,7 @@ namespace marius {
     std::list<ast::Trait*> trait_stack_;
 
   public:
-    ScopeTracker(marius::State& S, ArgMap& globals, LocalMap& locals)
+    ScopeTracker(r5::State& S, ArgMap& globals, LocalMap& locals)
       : S(S)
       , scope_(new LocalScope)
       , globals_(globals)
@@ -282,7 +282,7 @@ namespace marius {
     }
   };
 
-  void calculate_locals(marius::State& S, ast::Node* top,
+  void calculate_locals(r5::State& S, ast::Node* top,
                         ArgMap& globals, LocalMap& locals) {
     ScopeTracker tracker(S, globals, locals);
     top->accept(&tracker);

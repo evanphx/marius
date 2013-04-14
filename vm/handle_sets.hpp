@@ -5,7 +5,7 @@
 
 #include "handle_set.hpp"
 
-namespace marius {
+namespace r5 {
   class HandleSets {
     std::vector<HandleSet*> sets_;
 

@@ -4,7 +4,7 @@
 
 #include <stdlib.h>
 
-namespace marius {
+namespace r5 {
   static bool hard_abort = true;
 
   void abort() {

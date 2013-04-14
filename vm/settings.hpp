@@ -3,7 +3,7 @@
 
 #include <vector>
 
-namespace marius {
+namespace r5 {
   class Settings {
     std::vector<const char*> load_path_;
 

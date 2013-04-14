@@ -1,7 +1,7 @@
 #include "parser_state.hpp"
 #include <assert.h>
 
-namespace marius {
+namespace r5 {
 
   Instruction* ParserState::sequence() {
     size_t sz = context_->buffer.size();

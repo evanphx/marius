@@ -43,18 +43,18 @@
 **                       and nonterminal numbers.  "unsigned char" is
 **                       used if there are fewer than 250 rules and
 **                       states combined.  "int" is used otherwise.
-**    mariusParserTOKENTYPE     is the data type used for minor tokens given 
+**    r5ParserTOKENTYPE     is the data type used for minor tokens given 
 **                       directly to the parser from the tokenizer.
 **    YYMINORTYPE        is the data type used for all minor tokens.
 **                       This is typically a union of many types, one of
-**                       which is mariusParserTOKENTYPE.  The entry in the union
+**                       which is r5ParserTOKENTYPE.  The entry in the union
 **                       for base tokens is called "yy0".
 **    YYSTACKDEPTH       is the maximum depth of the parser's stack.  If
 **                       zero the stack is dynamically sized using realloc()
-**    mariusParserARG_SDECL     A static variable declaration for the %extra_argument
-**    mariusParserARG_PDECL     A parameter declaration for the %extra_argument
-**    mariusParserARG_STORE     Code to store %extra_argument into yypParser
-**    mariusParserARG_FETCH     Code to extract %extra_argument from yypParser
+**    r5ParserARG_SDECL     A static variable declaration for the %extra_argument
+**    r5ParserARG_PDECL     A parameter declaration for the %extra_argument
+**    r5ParserARG_STORE     Code to store %extra_argument into yypParser
+**    r5ParserARG_FETCH     Code to extract %extra_argument from yypParser
 **    YYNSTATE           the combined number of states.
 **    YYNRULE            the number of rules in the grammar
 **    YYERRORSYMBOL      is the code number of the error symbol.  If not
@@ -63,19 +63,19 @@
 #define YYCODETYPE unsigned char
 #define YYNOCODE 95
 #define YYACTIONTYPE unsigned short int
-#define mariusParserTOKENTYPE  marius::ParserToken 
+#define r5ParserTOKENTYPE  r5::ParserToken 
 typedef union {
   int yyinit;
-  mariusParserTOKENTYPE yy0;
-  marius::ParserToken yy144;
+  r5ParserTOKENTYPE yy0;
+  r5::ParserToken yy42;
 } YYMINORTYPE;
 #ifndef YYSTACKDEPTH
 #define YYSTACKDEPTH 100
 #endif
-#define mariusParserARG_SDECL  marius::ParserState* S ;
-#define mariusParserARG_PDECL , marius::ParserState* S 
-#define mariusParserARG_FETCH  marius::ParserState* S  = yypParser->S 
-#define mariusParserARG_STORE yypParser->S  = S 
+#define r5ParserARG_SDECL  r5::ParserState* S ;
+#define r5ParserARG_PDECL , r5::ParserState* S 
+#define r5ParserARG_FETCH  r5::ParserState* S  = yypParser->S 
+#define r5ParserARG_STORE yypParser->S  = S 
 #define YYNSTATE 322
 #define YYNRULE 153
 #define YY_NO_ACTION      (YYNSTATE+YYNRULE+2)
@@ -586,7 +586,7 @@ struct yyParser {
   int yyidxMax;                 /* Maximum value of yyidx */
 #endif
   int yyerrcnt;                 /* Shifts left before out of the error */
-  mariusParserARG_SDECL                /* A place to hold %extra_argument */
+  r5ParserARG_SDECL                /* A place to hold %extra_argument */
 #if YYSTACKDEPTH<=0
   int yystksz;                  /* Current side of the stack */
   yyStackEntry *yystack;        /* The parser's stack */
@@ -620,7 +620,7 @@ static char *yyTracePrompt = 0;
 ** Outputs:
 ** None.
 */
-void mariusParserTrace(FILE *TraceFILE, char *zTracePrompt){
+void r5ParserTrace(FILE *TraceFILE, char *zTracePrompt){
   yyTraceFILE = TraceFILE;
   yyTracePrompt = zTracePrompt;
   if( yyTraceFILE==0 ) yyTracePrompt = 0;
@@ -853,9 +853,9 @@ static void yyGrowStack(yyParser *p){
 **
 ** Outputs:
 ** A pointer to a parser.  This pointer is used in subsequent calls
-** to mariusParser and mariusParserFree.
+** to r5Parser and r5ParserFree.
 */
-void *mariusParserAlloc(void *(*mallocProc)(size_t)){
+void *r5ParserAlloc(void *(*mallocProc)(size_t)){
   yyParser *pParser;
   pParser = (yyParser*)(*mallocProc)( (size_t)sizeof(yyParser) );
   if( pParser ){
@@ -882,7 +882,7 @@ static void yy_destructor(
   YYCODETYPE yymajor,     /* Type code for object to destroy */
   YYMINORTYPE *yypminor   /* The object to be destroyed */
 ){
-  mariusParserARG_FETCH;
+  r5ParserARG_FETCH;
   switch( yymajor ){
     /* Here is inserted the actions which take place when a
     ** terminal or non-terminal is destroyed.  This can happen
@@ -896,7 +896,7 @@ static void yy_destructor(
     */
     default:  break;   /* If no destructor action specified: do nothing */
   }
-  mariusParserARG_STORE; /* Quiet a warning about the arg not being used */
+  r5ParserARG_STORE; /* Quiet a warning about the arg not being used */
 }
 
 /*
@@ -932,12 +932,12 @@ static int yy_pop_parser_stack(yyParser *pParser){
 ** Inputs:
 ** <ul>
 ** <li>  A pointer to the parser.  This should be a pointer
-**       obtained from mariusParserAlloc.
+**       obtained from r5ParserAlloc.
 ** <li>  A pointer to a function used to reclaim memory obtained
 **       from malloc.
 ** </ul>
 */
-void mariusParserFree(
+void r5ParserFree(
   void *p,                    /* The parser to be deleted */
   void (*freeProc)(void*)     /* Function used to reclaim memory */
 ){
@@ -954,7 +954,7 @@ void mariusParserFree(
 ** Return the peak depth of the stack for a parser.
 */
 #ifdef YYTRACKMAXSTACKDEPTH
-int mariusParserStackPeak(void *p){
+int r5ParserStackPeak(void *p){
   yyParser *pParser = (yyParser*)p;
   return pParser->yyidxMax;
 }
@@ -1064,7 +1064,7 @@ static int yy_find_reduce_action(
 ** The following routine is called if the stack overflows.
 */
 static void yyStackOverflow(yyParser *yypParser, YYMINORTYPE *yypMinor){
-   mariusParserARG_FETCH;
+   r5ParserARG_FETCH;
    yypParser->yyidx--;
 #ifndef NDEBUG
    if( yyTraceFILE ){
@@ -1074,7 +1074,7 @@ static void yyStackOverflow(yyParser *yypParser, YYMINORTYPE *yypMinor){
    while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
    /* Here code is inserted which will execute if the parser
    ** stack every overflows */
-   mariusParserARG_STORE; /* Suppress warning about unused %extra_argument var */
+   r5ParserARG_STORE; /* Suppress warning about unused %extra_argument var */
 }
 
 /*
@@ -1300,7 +1300,7 @@ static void yy_reduce(
   YYMINORTYPE yygotominor;        /* The LHS of the rule reduced */
   yyStackEntry *yymsp;            /* The top of the parser's stack */
   int yysize;                     /* Amount to pop the stack */
-  mariusParserARG_FETCH;
+  r5ParserARG_FETCH;
   yymsp = &yypParser->yystack[yypParser->yyidx];
 #ifndef NDEBUG
   if( yyTraceFILE && yyruleno>=0 
@@ -1339,13 +1339,13 @@ static void yy_reduce(
   */
       case 0: /* program ::= opt_fin l1 last_fin */
 #line 32 "vm/parser.lm"
-{ S->set_top(S->ret(yymsp[-1].minor.yy144.a)); }
+{ S->set_top(S->ret(yymsp[-1].minor.yy42.a)); }
 #line 1344 "vm/parser.c.inc"
         break;
       case 1: /* l1 ::= l1 fin l1e */
       case 17: /* seq ::= seq fin stmt */ yytestcase(yyruleno==17);
 #line 34 "vm/parser.lm"
-{ yygotominor.yy144.a = S->seq(yymsp[-2].minor.yy144.a, yymsp[0].minor.yy144.a); }
+{ yygotominor.yy42.a = S->seq(yymsp[-2].minor.yy42.a, yymsp[0].minor.yy42.a); }
 #line 1350 "vm/parser.c.inc"
         break;
       case 2: /* l1 ::= l1e */
@@ -1361,13 +1361,13 @@ static void yy_reduce(
       case 124: /* s2 ::= np_recv */ yytestcase(yyruleno==124);
       case 127: /* stmt ::= s2 */ yytestcase(yyruleno==127);
 #line 35 "vm/parser.lm"
-{ yygotominor.yy144.a = yymsp[0].minor.yy144.a; }
+{ yygotominor.yy42.a = yymsp[0].minor.yy42.a; }
 #line 1366 "vm/parser.c.inc"
         break;
       case 19: /* delim_seq ::= seq opt_fin */
       case 108: /* np_recv ::= LP s2 RP */ yytestcase(yyruleno==108);
 #line 60 "vm/parser.lm"
-{ yygotominor.yy144.a = yymsp[-1].minor.yy144.a; }
+{ yygotominor.yy42.a = yymsp[-1].minor.yy42.a; }
 #line 1372 "vm/parser.c.inc"
         break;
       case 20: /* class_start ::= CLASS */
@@ -1379,20 +1379,20 @@ static void yy_reduce(
       case 25: /* trait_body ::= l1 fin END */ yytestcase(yyruleno==25);
       case 28: /* def_body ::= seq fin END */ yytestcase(yyruleno==28);
 #line 63 "vm/parser.lm"
-{ yygotominor.yy144.a = yymsp[-2].minor.yy144.a; }
+{ yygotominor.yy42.a = yymsp[-2].minor.yy42.a; }
 #line 1384 "vm/parser.c.inc"
         break;
       case 22: /* class ::= class_start ID fin class_body */
 #line 65 "vm/parser.lm"
 {
-               yygotominor.yy144.a = S->ast_class(yymsp[-2].minor.yy0.s, 0, yymsp[0].minor.yy144.a);
+               yygotominor.yy42.a = S->ast_class(yymsp[-2].minor.yy0.s, 0, yymsp[0].minor.yy42.a);
              }
 #line 1391 "vm/parser.c.inc"
         break;
       case 23: /* class ::= class_start ID LT s2 fin class_body */
 #line 69 "vm/parser.lm"
 {
-               yygotominor.yy144.a = S->ast_class(yymsp[-4].minor.yy0.s, yymsp[-2].minor.yy144.a, yymsp[0].minor.yy144.a);
+               yygotominor.yy42.a = S->ast_class(yymsp[-4].minor.yy0.s, yymsp[-2].minor.yy42.a, yymsp[0].minor.yy42.a);
              }
 #line 1398 "vm/parser.c.inc"
         break;
@@ -1404,7 +1404,7 @@ static void yy_reduce(
       case 26: /* trait ::= trait_start ID fin trait_body */
 #line 76 "vm/parser.lm"
 {
-               yygotominor.yy144.a = S->trait(yymsp[-2].minor.yy0.s, yymsp[0].minor.yy144.a);
+               yygotominor.yy42.a = S->trait(yymsp[-2].minor.yy0.s, yymsp[0].minor.yy42.a);
              }
 #line 1410 "vm/parser.c.inc"
         break;
@@ -1420,12 +1420,12 @@ static void yy_reduce(
         break;
       case 30: /* arg ::= ID CAST np_recv */
 #line 84 "vm/parser.lm"
-{ S->def_arg_cast(yymsp[-2].minor.yy0.s, yymsp[0].minor.yy144.a); }
+{ S->def_arg_cast(yymsp[-2].minor.yy0.s, yymsp[0].minor.yy42.a); }
 #line 1425 "vm/parser.c.inc"
         break;
       case 33: /* opt_arg ::= ID EQUAL np_recv */
 #line 89 "vm/parser.lm"
-{ S->def_opt_arg(yymsp[-2].minor.yy0.s, yymsp[0].minor.yy144.a); }
+{ S->def_opt_arg(yymsp[-2].minor.yy0.s, yymsp[0].minor.yy42.a); }
 #line 1430 "vm/parser.c.inc"
         break;
       case 39: /* def_name ::= ID */
@@ -1435,61 +1435,61 @@ static void yy_reduce(
       case 43: /* def_name ::= OP2 */ yytestcase(yyruleno==43);
       case 44: /* def_name ::= SQUARE */ yytestcase(yyruleno==44);
 #line 98 "vm/parser.lm"
-{ yygotominor.yy144.s = yymsp[0].minor.yy0.s; }
+{ yygotominor.yy42.s = yymsp[0].minor.yy0.s; }
 #line 1440 "vm/parser.c.inc"
         break;
       case 45: /* def ::= def_start def_name def_args fin def_body */
 #line 106 "vm/parser.lm"
 {
-              yygotominor.yy144.a = S->ast_def(yymsp[-3].minor.yy144.s, yymsp[0].minor.yy144.a);
+              yygotominor.yy42.a = S->ast_def(yymsp[-3].minor.yy42.s, yymsp[0].minor.yy42.a);
             }
 #line 1447 "vm/parser.c.inc"
         break;
       case 46: /* def ::= def_start def_name def_args fin END */
 #line 109 "vm/parser.lm"
 {
-              yygotominor.yy144.a = S->ast_def(yymsp[-3].minor.yy144.s, S->ast_nil());
+              yygotominor.yy42.a = S->ast_def(yymsp[-3].minor.yy42.s, S->ast_nil());
             }
 #line 1454 "vm/parser.c.inc"
         break;
       case 47: /* lit ::= NUM */
 #line 113 "vm/parser.lm"
-{ yygotominor.yy144.a = S->number(yymsp[0].minor.yy0.i); }
+{ yygotominor.yy42.a = S->number(yymsp[0].minor.yy0.i); }
 #line 1459 "vm/parser.c.inc"
         break;
       case 48: /* lit ::= NIL */
 #line 114 "vm/parser.lm"
-{ yygotominor.yy144.a = S->ast_nil();  }
+{ yygotominor.yy42.a = S->ast_nil();  }
 #line 1464 "vm/parser.c.inc"
         break;
       case 49: /* lit ::= TRUE */
 #line 115 "vm/parser.lm"
-{ yygotominor.yy144.a = S->ast_true();  }
+{ yygotominor.yy42.a = S->ast_true();  }
 #line 1469 "vm/parser.c.inc"
         break;
       case 50: /* lit ::= FALSE */
 #line 116 "vm/parser.lm"
-{ yygotominor.yy144.a = S->ast_false(); }
+{ yygotominor.yy42.a = S->ast_false(); }
 #line 1474 "vm/parser.c.inc"
         break;
       case 51: /* lit ::= SELF */
 #line 117 "vm/parser.lm"
-{ yygotominor.yy144.a = S->self(); }
+{ yygotominor.yy42.a = S->self(); }
 #line 1479 "vm/parser.c.inc"
         break;
       case 52: /* lit ::= ID */
 #line 118 "vm/parser.lm"
-{ yygotominor.yy144.a = S->named(yymsp[0].minor.yy0.s); }
+{ yygotominor.yy42.a = S->named(yymsp[0].minor.yy0.s); }
 #line 1484 "vm/parser.c.inc"
         break;
       case 53: /* lit ::= IVAR */
 #line 119 "vm/parser.lm"
-{ yygotominor.yy144.a = S->ivar_read(yymsp[0].minor.yy0.s); }
+{ yygotominor.yy42.a = S->ivar_read(yymsp[0].minor.yy0.s); }
 #line 1489 "vm/parser.c.inc"
         break;
       case 54: /* lit ::= LITSTR */
 #line 120 "vm/parser.lm"
-{ yygotominor.yy144.a = S->lit_str(yymsp[0].minor.yy0.s); }
+{ yygotominor.yy42.a = S->lit_str(yymsp[0].minor.yy0.s); }
 #line 1494 "vm/parser.c.inc"
         break;
       case 56: /* np_arg ::= np_arg OP0 np_arg */
@@ -1502,7 +1502,7 @@ static void yy_reduce(
       case 119: /* s2 ::= np_recv PIPE np_arg */ yytestcase(yyruleno==119);
       case 121: /* s2 ::= np_recv OP2 np_arg */ yytestcase(yyruleno==121);
 #line 125 "vm/parser.lm"
-{ yygotominor.yy144.a = S->ast_binop(yymsp[-1].minor.yy0.s, yymsp[-2].minor.yy144.a, yymsp[0].minor.yy144.a); }
+{ yygotominor.yy42.a = S->ast_binop(yymsp[-1].minor.yy0.s, yymsp[-2].minor.yy42.a, yymsp[0].minor.yy42.a); }
 #line 1507 "vm/parser.c.inc"
         break;
       case 57: /* np_arg ::= np_arg OP0 LP s2 RP */
@@ -1515,113 +1515,113 @@ static void yy_reduce(
       case 120: /* s2 ::= np_recv PIPE LP s2 RP */ yytestcase(yyruleno==120);
       case 122: /* s2 ::= np_recv OP2 LP s2 RP */ yytestcase(yyruleno==122);
 #line 127 "vm/parser.lm"
-{ yygotominor.yy144.a = S->ast_binop(yymsp[-3].minor.yy0.s, yymsp[-4].minor.yy144.a, yymsp[-1].minor.yy144.a); }
+{ yygotominor.yy42.a = S->ast_binop(yymsp[-3].minor.yy0.s, yymsp[-4].minor.yy42.a, yymsp[-1].minor.yy42.a); }
 #line 1520 "vm/parser.c.inc"
         break;
       case 64: /* np_arg ::= np_arg OP2 np_arg */
 #line 145 "vm/parser.lm"
-{ yygotominor.yy144.a = S->ast_binop(yymsp[-1].minor.yy0.cs, yymsp[-2].minor.yy144.a, yymsp[0].minor.yy144.a); }
+{ yygotominor.yy42.a = S->ast_binop(yymsp[-1].minor.yy0.cs, yymsp[-2].minor.yy42.a, yymsp[0].minor.yy42.a); }
 #line 1525 "vm/parser.c.inc"
         break;
       case 65: /* np_arg ::= np_arg OP2 LP s2 RP */
 #line 147 "vm/parser.lm"
-{ yygotominor.yy144.a = S->ast_binop(yymsp[-3].minor.yy0.cs, yymsp[-4].minor.yy144.a, yymsp[-1].minor.yy144.a); }
+{ yygotominor.yy42.a = S->ast_binop(yymsp[-3].minor.yy0.cs, yymsp[-4].minor.yy42.a, yymsp[-1].minor.yy42.a); }
 #line 1530 "vm/parser.c.inc"
         break;
       case 66: /* np_arg ::= np_arg CAST np_arg */
       case 112: /* s2 ::= np_recv CAST np_arg */ yytestcase(yyruleno==112);
 #line 150 "vm/parser.lm"
-{ yygotominor.yy144.a = S->cast(yymsp[-2].minor.yy144.a, yymsp[0].minor.yy144.a); }
+{ yygotominor.yy42.a = S->cast(yymsp[-2].minor.yy42.a, yymsp[0].minor.yy42.a); }
 #line 1536 "vm/parser.c.inc"
         break;
       case 67: /* np_arg ::= np_arg NEQUAL np_arg */
       case 123: /* s2 ::= np_recv NEQUAL np_arg */ yytestcase(yyruleno==123);
 #line 152 "vm/parser.lm"
-{ yygotominor.yy144.a = S->not_(S->ast_binop("==", yymsp[-2].minor.yy144.a, yymsp[0].minor.yy144.a)); }
+{ yygotominor.yy42.a = S->not_(S->ast_binop("==", yymsp[-2].minor.yy42.a, yymsp[0].minor.yy42.a)); }
 #line 1542 "vm/parser.c.inc"
         break;
       case 68: /* np_arg ::= np_arg DOT */
       case 96: /* np_recv ::= np_recv DOT */ yytestcase(yyruleno==96);
 #line 153 "vm/parser.lm"
-{ yygotominor.yy144.a = S->call(yymsp[-1].minor.yy144.a, yymsp[0].minor.yy0.s); }
+{ yygotominor.yy42.a = S->call(yymsp[-1].minor.yy42.a, yymsp[0].minor.yy0.s); }
 #line 1548 "vm/parser.c.inc"
         break;
       case 69: /* np_arg ::= np_arg DOT LP RP */
       case 97: /* np_recv ::= np_recv DOT LP RP */ yytestcase(yyruleno==97);
 #line 154 "vm/parser.lm"
-{ yygotominor.yy144.a = S->call(yymsp[-3].minor.yy144.a, yymsp[-2].minor.yy0.s); }
+{ yygotominor.yy42.a = S->call(yymsp[-3].minor.yy42.a, yymsp[-2].minor.yy0.s); }
 #line 1554 "vm/parser.c.inc"
         break;
       case 70: /* np_arg ::= np_arg DOT LP np_arg_list RP */
       case 98: /* np_recv ::= np_recv DOT LP np_arg_list RP */ yytestcase(yyruleno==98);
 #line 156 "vm/parser.lm"
-{ yygotominor.yy144.a = S->call_args(yymsp[-4].minor.yy144.a, yymsp[-3].minor.yy0.s); }
+{ yygotominor.yy42.a = S->call_args(yymsp[-4].minor.yy42.a, yymsp[-3].minor.yy0.s); }
 #line 1560 "vm/parser.c.inc"
         break;
       case 71: /* np_arg ::= ID LP RP */
       case 94: /* np_recv ::= ID LP RP */ yytestcase(yyruleno==94);
 #line 157 "vm/parser.lm"
-{ yygotominor.yy144.a = S->self_call(yymsp[-2].minor.yy0.s); }
+{ yygotominor.yy42.a = S->self_call(yymsp[-2].minor.yy0.s); }
 #line 1566 "vm/parser.c.inc"
         break;
       case 72: /* np_arg ::= ID LP np_arg_list RP */
       case 95: /* np_recv ::= ID LP np_arg_list RP */ yytestcase(yyruleno==95);
 #line 159 "vm/parser.lm"
-{ yygotominor.yy144.a = S->self_call_args(yymsp[-3].minor.yy0.s); }
+{ yygotominor.yy42.a = S->self_call_args(yymsp[-3].minor.yy0.s); }
 #line 1572 "vm/parser.c.inc"
         break;
       case 73: /* np_arg ::= np_arg DCOLON ID */
       case 99: /* np_recv ::= np_recv DCOLON ID */ yytestcase(yyruleno==99);
 #line 160 "vm/parser.lm"
-{ yygotominor.yy144.a = S->dcolon(yymsp[-2].minor.yy144.a, yymsp[-1].minor.yy0.s, yymsp[0].minor.yy0.s); }
+{ yygotominor.yy42.a = S->dcolon(yymsp[-2].minor.yy42.a, yymsp[-1].minor.yy0.s, yymsp[0].minor.yy0.s); }
 #line 1578 "vm/parser.c.inc"
         break;
       case 74: /* np_arg ::= np_arg DOT_DOLLAR lit */
       case 100: /* np_recv ::= np_recv DOT_DOLLAR lit */ yytestcase(yyruleno==100);
 #line 163 "vm/parser.lm"
-{ yygotominor.yy144.a = S->send_indirect(yymsp[-2].minor.yy144.a, yymsp[0].minor.yy144.a); }
+{ yygotominor.yy42.a = S->send_indirect(yymsp[-2].minor.yy42.a, yymsp[0].minor.yy42.a); }
 #line 1584 "vm/parser.c.inc"
         break;
       case 75: /* np_arg ::= np_arg DOT_DOLLAR lit LP RP */
       case 101: /* np_recv ::= np_recv DOT_DOLLAR lit LP RP */ yytestcase(yyruleno==101);
 #line 165 "vm/parser.lm"
-{ yygotominor.yy144.a = S->send_indirect(yymsp[-4].minor.yy144.a, yymsp[-2].minor.yy144.a); }
+{ yygotominor.yy42.a = S->send_indirect(yymsp[-4].minor.yy42.a, yymsp[-2].minor.yy42.a); }
 #line 1590 "vm/parser.c.inc"
         break;
       case 76: /* np_arg ::= np_arg DOT_DOLLAR lit LP np_arg_list RP */
       case 102: /* np_recv ::= np_recv DOT_DOLLAR lit LP np_arg_list RP */ yytestcase(yyruleno==102);
 #line 167 "vm/parser.lm"
-{ yygotominor.yy144.a = S->send_indirect_args(yymsp[-5].minor.yy144.a, yymsp[-3].minor.yy144.a); }
+{ yygotominor.yy42.a = S->send_indirect_args(yymsp[-5].minor.yy42.a, yymsp[-3].minor.yy42.a); }
 #line 1596 "vm/parser.c.inc"
         break;
       case 77: /* np_arg ::= NOT np_arg */
       case 125: /* s2 ::= NOT s2 */ yytestcase(yyruleno==125);
 #line 168 "vm/parser.lm"
-{ yygotominor.yy144.a = S->not_(yymsp[0].minor.yy144.a); }
+{ yygotominor.yy42.a = S->not_(yymsp[0].minor.yy42.a); }
 #line 1602 "vm/parser.c.inc"
         break;
       case 79: /* np_arg ::= np_arg LSB np_arg_list RSB */
       case 107: /* np_recv ::= np_recv LSB np_arg_list RSB */ yytestcase(yyruleno==107);
 #line 171 "vm/parser.lm"
-{ yygotominor.yy144.a = S->call_args(yymsp[-3].minor.yy144.a, "[]"); }
+{ yygotominor.yy42.a = S->call_args(yymsp[-3].minor.yy42.a, "[]"); }
 #line 1608 "vm/parser.c.inc"
         break;
       case 80: /* np_arg ::= TUPLE_START np_arg_list RP */
       case 104: /* np_recv ::= TUPLE_START np_arg_list RP */ yytestcase(yyruleno==104);
 #line 173 "vm/parser.lm"
-{ yygotominor.yy144.a = S->tuple(); }
+{ yygotominor.yy42.a = S->tuple(); }
 #line 1614 "vm/parser.c.inc"
         break;
       case 81: /* np_arg ::= LIST np_arg_list RSB */
       case 105: /* np_recv ::= LIST np_arg_list RSB */ yytestcase(yyruleno==105);
 #line 174 "vm/parser.lm"
-{ yygotominor.yy144.a = S->list(); }
+{ yygotominor.yy42.a = S->list(); }
 #line 1620 "vm/parser.c.inc"
         break;
       case 82: /* np_arg ::= DICT_START np_arg_list RB */
       case 106: /* np_recv ::= DICT_START np_arg_list RB */ yytestcase(yyruleno==106);
 #line 175 "vm/parser.lm"
-{ yygotominor.yy144.a = S->dict(); }
+{ yygotominor.yy42.a = S->dict(); }
 #line 1626 "vm/parser.c.inc"
         break;
       case 83: /* np_arg_list_start ::= */
@@ -1632,32 +1632,32 @@ static void yy_reduce(
       case 84: /* np_arg_list_elems ::= np_arg_list_elems comma np_arg */
       case 85: /* np_arg_list_elems ::= np_arg */ yytestcase(yyruleno==85);
 #line 178 "vm/parser.lm"
-{ S->add_arg(yymsp[0].minor.yy144.a); }
+{ S->add_arg(yymsp[0].minor.yy42.a); }
 #line 1637 "vm/parser.c.inc"
         break;
       case 86: /* np_kw_arg ::= ID EQUAL np_arg */
 #line 181 "vm/parser.lm"
-{ S->add_kw_arg(yymsp[-2].minor.yy0.s, yymsp[0].minor.yy144.a); }
+{ S->add_kw_arg(yymsp[-2].minor.yy0.s, yymsp[0].minor.yy42.a); }
 #line 1642 "vm/parser.c.inc"
         break;
       case 109: /* s2 ::= np_recv DOT np_arg_list */
 #line 213 "vm/parser.lm"
-{ yygotominor.yy144.a = S->call_args(yymsp[-2].minor.yy144.a, yymsp[-1].minor.yy0.s); }
+{ yygotominor.yy42.a = S->call_args(yymsp[-2].minor.yy42.a, yymsp[-1].minor.yy0.s); }
 #line 1647 "vm/parser.c.inc"
         break;
       case 110: /* s2 ::= np_recv DOT_DOLLAR lit np_arg_list */
 #line 215 "vm/parser.lm"
-{ yygotominor.yy144.a = S->send_indirect_args(yymsp[-3].minor.yy144.a, yymsp[-1].minor.yy144.a); }
+{ yygotominor.yy42.a = S->send_indirect_args(yymsp[-3].minor.yy42.a, yymsp[-1].minor.yy42.a); }
 #line 1652 "vm/parser.c.inc"
         break;
       case 111: /* s2 ::= ID np_arg_list */
 #line 216 "vm/parser.lm"
-{ yygotominor.yy144.a = S->self_call_args(yymsp[-1].minor.yy0.s); }
+{ yygotominor.yy42.a = S->self_call_args(yymsp[-1].minor.yy0.s); }
 #line 1657 "vm/parser.c.inc"
         break;
       case 126: /* s2 ::= np_recv AND np_arg */
 #line 232 "vm/parser.lm"
-{ yygotominor.yy144.a = S->and_(yymsp[-2].minor.yy144.a, yymsp[0].minor.yy144.a); }
+{ yygotominor.yy42.a = S->and_(yymsp[-2].minor.yy42.a, yymsp[0].minor.yy42.a); }
 #line 1662 "vm/parser.c.inc"
         break;
       case 128: /* lambda_start ::= LB */
@@ -1672,100 +1672,100 @@ static void yy_reduce(
         break;
       case 131: /* lambda ::= lambda_start lambda_args opt_fin delim_seq RB */
 #line 243 "vm/parser.lm"
-{ yygotominor.yy144.a = S->lambda(yymsp[-1].minor.yy144.a); }
+{ yygotominor.yy42.a = S->lambda(yymsp[-1].minor.yy42.a); }
 #line 1677 "vm/parser.c.inc"
         break;
       case 132: /* stmt ::= IF s2 fin seq fin END */
 #line 247 "vm/parser.lm"
-{ yygotominor.yy144.a = S->if_cond(yymsp[-4].minor.yy144.a, yymsp[-2].minor.yy144.a); }
+{ yygotominor.yy42.a = S->if_cond(yymsp[-4].minor.yy42.a, yymsp[-2].minor.yy42.a); }
 #line 1682 "vm/parser.c.inc"
         break;
       case 133: /* stmt ::= IF s2 fin seq fin ELSE fin seq fin END */
 #line 249 "vm/parser.lm"
-{ yygotominor.yy144.a = S->if_else(yymsp[-8].minor.yy144.a, yymsp[-6].minor.yy144.a, yymsp[-2].minor.yy144.a); }
+{ yygotominor.yy42.a = S->if_else(yymsp[-8].minor.yy42.a, yymsp[-6].minor.yy42.a, yymsp[-2].minor.yy42.a); }
 #line 1687 "vm/parser.c.inc"
         break;
       case 134: /* stmt ::= s2 IF s2 */
 #line 251 "vm/parser.lm"
-{ yygotominor.yy144.a = S->if_cond(yymsp[0].minor.yy144.a, yymsp[-2].minor.yy144.a); }
+{ yygotominor.yy42.a = S->if_cond(yymsp[0].minor.yy42.a, yymsp[-2].minor.yy42.a); }
 #line 1692 "vm/parser.c.inc"
         break;
       case 135: /* stmt ::= RETURN s2 IF s2 */
 #line 252 "vm/parser.lm"
-{ yygotominor.yy144.a = S->if_cond(yymsp[0].minor.yy144.a, S->ret(yymsp[-2].minor.yy144.a)); }
+{ yygotominor.yy42.a = S->if_cond(yymsp[0].minor.yy42.a, S->ret(yymsp[-2].minor.yy42.a)); }
 #line 1697 "vm/parser.c.inc"
         break;
       case 136: /* stmt ::= RAISE s2 IF s2 */
 #line 253 "vm/parser.lm"
-{ yygotominor.yy144.a = S->if_cond(yymsp[0].minor.yy144.a, S->raise(yymsp[-2].minor.yy144.a)); }
+{ yygotominor.yy42.a = S->if_cond(yymsp[0].minor.yy42.a, S->raise(yymsp[-2].minor.yy42.a)); }
 #line 1702 "vm/parser.c.inc"
         break;
       case 137: /* stmt ::= UNLESS s2 fin seq fin END */
 #line 254 "vm/parser.lm"
-{ yygotominor.yy144.a = S->unless(yymsp[-4].minor.yy144.a, yymsp[-2].minor.yy144.a); }
+{ yygotominor.yy42.a = S->unless(yymsp[-4].minor.yy42.a, yymsp[-2].minor.yy42.a); }
 #line 1707 "vm/parser.c.inc"
         break;
       case 138: /* stmt ::= WHILE s2 fin seq fin END */
 #line 255 "vm/parser.lm"
-{ yygotominor.yy144.a = S->while_(yymsp[-4].minor.yy144.a, yymsp[-2].minor.yy144.a); }
+{ yygotominor.yy42.a = S->while_(yymsp[-4].minor.yy42.a, yymsp[-2].minor.yy42.a); }
 #line 1712 "vm/parser.c.inc"
         break;
       case 139: /* stmt ::= IMPORT DOT_NAME */
 #line 259 "vm/parser.lm"
-{ yygotominor.yy144.a = S->import(yymsp[0].minor.yy0.s); }
+{ yygotominor.yy42.a = S->import(yymsp[0].minor.yy0.s); }
 #line 1717 "vm/parser.c.inc"
         break;
       case 140: /* stmt ::= IMPORT DOT_NAME AS ID */
 #line 260 "vm/parser.lm"
-{ yygotominor.yy144.a = S->import(yymsp[-2].minor.yy0.s, yymsp[0].minor.yy0.s); }
+{ yygotominor.yy42.a = S->import(yymsp[-2].minor.yy0.s, yymsp[0].minor.yy0.s); }
 #line 1722 "vm/parser.c.inc"
         break;
       case 141: /* stmt ::= TRY fin seq fin RESCUE fin seq fin END */
 #line 262 "vm/parser.lm"
 {
-              yygotominor.yy144.a = S->ast_try(yymsp[-6].minor.yy144.a, yymsp[-2].minor.yy144.a);
+              yygotominor.yy42.a = S->ast_try(yymsp[-6].minor.yy42.a, yymsp[-2].minor.yy42.a);
             }
 #line 1729 "vm/parser.c.inc"
         break;
       case 142: /* stmt ::= TRY fin seq fin RESCUE ID CAST s2 fin seq fin END */
 #line 266 "vm/parser.lm"
 {
-              yygotominor.yy144.a = S->ast_try(yymsp[-9].minor.yy144.a, yymsp[-6].minor.yy0.s, yymsp[-4].minor.yy144.a, yymsp[-2].minor.yy144.a);
+              yygotominor.yy42.a = S->ast_try(yymsp[-9].minor.yy42.a, yymsp[-6].minor.yy0.s, yymsp[-4].minor.yy42.a, yymsp[-2].minor.yy42.a);
             }
 #line 1736 "vm/parser.c.inc"
         break;
       case 143: /* stmt ::= ID EQUAL s2 */
 #line 270 "vm/parser.lm"
-{ yygotominor.yy144.a = S->assign(yymsp[-2].minor.yy0.s, yymsp[0].minor.yy144.a); }
+{ yygotominor.yy42.a = S->assign(yymsp[-2].minor.yy0.s, yymsp[0].minor.yy42.a); }
 #line 1741 "vm/parser.c.inc"
         break;
       case 144: /* stmt ::= ID OP2_SET s2 */
       case 145: /* stmt ::= ID OP1_SET s2 */ yytestcase(yyruleno==145);
       case 146: /* stmt ::= ID OP0_SET s2 */ yytestcase(yyruleno==146);
 #line 271 "vm/parser.lm"
-{ yygotominor.yy144.a = S->assign_op(yymsp[-2].minor.yy0.s, yymsp[-1].minor.yy0.s, yymsp[0].minor.yy144.a); }
+{ yygotominor.yy42.a = S->assign_op(yymsp[-2].minor.yy0.s, yymsp[-1].minor.yy0.s, yymsp[0].minor.yy42.a); }
 #line 1748 "vm/parser.c.inc"
         break;
       case 147: /* stmt ::= IVAR EQUAL s2 */
 #line 274 "vm/parser.lm"
-{ yygotominor.yy144.a = S->ivar_assign(yymsp[-2].minor.yy0.s, yymsp[0].minor.yy144.a); }
+{ yygotominor.yy42.a = S->ivar_assign(yymsp[-2].minor.yy0.s, yymsp[0].minor.yy42.a); }
 #line 1753 "vm/parser.c.inc"
         break;
       case 148: /* stmt ::= IVAR OP2_SET s2 */
       case 149: /* stmt ::= IVAR OP1_SET s2 */ yytestcase(yyruleno==149);
       case 150: /* stmt ::= IVAR OP0_SET s2 */ yytestcase(yyruleno==150);
 #line 276 "vm/parser.lm"
-{ yygotominor.yy144.a = S->ivar_assign_op(yymsp[-2].minor.yy0.s, yymsp[-1].minor.yy0.s, yymsp[0].minor.yy144.a); }
+{ yygotominor.yy42.a = S->ivar_assign_op(yymsp[-2].minor.yy0.s, yymsp[-1].minor.yy0.s, yymsp[0].minor.yy42.a); }
 #line 1760 "vm/parser.c.inc"
         break;
       case 151: /* stmt ::= RAISE s2 */
 #line 281 "vm/parser.lm"
-{ yygotominor.yy144.a = S->raise(yymsp[0].minor.yy144.a); }
+{ yygotominor.yy42.a = S->raise(yymsp[0].minor.yy42.a); }
 #line 1765 "vm/parser.c.inc"
         break;
       case 152: /* stmt ::= RETURN s2 */
 #line 282 "vm/parser.lm"
-{ yygotominor.yy144.a = S->ret(yymsp[0].minor.yy144.a); }
+{ yygotominor.yy42.a = S->ret(yymsp[0].minor.yy42.a); }
 #line 1770 "vm/parser.c.inc"
         break;
       default:
@@ -1829,7 +1829,7 @@ static void yy_reduce(
 static void yy_parse_failed(
   yyParser *yypParser           /* The parser */
 ){
-  mariusParserARG_FETCH;
+  r5ParserARG_FETCH;
 #ifndef NDEBUG
   if( yyTraceFILE ){
     fprintf(yyTraceFILE,"%sFail!\n",yyTracePrompt);
@@ -1838,7 +1838,7 @@ static void yy_parse_failed(
   while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
   /* Here code is inserted which will be executed whenever the
   ** parser fails */
-  mariusParserARG_STORE; /* Suppress warning about unused %extra_argument variable */
+  r5ParserARG_STORE; /* Suppress warning about unused %extra_argument variable */
 }
 #endif /* YYNOERRORRECOVERY */
 
@@ -1850,7 +1850,7 @@ static void yy_syntax_error(
   int yymajor,                   /* The major type of the error token */
   YYMINORTYPE yyminor            /* The minor type of the error token */
 ){
-  mariusParserARG_FETCH;
+  r5ParserARG_FETCH;
 #define TOKEN (yyminor.yy0)
 #line 25 "vm/parser.lm"
 
@@ -1859,7 +1859,7 @@ static void yy_syntax_error(
   std::cout << "Syntax error at line " << S->line()
             << ", column " << S->column() << std::endl;
 #line 1862 "vm/parser.c.inc"
-  mariusParserARG_STORE; /* Suppress warning about unused %extra_argument variable */
+  r5ParserARG_STORE; /* Suppress warning about unused %extra_argument variable */
 }
 
 /*
@@ -1868,7 +1868,7 @@ static void yy_syntax_error(
 static void yy_accept(
   yyParser *yypParser           /* The parser */
 ){
-  mariusParserARG_FETCH;
+  r5ParserARG_FETCH;
 #ifndef NDEBUG
   if( yyTraceFILE ){
     fprintf(yyTraceFILE,"%sAccept!\n",yyTracePrompt);
@@ -1877,12 +1877,12 @@ static void yy_accept(
   while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
   /* Here code is inserted which will be executed whenever the
   ** parser accepts */
-  mariusParserARG_STORE; /* Suppress warning about unused %extra_argument variable */
+  r5ParserARG_STORE; /* Suppress warning about unused %extra_argument variable */
 }
 
 /* The main parser program.
 ** The first argument is a pointer to a structure obtained from
-** "mariusParserAlloc" which describes the current state of the parser.
+** "r5ParserAlloc" which describes the current state of the parser.
 ** The second argument is the major token number.  The third is
 ** the minor token.  The fourth optional argument is whatever the
 ** user wants (and specified in the grammar) and is available for
@@ -1899,11 +1899,11 @@ static void yy_accept(
 ** Outputs:
 ** None.
 */
-void mariusParser(
+void r5Parser(
   void *yyp,                   /* The parser */
   int yymajor,                 /* The major token code number */
-  mariusParserTOKENTYPE yyminor       /* The value for the token */
-  mariusParserARG_PDECL               /* Optional %extra_argument parameter */
+  r5ParserTOKENTYPE yyminor       /* The value for the token */
+  r5ParserARG_PDECL               /* Optional %extra_argument parameter */
 ){
   YYMINORTYPE yyminorunion;
   int yyact;            /* The parser action. */
@@ -1931,7 +1931,7 @@ void mariusParser(
   }
   yyminorunion.yy0 = yyminor;
   yyendofinput = (yymajor==0);
-  mariusParserARG_STORE;
+  r5ParserARG_STORE;
 
 #ifndef NDEBUG
   if( yyTraceFILE ){

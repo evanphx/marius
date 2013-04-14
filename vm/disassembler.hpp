@@ -3,7 +3,7 @@
 
 #include "code.hpp"
 
-namespace marius {
+namespace r5 {
   class Code;
 
   class Disassembler {

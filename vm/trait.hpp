@@ -6,7 +6,7 @@
 #include "method_table.hpp"
 #include "state.hpp"
 
-namespace marius {
+namespace r5 {
   class String;
 
   class Trait : public GCAllocated, public Attributes {

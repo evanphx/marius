@@ -7,7 +7,7 @@
 
 #include "gc_allocated.hpp"
 
-namespace marius {
+namespace r5 {
   class String;
   class State;
   class GCImpl;
