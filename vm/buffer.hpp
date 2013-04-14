@@ -87,7 +87,8 @@ namespace marius {
     }
 
     char* copy_out() {
-      return strndup((const char*)buf, len);
+      buf[len] = 0;
+      return strdup((const char*)buf);
     }
   };
 }
