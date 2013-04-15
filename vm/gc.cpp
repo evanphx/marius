@@ -49,6 +49,7 @@ namespace r5 {
 
     const static int cMarkMask = 0x3;
     const static int cForwardedFlag = 0x4;
+    const static int cPinnedFlag = 0x8;
 
     void mark(int val) {
       flags &= ~cMarkMask;
@@ -70,6 +71,14 @@ namespace r5 {
     void set_forward(OOP val) {
       forwarded = val;
       flags |= cForwardedFlag;
+    }
+
+    void pin() {
+      flags |= cPinnedFlag;
+    }
+
+    bool pinned_p() {
+      return (flags & cPinnedFlag);
     }
   };
 
@@ -134,9 +143,6 @@ namespace r5 {
 
       GCInfo* info = GCInfo::of(addr);
 
-      memory::Address to_addr = object_address(to);
-
-      printf("Moved %p to %p\n", addr.ptr(), to_addr.ptr());
       info->set_forward(to);
     }
 
@@ -154,7 +160,7 @@ namespace r5 {
     }
 
     bool pinned(memory::Address addr) {
-      return false;
+      return GCInfo::of(addr)->pinned_p();
     }
 
     memory::Address object_address(OOP val) {
@@ -573,6 +579,10 @@ namespace r5 {
     new(addr) GCInfo(bytes);
 
     return addr + sizeof(GCInfo);
+  }
+
+  void GC::pin(memory::Address addr) {
+    GCInfo::of(addr)->pin();
   }
 
   void GC::collect(State& S) {

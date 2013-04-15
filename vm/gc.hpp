@@ -13,6 +13,7 @@ namespace r5 {
   public:
     GC();
     memory::Address allocate(unsigned bytes);
+    void pin(memory::Address);
     void collect(State& S);
 
     bool gc_soon();

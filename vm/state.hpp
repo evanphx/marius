@@ -67,6 +67,10 @@ namespace r5 {
       return gc_.allocate(size);
     }
 
+    void pin(void* ptr) {
+      gc_.pin(ptr);
+    }
+
     void check();
   };
 }

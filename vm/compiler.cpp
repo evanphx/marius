@@ -151,6 +151,7 @@ namespace r5 {
     int out_ip = 0;
 
     Instruction* out = new(S) Instruction[size];
+    S.pin(out);
 
     bool skip_next = false;
 
