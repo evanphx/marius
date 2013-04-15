@@ -299,6 +299,12 @@ namespace r5 {
           mark_spec(&c->name_);
           mark_ltuple(&c->strings_);
           mark_ltuple(&c->codes_);
+          mark_ltuple(&c->args_);
+
+          mark_raw(&c->keywords_);
+          for(unsigned i = 0; i < c->keywords_->size_; i++) {
+            mark_ltuple(c->keywords_->elems_ + i);
+          }
         }
         return;
       case OOP::eClosure:
