@@ -30,7 +30,7 @@ namespace ast {
 
   Code* State::to_code(String* name, ArgMap& args, int req, int cov, bool ret) {
     size_t sz = buffer.size();
-    Instruction* seq = new Instruction[sz];
+    Instruction* seq = new(MS) Instruction[sz];
 
     for(size_t i = 0; i < sz; i++) {
       seq[i] = buffer[i];

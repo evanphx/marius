@@ -297,6 +297,7 @@ namespace r5 {
         {
           Code* c = obj.code_;
           mark_spec(&c->name_);
+          mark_raw(&c->code_);
           mark_ltuple(&c->strings_);
           mark_ltuple(&c->codes_);
           mark_ltuple(&c->args_);

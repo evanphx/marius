@@ -210,7 +210,7 @@ namespace r5 {
 
     int size = ser->instructions_size();
 
-    Instruction* insn = new Instruction[size];
+    Instruction* insn = new(S) Instruction[size];
 
     for(int i = 0; i < size; i++) {
       insn[i] = ser->instructions(i);

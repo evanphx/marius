@@ -143,14 +143,14 @@ namespace r5 {
     }
   }
 
-  void Compiler::optimize() {
+  void Compiler::optimize(State& S) {
     int size = code_->size();
     Instruction* insns = code_->code();
 
     int ip = 0;
     int out_ip = 0;
 
-    Instruction* out = new Instruction[size];
+    Instruction* out = new(S) Instruction[size];
 
     bool skip_next = false;
 

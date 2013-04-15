@@ -3,17 +3,6 @@
 
 namespace r5 {
 
-  Instruction* ParserState::sequence() {
-    size_t sz = context_->buffer.size();
-    Instruction* seq = new Instruction[sz];
-
-    for(size_t i = 0; i < sz; i++) {
-      seq[i] = context_->buffer[i];
-    }
-
-    return seq;
-  }
-
   void ParserState::set_top(ast::Node* b) {
     ast::Argument* a = new ast::Argument(String::internalize(S, "self"), -1);
 

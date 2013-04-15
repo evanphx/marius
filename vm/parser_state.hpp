@@ -77,8 +77,6 @@ namespace r5 {
 
     void set_top(ast::Node* n);
 
-    Instruction* sequence();
-
     int sequence_size() {
       return context_->buffer.size();
     }

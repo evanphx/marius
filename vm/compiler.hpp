@@ -22,7 +22,7 @@ namespace r5 {
     }
 
     bool compile(State& S, FILE* f);
-    void optimize();
+    void optimize(State& S);
   };
 }
 
