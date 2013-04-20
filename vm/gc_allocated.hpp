@@ -2,6 +2,7 @@
 #define GC_ALLOCATED_HPP
 
 #include <stddef.h>
+#include "util/address.hpp"
 
 namespace r5 {
   class State;
@@ -11,6 +12,10 @@ namespace r5 {
 
   public:
     void* operator new(size_t size, State& S);
+
+    inline void* operator new(size_t size, memory::Address addr) {
+      return addr.ptr();
+    }
   };
 }
 

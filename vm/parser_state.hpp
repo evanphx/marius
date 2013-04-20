@@ -158,6 +158,7 @@ namespace r5 {
     ast::Node* send_indirect_args(ast::Node* recv, ast::Node* n);
 
     ast::Node* call(ast::Node* recv, String* id);
+    ast::Node* call_attr(ast::Node* recv, String* id);
     ast::Node* self_call(String* id);
     ast::Node* attr(ast::Node* recv, String* id);
 

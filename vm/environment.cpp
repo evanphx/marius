@@ -14,6 +14,7 @@
 #include "trait.hpp"
 #include "exception.hpp"
 #include "compiler.hpp"
+#include "arguments.hpp"
 
 #include <iostream>
 #include <stdio.h>
@@ -52,15 +53,11 @@ namespace r5 {
 
     if(obj->type() == OOP::eInteger) return obj;
 
-    Method* meth = obj->find_method(String::internalize(S, "to_s"));
-    check(meth);
+    Handle ret = args.setup(obj).apply(String::internalize(S, "to_s"));
 
-    Arguments out_args(S, 0, S.last_fp);
-    OOP ret = meth->run(S, *obj, out_args);
+    check(ret->type() == OOP::eInteger);
 
-    check(ret.type() == OOP::eInteger);
-
-    return handle(S, ret);
+    return ret;
   }
 
   static Handle int_plus(State& S, Handle recv, Arguments& args) {
@@ -129,9 +126,23 @@ namespace r5 {
   }
 
   static Handle new_instance(State& S, Handle recv, Arguments& args) {
+    Arguments na = args.setup(recv);
+
+    Handle hndl = na.apply(String::internalize(S, "allocate"));
+    Handle ret = args.forward(hndl).apply(String::internalize(S, "initialize"));
+
+    if(ret->unwind_p()) return handle(S, ret);
+    return hndl;
+  }
+
+  static Handle alloc_instance(State& S, Handle recv, Arguments& args) {
     Class* cls = recv->as_class();
 
     return handle(S, OOP(new(S) User(S, cls)));
+  }
+
+  static Handle init_instance(State& S, Handle recv, Arguments& args) {
+    return recv;
   }
 
   static Handle class_subclass(State& S, Handle recv, Arguments& args) {
@@ -155,7 +166,9 @@ namespace r5 {
   static Handle run_code(State& S, Handle recv, Arguments& args) {
     Method* m = recv->as_method();
 
-    return handle(S, S.vm().run(S, m, args.frame() + 1, args.count() - 1));
+    Arguments out_args = args.shift();
+
+    return handle(S, S.vm().run(S, m, out_args));
   }
 
   static Handle run_class_body(State& S, Handle recv, Arguments& args) {
@@ -168,7 +181,9 @@ namespace r5 {
                   String::internalize(S, n + "." + cls->name()->c_str()),
                   m->code(), m->closure());
 
-    Handle ret = handle(S, S.vm().run(S, m, args.frame(), 0));
+    Arguments out_args = args.setup(cls);
+
+    Handle ret = handle(S, S.vm().run(S, m, out_args));
 
     if(ret->unwind_p()) return ret;
 
@@ -189,26 +204,24 @@ namespace r5 {
                   String::internalize(S, n + "." + trt->name()->c_str()),
                   m->code(), m->closure());
 
-    return handle(S, S.vm().run(S, m, args.frame(), 0));
+    Arguments out_args = args.setup(recv);
+
+    return handle(S, S.vm().run(S, m, out_args));
   }
 
   static Handle method_call(State& S, Handle recv, Arguments& args) {
     Method* m = recv->as_method();
 
-    OOP* fp = args.frame();
-
-    return handle(S, S.vm().run(S, m, fp, args.count()));
+    return handle(S, S.vm().run(S, m, args));
   }
 
   static Handle io_puts(State& S, Handle recv, Arguments& args) {
-    Handle arg = args[0];
-    puts(String::convert(S, *arg)->c_str());
+    puts(String::convert(S, args, args[0])->c_str());
     return handle(S, OOP::nil());
   }
 
   static Handle io_print(State& S, Handle recv, Arguments& args) {
-    Handle arg = args[0];
-    printf("%s", String::convert(S, *arg)->c_str());
+    printf("%s", String::convert(S, args, args[0])->c_str());
     return handle(S, OOP::nil());
   }
 
@@ -220,14 +233,16 @@ namespace r5 {
     HTuple tup = recv;
     Method* m = args[0]->as_method();
 
-    OOP* fp = args.frame() + 1;
+    OOP* fp = args.rest() + 1;
     fp[-1] = OOP(m);
 
     std::vector<OOP> found;
 
     for(size_t i = 0; i < tup->size(); i++) {
       fp[0] = tup->get(i);
-      OOP t = S.vm().run(S, m, fp, 1);
+
+      Arguments out_args(S, 1, fp);
+      OOP t = S.vm().run(S, m, out_args);
 
       if(t.unwind_p()) {
         return handle(S, t);
@@ -250,12 +265,14 @@ namespace r5 {
     HTuple tup = recv;
     Method* m = args[0]->as_method();
 
-    OOP* fp = args.frame() + 1;
+    OOP* fp = args.rest() + 1;
     fp[-1] = OOP(m);
 
     for(size_t i = 0; i < tup->size(); i++) {
       fp[0] = tup->get(i);
-      OOP t = S.vm().run(S, m, fp, 1);
+      Arguments out_args(S, 1, fp);
+
+      OOP t = S.vm().run(S, m, out_args);
       if(t.unwind_p()) return handle(S, t);
     }
 
@@ -273,9 +290,9 @@ namespace r5 {
     size_t tot = tup->size();
 
     for(size_t i = 0; i < tot; i++) {
-      OOP v = o->get(i);
-      OOP ret = tup->get(i).call(S, String::internalize(S, "=="), &v, 1);
-      if(!ret.true_condition_p()) return handle(S, OOP::false_());
+      Arguments oa = args.setup(tup->get(i), o->get(i));
+      Handle ret = oa.apply(String::internalize(S, "=="));
+      if(!ret->true_condition_p()) return handle(S, OOP::false_());
     }
 
     return handle(S, OOP::true_());
@@ -392,7 +409,8 @@ namespace r5 {
 
     c->add_method(S, "add_method", add_method, 2);
     c->add_method(S, "uses", uses_trait, 1);
-    c->add_method(S, "new", new_instance, 0);
+    c->add_method(S, "allocate", alloc_instance, 0);
+    c->add_method(S, "new", new_instance, -1);
 
     c->add_method(S, "<", class_subclass, 1);
     c->add_method(S, "===", class_tequal, 1);
@@ -402,6 +420,7 @@ namespace r5 {
     trait->add_method(S, "add_method", trait_add_method, 2);
     trait->add_class_method(S, "new", trait_new, 2);
 
+    o->add_method(S, "initialize", init_instance, -1);
     o->add_method(S, "methods", object_methods, 0);
 
     Class* i = new_class(S, "Integer");
@@ -524,11 +543,15 @@ namespace r5 {
 
     Method* mtop = new(S) Method(String::internalize(S, "__init__"),
                                  enum_code, S.env().globals());
-    S.vm().run(S, mtop, fp + 1, 1);
+
+    Arguments args(S, 1, fp + 1);
+    S.vm().run(S, mtop, args);
 
     Trait* enum_ = lookup(S, "Enumerable").as_trait();
 
     tuple->uses_trait(S, enum_);
+
+    init_builtin_extensions(S);
   }
 
   void Environment::import_args(State& S, char** args, int count) {

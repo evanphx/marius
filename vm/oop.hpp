@@ -27,6 +27,7 @@ namespace r5 {
   class List;
   class Trait;
   class LongReturn;
+  class Arguments;
 
   class GCImpl;
 
@@ -276,6 +277,11 @@ namespace r5 {
       return return_;
     }
 
+    User* as_user() {
+      check(type_ == eUser);
+      return user_;
+    }
+
     Attributes* as_attributes();
 
     bool true_condition_p() {
@@ -349,7 +355,6 @@ namespace r5 {
     Method* find_method(String* name);
     OOP set_attribute(State& S, String* name, OOP val);
     OOP attribute(String* name, bool* found=0);
-    OOP call(State& S, String* name, OOP* vals, unsigned count);
 
     void print();
   };

@@ -54,7 +54,7 @@ namespace r5 {
 
     Closure* return_to();
 
-    OOP run(State& S, OOP recv, Arguments& args);
+    OOP run(State& S, Arguments& args);
   };
 }
 

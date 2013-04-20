@@ -11,6 +11,7 @@
 #include "exception.hpp"
 #include "invoke_info.hpp"
 #include "long_return.hpp"
+#include "arguments.hpp"
 
 #include <iostream>
 
@@ -27,10 +28,6 @@ namespace r5 {
     stack_ = new OOP[cInitialStack];
     frames_ = new StackFrame[cInitialStack];
     top_frame_ = frames_ - 1;
-  }
-
-  OOP VM::run(State& S, Method* meth, int arg_count) {
-    return run(S, meth, stack_, arg_count);
   }
 
   struct ExceptionHandler {
@@ -58,7 +55,10 @@ namespace r5 {
     }
   };
 
-  OOP VM::run(State& S, Method* meth, OOP* fp, int arg_count) {
+  OOP VM::run(State& S, Method* meth, Arguments& args) {
+    int arg_count = args.count();
+    OOP* fp = args.frame();
+
     FrameTracker ft(this);
     top_frame_->method = meth;
 
@@ -153,6 +153,13 @@ namespace r5 {
 
 check_unwind:
         if(t.unwind_p()) {
+#ifdef TRACE
+          if(debug_) {
+            int ip = seq - code->code();
+            printf("[%04d] %8s | UNWIND\n", ip, "UNWIND");
+          }
+#endif
+
           if(t.long_return_p()) {
             lr = t.as_long_return();
             if(lr->target() == clos) {
@@ -342,11 +349,9 @@ check_unwind:
                                "Unable to find method '%s'", name->c_str()));
     }
 
-    S.last_fp = fp;
-
     Arguments args(S, argc, fp);
 
-    return meth->run(S, recv, args);
+    return meth->run(S, args);
   }
 
   void VM::reorg_args(OOP* fp, Method* meth, STuple* keywords) {
@@ -394,11 +399,9 @@ check_unwind:
       reorg_args(fp, meth, keywords);
     }
 
-    S.last_fp = fp;
-
     Arguments args(S, argc, fp, keywords);
 
-    return meth->run(S, recv, args);
+    return meth->run(S, args);
   }
 
   OOP VM::load_attr(State& S, String* name, OOP recv, OOP* fp) {

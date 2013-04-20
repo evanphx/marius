@@ -3,6 +3,8 @@
 
 #include "handle_sets.hpp"
 #include "gc.hpp"
+#include "handle.hpp"
+#include "simple_func.hpp"
 
 namespace r5 {
   class Environment;
@@ -20,8 +22,6 @@ namespace r5 {
     HandleSets handle_sets_;
     GC& gc_;
   public:
-
-    OOP* last_fp;
 
     State(VM& vm, Environment& env, Settings& set);
 
@@ -72,6 +72,10 @@ namespace r5 {
     }
 
     void check();
+
+    Handle new_module(const char* name);
+    Handle new_class(Handle mod, const char* name);
+    void add_method(Handle mod, const char* name, SimpleFunc ptr, int arity);
   };
 }
 

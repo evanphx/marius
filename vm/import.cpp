@@ -14,6 +14,7 @@
 #include "dictionary.hpp"
 
 #include "exception.hpp"
+#include "arguments.hpp"
 
 #include <string.h>
 
@@ -96,14 +97,16 @@ namespace r5 {
 
       S.env().modules()->set(S, name, m);
 
-      OOP* fp = args.frame() + 1;
+      OOP* fp = args.rest() + 1;
       fp[0] = m;
 
       Code* code = compiler.code();
 
       Method* top = new(S) Method(name, code, S.env().globals());
 
-      OOP t = S.vm().run(S, top, fp + 1, 1);
+      Arguments out_args(S, 1, fp + 1);
+
+      OOP t = S.vm().run(S, top, out_args);
       if(t.unwind_p()) return handle(S, t);
 
       return handle(S, m);

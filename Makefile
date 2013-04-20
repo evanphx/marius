@@ -1,7 +1,7 @@
 SRC=$(sort $(wildcard vm/*.cpp vm/util/*.cpp))
 OBJ=$(patsubst %.cpp,%.o,$(SRC))
 
-CXXFLAGS := -ggdb -Wall -Ivm
+CXXFLAGS := -std=c++11 -ggdb -Wall -Ivm
 
 LDFLAGS := -lprotobuf
 

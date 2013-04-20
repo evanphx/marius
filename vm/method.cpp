@@ -3,6 +3,7 @@
 #include "state.hpp"
 #include "closure.hpp"
 #include "exception.hpp"
+#include "arguments.hpp"
 
 namespace r5 {
   Method::Method(String* scope, SimpleFunc func, int arity, Closure* closure)
@@ -47,7 +48,7 @@ namespace r5 {
     closure_->set_at_depth(depth, idx, val);
   }
 
-  OOP Method::run(State& S, OOP recv, Arguments& args) {
+  OOP Method::run(State& S, Arguments& args) {
     if(arity_ > 0 && args.count() != arity_) {
       return OOP::make_unwind(
         Exception::create(S, "ArgumentError",
@@ -57,9 +58,9 @@ namespace r5 {
     if(func_) {
       HandleScope scope(S);
 
-      return *func_(S, handle(S, recv), args);
+      return *func_(S, args.self(), args);
     } else if(code_) {
-      return S.vm().run(S, this, args.frame(), args.count());
+      return S.vm().run(S, this, args);
     }
 
     return OOP::nil();

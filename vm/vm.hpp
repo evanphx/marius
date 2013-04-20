@@ -18,6 +18,7 @@ namespace r5 {
   class Method;
   struct StackFrame;
   class FrameTracker;
+  class Arguments;
 
   class VM {
     unsigned stack_size_;
@@ -41,8 +42,8 @@ namespace r5 {
       return stack_;
     }
 
-    OOP run(State& S, Method* meth, int arg_count);
-    OOP run(State& S, Method* meth, OOP* fp, int arg_count);
+    OOP run(State& S, Method* meth, Arguments& args);
+    OOP run(State& S, Method* meth, OOP* fp, Arguments& args);
     OOP run_method(State& S, OOP recv,
                            String* name, int argc, OOP* argv);
 

@@ -6,6 +6,7 @@
 #include "user.hpp"
 #include "method.hpp"
 #include "trait.hpp"
+#include "arguments.hpp"
 
 #include <stdio.h>
 
@@ -32,20 +33,6 @@ namespace r5 {
     } else {
       return klass()->lookup(name);
     }
-  }
-
-  OOP OOP::call(State& S, String* name, OOP* vals, unsigned count) {
-    Method* meth = find_method(name);
-    check(meth);
-
-    OOP* fp = S.last_fp;
-
-    for(unsigned i = 0; i < count; i++) {
-      fp[i] = vals[i];
-    }
-
-    Arguments args(S, count, fp);
-    return meth->run(S, *this, args);
   }
 
   void OOP::print() {
@@ -129,6 +116,8 @@ namespace r5 {
   OOP OOP::set_attribute(State& S, String* name, OOP val) {
     if(Attributes* attrs = as_attributes()) {
       attrs->set_attribute(S, name, val);
+    } else {
+      check(0);
     }
 
     return val;

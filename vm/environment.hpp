@@ -66,6 +66,7 @@ namespace r5 {
     void import_args(State& S, char** args, int count);
     Code* frozen_enumerable(State& S);
 
+    void init_builtin_extensions(State& S);
   };
 }
 

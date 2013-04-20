@@ -3,6 +3,7 @@
 #include "state.hpp"
 #include "class.hpp"
 #include "vm.hpp"
+#include "arguments.hpp"
 
 namespace r5 {
 
@@ -23,12 +24,13 @@ namespace r5 {
       List* l = recv->as_list();
       Method* m = args[0]->as_method();
 
-      OOP* fp = args.frame() + 1;
+      OOP* fp = args.rest() + 1;
       fp[-1] = OOP(m);
 
       for(size_t i = 0; i < l->size(); i++) {
         fp[0] = l->get(i);
-        OOP t = S.vm().run(S, m, fp, 1);
+        Arguments out_args(S, 1, fp);
+        OOP t = S.vm().run(S, m, out_args);
         if(t.unwind_p()) return handle(S, t);
       }
 
@@ -55,9 +57,9 @@ namespace r5 {
       unsigned tot = lst->size();
 
       for(unsigned i = 0; i < tot; i++) {
-        OOP v = o->get(i);
-        OOP ret = lst->get(i).call(S, String::internalize(S, "=="), &v, 1);
-        if(!ret.true_condition_p()) return handle(S, OOP::false_());
+        Arguments oa = args.setup(lst->get(i), o->get(i));
+        Handle ret = oa.apply(String::internalize(S, "=="));
+        if(!ret->true_condition_p()) return handle(S, OOP::false_());
       }
 
       return handle(S, OOP::true_());

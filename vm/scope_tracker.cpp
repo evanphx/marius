@@ -130,7 +130,7 @@ namespace r5 {
     }
 
     void visit(Scope* s) {
-      int regs = 0;
+      int regs = s->arg_objs().size();
       int closed = 0;
 
       for(LocalScope::iterator i = scope_->begin();

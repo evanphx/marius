@@ -14,8 +14,11 @@
 #include "handle.hpp"
 #include "closure.hpp"
 #include "exception.hpp"
+#include "handle_scope.hpp"
 
+#include "arguments.hpp"
 #include "bug.hpp"
+#include "module.hpp"
 
 #include <vector>
 #include <iostream>
@@ -32,6 +35,7 @@ int main(int argc, char** argv) {
   bool check = false;
   bool write_bc = false;
   bool write_bc_as_c = false;
+  bool write_cimple = false;
 
   char** opt = argv + 1;
   char** fin = argv + argc;
@@ -52,6 +56,9 @@ int main(int argc, char** argv) {
       case 'b':
         write_bc = true;
         write_bc_as_c = (s[2] == 'c');
+        break;
+      case 'C':
+        write_cimple = true;
         break;
       case 'I':
         if(s[2]) {
@@ -95,12 +102,45 @@ int main(int argc, char** argv) {
   const char* script = *opt++;
   env.import_args(S, opt, fin - opt); 
 
+  Arguments root_args(S, 0, vm.stack());
+
   OOP ret;
 
   struct stat s;
   stat(script, &s);
 
   if(S_ISREG(s.st_mode) || S_ISLNK(s.st_mode)) {
+    if(write_cimple) {
+      const char* output = *opt++;
+
+      if(!output) {
+        printf("specify output file\n");
+        return 1;
+      }
+
+      FILE* file = fopen(script, "r");
+      r5::check(file);
+
+      Compiler compiler(debug);
+
+      const char* name = *opt;
+
+      if(!name) {
+        name = strrchr(script, '/');
+        if(name) {
+          name++;
+        } else {
+          name = script;
+        }
+
+        char* pos = strrchr(name, '.');
+        *pos = 0;
+      }
+
+      if(!compiler.cimple(S, file, name, output)) return 1;
+      return 0;
+    }
+
     Code* code = Code::load_file(S, script);
 
     if(!code) {
@@ -129,9 +169,14 @@ int main(int argc, char** argv) {
       }
     }
 
+    Module* m = new(S) Module(S,
+        S.env().lookup(S, "Module").as_class(),
+        String::internalize(S, "__main__"));
+
     Method* top = new(S) Method(String::internalize(S, "__main__"), code, env.globals());
 
-    ret = vm.run(S, top, 0);
+    Arguments args = root_args.setup(m);
+    ret = vm.run(S, top, args);
   } else {
     char buf[128];
     buf[0] = 0;
@@ -139,8 +184,10 @@ int main(int argc, char** argv) {
     strcat(buf, script);
 
     OOP bin_path_o = String::internalize(S, buf);
-    ret = OOP(S.importer()).call(S, String::internalize(S, "import"),
-                                 &bin_path_o, 1);
+
+    Arguments args = root_args.setup(S.importer(), bin_path_o);
+      
+    ret = *args.apply(String::internalize(S, "import"));
   }
 
   if(ret.unwind_p()) {

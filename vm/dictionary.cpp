@@ -8,7 +8,7 @@ namespace r5 {
 
   namespace {
     Handle get_m(State& S, Handle recv, Arguments& args) {
-      String* key = String::convert(S, *args[0]);
+      String* key = String::convert(S, args, args[0]);
 
       Dictionary* dict = recv->as_dictionary();
       option<OOP> val = dict->get(key);

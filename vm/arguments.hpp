@@ -3,6 +3,7 @@
 
 #include "state.hpp"
 #include "handle.hpp"
+#include "handle_scope.hpp"
 #include "code.hpp"
 #include "util/option.hpp"
 
@@ -32,6 +33,10 @@ namespace r5 {
       return fp_;
     }
 
+    OOP* rest() {
+      return fp_ + argc_;
+    }
+
     int count() {
       return argc_;
     }
@@ -48,6 +53,44 @@ namespace r5 {
       check(idx < argc_);
       return handle(S_, fp_[idx]);
     }
+
+    Arguments shift() {
+      return Arguments(S_, argc_-1, fp_+1);
+    }
+
+    Arguments& forward(OOP recv) {
+      fp_[-1] = recv;
+      return *this;
+    }
+
+    Arguments& forward(Handle recv) {
+      fp_[-1] = *recv;
+      return *this;
+    }
+
+    Arguments setup(OOP recv) {
+      OOP* fp = rest();
+      fp[0] = recv;
+
+      return Arguments(S_, 0, fp+1);
+    }
+
+    Arguments setup(OOP recv, OOP arg) {
+      OOP* fp = rest();
+      fp[0] = recv;
+      fp[1] = arg;
+
+      return Arguments(S_, 1, fp+1);
+    }
+
+    Arguments setup(Handle recv) {
+      OOP* fp = rest();
+      fp[0] = *recv;
+
+      return Arguments(S_, 0, fp+1);
+    }
+
+    Handle apply(String* name);
   };
 }
 

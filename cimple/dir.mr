@@ -1,0 +1,26 @@
+
+import dirent.h
+
+class Dir
+
+  let @os : Ptr[DIR]
+
+  def initialize(name : String)
+    @os = opendir name.c_str()
+  end
+
+  def read
+    a = readdir @os
+
+    if a == null
+      return nil
+    end
+
+    return ext.string(a.d_name, a.d_namlen)
+  end
+
+  def close
+    closedir @os
+  end
+
+end

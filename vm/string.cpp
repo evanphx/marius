@@ -17,7 +17,7 @@ namespace r5 {
     return mapping_;
   }
 
-  String* String::internalize(State& S, char* str, unsigned len) {
+  String* String::internalize(State& S, const char* str, unsigned len) {
     char* cstr = new(S) char[len+1];
     memcpy(cstr, str, len);
     cstr[len] = 0;
@@ -47,14 +47,14 @@ namespace r5 {
     */
   }
 
-  String* String::convert(State& S, OOP obj) {
-    if(obj.type() == OOP::eString) {
-      return obj.as_string();
+  String* String::convert(State& S, Arguments& args, Handle obj) {
+    if(obj->type() == OOP::eString) {
+      return obj->as_string();
     }
 
-    OOP ret = obj.call(S, String::internalize(S, "to_s"), 0, 0);
+    Handle ret = args.setup(obj).apply(String::internalize(S, "to_s"));
     
-    return ret.as_string();
+    return ret->as_string();
   }
 
   unsigned String::hash() {

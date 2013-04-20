@@ -6,6 +6,9 @@
 #include "code.hpp"
 #include "string.hpp"
 #include "local.hpp"
+#include "cimple.hpp"
+
+#include <fstream>
 
 namespace r5 {
   class String;
@@ -13,6 +16,7 @@ namespace r5 {
   namespace ast {
 
     class State;
+    class CimpleState;
 
     class Label {
       int idx_;
@@ -111,12 +115,55 @@ namespace r5 {
 
     class Visitor;
 
+    extern int IDBase;
+
+    template <typename T>
+    struct ID {
+      static int id() {
+        static int i = 0;
+        static bool set = false;
+
+        if(!set) {
+          set = true;
+          i = ++IDBase;
+        }
+
+        return i;
+      }
+    };
+
     class Node {
     public:
       virtual int drive(State& S, int t) = 0;
       virtual void accept(Visitor* V) = 0;
+      virtual CimpleValue cimple(CimpleState& S) = 0;
+      virtual int type() = 0;
+      virtual const char* type_name() = 0;
       virtual bool self_p() { return false; }
     };
+
+#define PER_NODE(name) \
+    virtual int type() { return ID<name>::id(); } \
+    virtual const char* type_name() { return #name; }
+
+    template <typename T>
+      T* try_as(ast::Node* n) {
+        int req = ID<T>::id();
+        int is = n->type();
+
+        if(req == is) {
+          return (T*)n;
+        }
+
+        return 0;
+      }
+
+    template <typename T>
+      T* as(ast::Node* n) {
+        T* v = try_as<T>(n);
+        check(v);
+        return v;
+      }
 
     class Seq : public Node {
       ast::Node* parent_;
@@ -128,7 +175,10 @@ namespace r5 {
         , child_(c)
       {}
 
+      PER_NODE(Seq);
+
       int drive(State& S, int t);
+      CimpleValue cimple(CimpleState& S);
       void accept(Visitor* V);
     };
 
@@ -153,6 +203,8 @@ namespace r5 {
         , opt_value_(o)
       {}
 
+      PER_NODE(Argument);
+
       String* name() {
         return name_;
       }
@@ -170,6 +222,7 @@ namespace r5 {
       }
 
       int drive(State& S, int t);
+      CimpleValue cimple(CimpleState& S);
       void accept(Visitor* V);
     };
 
@@ -202,6 +255,8 @@ namespace r5 {
         , body_(body)
       {}
 
+      PER_NODE(Scope);
+
       ArgMap& locals() {
         return locals_;
       }
@@ -223,6 +278,7 @@ namespace r5 {
       }
 
       int drive(State& S, int t);
+      CimpleValue cimple(CimpleState& S);
       void accept(Visitor* V);
 
       void add_local(String* n, int reg) {
@@ -265,7 +321,10 @@ namespace r5 {
         , args_(args)
       {}
 
+      PER_NODE(SendIndirect);
+
       int drive(State& S, int t);
+      CimpleValue cimple(CimpleState& S);
       void accept(Visitor* V);
     };
 
@@ -277,7 +336,10 @@ namespace r5 {
         : args_(a)
       {}
 
+      PER_NODE(Tuple);
+
       int drive(State& S, int t);
+      CimpleValue cimple(CimpleState& S);
       void accept(Visitor* V);
     };
 
@@ -289,7 +351,10 @@ namespace r5 {
         : args_(a)
       {}
 
+      PER_NODE(List);
+
       int drive(State& S, int t);
+      CimpleValue cimple(CimpleState& S);
       void accept(Visitor* V);
     };
 
@@ -301,25 +366,37 @@ namespace r5 {
         : args_(a)
       {}
 
+      PER_NODE(Dictionary);
+
       int drive(State& S, int t);
+      CimpleValue cimple(CimpleState& S);
       void accept(Visitor* V);
     };
 
     class Call : public Node {
+    public:
+      enum Special {
+        eNone,
+        eSelfLess,
+        eAttr
+      };
+
     protected:
       String* name_;
       Node* recv_;
       Arguments* args_;
 
-      bool self_less_;
+      Special spec_;
 
     public:
-      Call(String* name, Node* recv, Arguments* args=0, bool self=false)
+      Call(String* name, Node* recv, Arguments* args=0, Special s=eNone)
         : name_(name)
         , recv_(recv)
         , args_(args)
-        , self_less_(self)
+        , spec_(s)
       {}
+
+      PER_NODE(Call);
 
       Node* recv() {
         return recv_;
@@ -329,11 +406,20 @@ namespace r5 {
         return name_;
       }
 
+      Arguments* args() {
+        return args_;
+      }
+
       bool self_less_p() {
-        return self_less_;
+        return spec_ == eSelfLess;
+      }
+
+      bool attr_p() {
+        return spec_ == eAttr;
       }
 
       int drive(State& S, int t);
+      CimpleValue cimple(CimpleState& S);
       void accept(Visitor* V);
     };
 
@@ -345,7 +431,10 @@ namespace r5 {
         : val_(v)
       {}
 
+      PER_NODE(Number);
+
       int drive(State& S, int t);
+      CimpleValue cimple(CimpleState& S);
       void accept(Visitor* V);
     };
 
@@ -357,11 +446,14 @@ namespace r5 {
         : name_(n)
       {}
 
+      PER_NODE(Named);
+
       String* name() {
         return name_;
       }
 
       int drive(State& S, int t);
+      CimpleValue cimple(CimpleState& S);
       void accept(Visitor* V);
     };
 
@@ -373,7 +465,10 @@ namespace r5 {
         : val_(n)
       {}
 
+      PER_NODE(Return);
+
       int drive(State& S, int t);
+      CimpleValue cimple(CimpleState& S);
       void accept(Visitor* V);
     };
 
@@ -389,6 +484,8 @@ namespace r5 {
         , body_(b)
       {}
 
+      PER_NODE(Class);
+
       String* name() {
         return name_;
       }
@@ -402,6 +499,7 @@ namespace r5 {
       }
 
       int drive(State& S, int t);
+      CimpleValue cimple(CimpleState& S);
       void accept(Visitor* V);
     };
 
@@ -417,6 +515,8 @@ namespace r5 {
         , body_(b)
       {}
 
+      PER_NODE(Trait);
+
       String* name() {
         return name_;
       }
@@ -430,6 +530,7 @@ namespace r5 {
       }
 
       int drive(State& S, int t);
+      CimpleValue cimple(CimpleState& S);
       void accept(Visitor* V);
     };
 
@@ -445,7 +546,10 @@ namespace r5 {
         , args_(args)
       {}
 
+      PER_NODE(Def);
+
       int drive(State& S, int t);
+      CimpleValue cimple(CimpleState& S);
       void accept(Visitor* V);
     };
 
@@ -458,7 +562,10 @@ namespace r5 {
         : name_(n)
       {}
 
+      PER_NODE(CascadeCall);
+
       int drive(State& S, int t);
+      CimpleValue cimple(CimpleState& S);
       void accept(Visitor* V);
     };
 
@@ -471,11 +578,14 @@ namespace r5 {
         : recv_(n)
       {}
 
+      PER_NODE(Cascade);
+
       void push_message(ast::Node* n) {
         messages_.push_back(n);
       }
 
       int drive(State& S, int t);
+      CimpleValue cimple(CimpleState& S);
       void accept(Visitor* V);
     };
 
@@ -491,7 +601,10 @@ namespace r5 {
         , ebody_(ebody)
       {}
 
+      PER_NODE(IfCond);
+
       int drive(State& S, int t);
+      CimpleValue cimple(CimpleState& S);
       void accept(Visitor* V);
     };
 
@@ -505,7 +618,10 @@ namespace r5 {
         , body_(b)
       {}
 
+      PER_NODE(Unless);
+
       int drive(State& S, int t);
+      CimpleValue cimple(CimpleState& S);
       void accept(Visitor* V);
     };
 
@@ -519,31 +635,46 @@ namespace r5 {
         , body_(b)
       {}
 
+      PER_NODE(While);
+
       int drive(State& S, int t);
+      CimpleValue cimple(CimpleState& S);
       void accept(Visitor* V);
     };
 
     class Nil : public Node {
     public:
+      PER_NODE(Nil);
+
       int drive(State& S, int t);
+      CimpleValue cimple(CimpleState& S);
       void accept(Visitor* V);
     };
 
     class False : public Node {
     public:
+      PER_NODE(False);
+
       int drive(State& S, int t);
+      CimpleValue cimple(CimpleState& S);
       void accept(Visitor* V);
     };
 
     class True : public Node {
     public:
+      PER_NODE(True);
+
       int drive(State& S, int t);
+      CimpleValue cimple(CimpleState& S);
       void accept(Visitor* V);
     };
 
     class Self : public Node {
     public:
+      PER_NODE(Self);
+
       int drive(State& S, int t);
+      CimpleValue cimple(CimpleState& S);
       void accept(Visitor* V);
       bool self_p() { return true; }
     };
@@ -556,6 +687,8 @@ namespace r5 {
       Import(r5::State& S, String* n);
       Import(r5::State& S, String* p, String* n);
 
+      PER_NODE(Import);
+
       String* name() {
         return name_;
       }
@@ -565,6 +698,7 @@ namespace r5 {
       }
 
       int drive(State& S, int t);
+      CimpleValue cimple(CimpleState& S);
       void accept(Visitor* V);
     };
 
@@ -582,11 +716,14 @@ namespace r5 {
         , type_(t)
       {}
 
+      PER_NODE(Try);
+
       String* id() {
         return id_;
       }
 
       int drive(State& S, int t);
+      CimpleValue cimple(CimpleState& S);
       void accept(Visitor* V);
     };
 
@@ -600,11 +737,14 @@ namespace r5 {
         , value_(v)
       {}
 
+      PER_NODE(Assign);
+
       String* name() {
         return name_;
       }
 
       int drive(State& S, int t);
+      CimpleValue cimple(CimpleState& S);
       void accept(Visitor* V);
     };
 
@@ -620,11 +760,14 @@ namespace r5 {
         , value_(v)
       {}
 
+      PER_NODE(AssignOp);
+
       String* name() {
         return name_;
       }
 
       int drive(State& S, int t);
+      CimpleValue cimple(CimpleState& S);
       void accept(Visitor* V);
     };
 
@@ -638,7 +781,10 @@ namespace r5 {
         , name_(n)
       {}
 
+      PER_NODE(LoadAttr);
+
       int drive(State& S, int t);
+      CimpleValue cimple(CimpleState& S);
       void accept(Visitor* V);
     };
 
@@ -652,7 +798,10 @@ namespace r5 {
         , value_(v)
       {}
 
+      PER_NODE(IvarAssign);
+
       int drive(State& S, int t);
+      CimpleValue cimple(CimpleState& S);
       void accept(Visitor* V);
     };
 
@@ -668,7 +817,10 @@ namespace r5 {
         , value_(v)
       {}
 
+      PER_NODE(IvarAssignOp);
+
       int drive(State& S, int t);
+      CimpleValue cimple(CimpleState& S);
       void accept(Visitor* V);
     };
 
@@ -680,7 +832,14 @@ namespace r5 {
         : name_(n)
       {}
 
+      PER_NODE(IvarRead);
+
+      String* name() {
+        return name_;
+      }
+
       int drive(State& S, int t);
+      CimpleValue cimple(CimpleState& S);
       void accept(Visitor* V);
     };
 
@@ -692,7 +851,10 @@ namespace r5 {
         : str_(n)
       {}
 
+      PER_NODE(LiteralString);
+
       int drive(State& S, int t);
+      CimpleValue cimple(CimpleState& S);
       void accept(Visitor* V);
     };
 
@@ -704,7 +866,10 @@ namespace r5 {
         : body_(b)
       {}
 
+      PER_NODE(Lambda);
+
       int drive(State& S, int t);
+      CimpleValue cimple(CimpleState& S);
       void accept(Visitor* V);
     };
 
@@ -718,7 +883,18 @@ namespace r5 {
         , type_(t)
       {}
 
+      Node* value() {
+        return value_;
+      }
+
+      Node* cast_type() {
+        return type_;
+      }
+
+      PER_NODE(Cast);
+
       int drive(State& S, int t);
+      CimpleValue cimple(CimpleState& S);
       void accept(Visitor* V);
     };
 
@@ -730,7 +906,10 @@ namespace r5 {
         : value_(v)
       {}
 
+      PER_NODE(Raise);
+
       int drive(State& S, int t);
+      CimpleValue cimple(CimpleState& S);
       void accept(Visitor* V);
     };
 
@@ -742,7 +921,10 @@ namespace r5 {
         : value_(v)
       {}
 
+      PER_NODE(Not);
+
       int drive(State& S, int t);
+      CimpleValue cimple(CimpleState& S);
       void accept(Visitor* V);
     };
 
@@ -756,7 +938,10 @@ namespace r5 {
         , right_(b)
       {}
 
+      PER_NODE(And);
+
       int drive(State& S, int t);
+      CimpleValue cimple(CimpleState& S);
       void accept(Visitor* V);
     };
 

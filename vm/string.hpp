@@ -10,6 +10,7 @@
 #include "util/murmur_hash3.hpp"
 
 #include "gc_allocated.hpp"
+#include "handle.hpp"
 
 #include <map>
 
@@ -53,9 +54,9 @@ namespace r5 {
     static std::map<std::string, String*>& internal();
 
     static String* internalize(State& S, std::string str);
-    static String* internalize(State& S, char* str, unsigned len);
+    static String* internalize(State& S, const char* str, unsigned len);
 
-    static String* convert(State& S, OOP obj);
+    static String* convert(State& S, Arguments& args, Handle val);
   };
 }
 

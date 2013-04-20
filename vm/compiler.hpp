@@ -22,6 +22,7 @@ namespace r5 {
     }
 
     bool compile(State& S, FILE* f);
+    bool cimple(State& S, FILE* f, const char* name, const char* path);
     void optimize(State& S);
   };
 }

@@ -18,9 +18,10 @@ namespace r5 {
 
     va_start(ap, fmt);
 
-    char buf[127];
+    char buf[128];
+    buf[0] = 0;
 
-    vsnprintf(buf, 128, fmt, ap);
+    vsnprintf(buf, 127, fmt, ap);
 
     va_end(ap);
 

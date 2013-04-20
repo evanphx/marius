@@ -5,6 +5,8 @@
 namespace r5 {
 namespace ast {
 
+  int IDBase = 0;
+
   Import::Import(r5::State& S, String* n)
     : path_(n)
   {
@@ -76,7 +78,7 @@ namespace ast {
     parent_->drive(S, t);
     return child_->drive(S, t);
   }
-  
+
   void Seq::accept(Visitor* V) {
     parent_->accept(V);
     child_->accept(V);

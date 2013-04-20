@@ -2,6 +2,7 @@
 #include "method.hpp"
 #include "class.hpp"
 #include "environment.hpp"
+#include "arguments.hpp"
 
 namespace r5 {
   namespace {

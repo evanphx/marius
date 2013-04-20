@@ -150,7 +150,7 @@ np_arg(A) ::= np_arg(B) CAST np_arg(C).
                 { A.a = S->cast(B.a, C.a); }
 np_arg(A) ::= np_arg(B) NEQUAL np_arg(C).
                 { A.a = S->not_(S->ast_binop("==", B.a, C.a)); }
-np_arg(A) ::= np_arg(B) DOT(C). { A.a = S->call(B.a, C.s); }
+np_arg(A) ::= np_arg(B) DOT(C). { A.a = S->call_attr(B.a, C.s); }
 np_arg(A) ::= np_arg(B) DOT(C) LP RP. { A.a = S->call(B.a, C.s); }
 np_arg(A) ::= np_arg(B) DOT(C) LP np_arg_list RP.
                 { A.a = S->call_args(B.a, C.s); }
@@ -192,7 +192,7 @@ np_arg_list ::= np_arg_list_start np_kw_arg_list_elems.
 np_recv(A) ::= lit(B). { A.a = B.a; }
 np_recv(A) ::= ID(C) LP RP. { A.a = S->self_call(C.s); }
 np_recv(A) ::= ID(C) LP np_arg_list RP. { A.a = S->self_call_args(C.s); }
-np_recv(A) ::= np_recv(B) DOT(C). { A.a = S->call(B.a, C.s); }
+np_recv(A) ::= np_recv(B) DOT(C). { A.a = S->call_attr(B.a, C.s); }
 np_recv(A) ::= np_recv(B) DOT(C) LP RP. { A.a = S->call(B.a, C.s); }
 np_recv(A) ::= np_recv(B) DOT(C) LP np_arg_list RP. { A.a = S->call_args(B.a, C.s); }
 np_recv(A) ::= np_recv(B) DCOLON(C) ID(D). { A.a = S->dcolon(B.a, C.s, D.s); }
@@ -244,15 +244,18 @@ lambda(A) ::= lambda_start lambda_args opt_fin delim_seq(B) RB. { A.a = S->lambd
 
 /* Conditions */
 
-stmt(A) ::= IF s2(B) fin seq(C) fin END. { A.a = S->if_cond(B.a, C.a); }
-stmt(A) ::= IF s2(B) fin seq(C) fin ELSE fin seq(D) fin END.
+cond(A) ::= s2(B). { A.a = B.a; }
+cond(A) ::= ID(B) EQUAL s2(C). { A.a = S->assign(B.s, C.a); }
+
+stmt(A) ::= IF cond(B) fin seq(C) fin END. { A.a = S->if_cond(B.a, C.a); }
+stmt(A) ::= IF cond(B) fin seq(C) fin ELSE fin seq(D) fin END.
                { A.a = S->if_else(B.a, C.a, D.a); }
 
 stmt(A) ::= s2(B) IF s2(C). { A.a = S->if_cond(C.a, B.a); }
 stmt(A) ::= RETURN s2(B) IF s2(C). { A.a = S->if_cond(C.a, S->ret(B.a)); }
 stmt(A) ::= RAISE  s2(B) IF s2(C). { A.a = S->if_cond(C.a, S->raise(B.a)); }
-stmt(A) ::= UNLESS s2(B) fin seq(C) fin END. { A.a = S->unless(B.a, C.a); }
-stmt(A) ::= WHILE s2(B) fin seq(C) fin END. { A.a = S->while_(B.a, C.a); }
+stmt(A) ::= UNLESS cond(B) fin seq(C) fin END. { A.a = S->unless(B.a, C.a); }
+stmt(A) ::= WHILE cond(B) fin seq(C) fin END. { A.a = S->while_(B.a, C.a); }
 
 /* Import */
 

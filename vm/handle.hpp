@@ -1,7 +1,7 @@
 #ifndef HANDLE_HPP
 #define HANDLE_HPP
 
-#include "state.hpp"
+#include "oop.hpp"
 
 namespace r5 {
   class Handle {
@@ -59,45 +59,6 @@ namespace r5 {
       return hndl_;
     }
   };
-
-  class HandleScope {
-    State& S_;
-    HandleSet* set_;
-    OOP* old_;
-    HandleScope* prev_;
-
-  public:
-    HandleScope(State& S)
-      : S_(S)
-      , set_(S.pull_set())
-      , old_(set_->pos())
-      , prev_(S.set_handles(this))
-    {}
-
-    ~HandleScope() {
-      set_->reset(old_);
-      S_.set_handles(prev_);
-    }
-
-    OOP* add(OOP oop) {
-      OOP* loc = set_->add(oop);
-      if(!loc) {
-        set_ = S_.pull_set();
-        loc = set_->add(oop);
-        check(loc);
-      }
-
-      return loc;
-    }
-      
-    Handle handle(OOP v) {
-      return Handle(add(v));
-    }
-  };
-
-  inline Handle handle(State& S, OOP v) {
-    return S.handles()->handle(v);
-  }
 }
 
 #endif

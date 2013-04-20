@@ -93,8 +93,12 @@ namespace r5 {
     return new ast::Call(n, recv);
   }
 
+  ast::Node* ParserState::call_attr(ast::Node* recv, String* n) {
+    return new ast::Call(n, recv, 0, ast::Call::eAttr);
+  }
+
   ast::Node* ParserState::self_call(String* n) {
-    return new ast::Call(n, self(), 0, true);
+    return new ast::Call(n, self(), 0, ast::Call::eSelfLess);
   }
 
   ast::Node* ParserState::send_indirect(ast::Node* recv, ast::Node* n) {
@@ -212,7 +216,7 @@ namespace r5 {
 
     ast::Arguments* args = new ast::Arguments(arg_info_.nodes, arg_info_.keywords);
 
-    n = new ast::Call(id, self(), args, true);
+    n = new ast::Call(id, self(), args, ast::Call::eSelfLess);
 
     arg_info_ = arg_infos_.back();
     arg_infos_.pop_back();
