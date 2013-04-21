@@ -17,6 +17,7 @@
 #include "arguments.hpp"
 
 #include <string.h>
+#include <unistd.h>
 
 namespace r5 {
   namespace {
