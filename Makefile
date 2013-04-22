@@ -18,7 +18,7 @@ clean:
 	rm $(OBJ)
 
 tools/lemon:
-	gcc -o tools/lemon tools/lemon.c
+	$(CC) -o tools/lemon tools/lemon.c
 
 vm/parser.c.inc: vm/parser.lm tools/lemon
 	./tools/lemon -Ttools/lempar.c vm/parser.lm
@@ -28,7 +28,7 @@ vm/parser.cpp: vm/parser.c.inc
 vm/parser.o: vm/parser.c.inc
 
 marius: $(OBJ)
-	c++ -ggdb $(LDFLAGS) -o marius $(OBJ) -lprotobuf
+	$(CC) $(CXXFLAGS) $(LDFLAGS) -o marius $(OBJ)
 
 rebuild_kernel: marius
 	for i in kernel/*; do ./marius -bc $$i; mv $${i%.mr}.mrc vm/kernel/; done
