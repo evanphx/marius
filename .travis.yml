@@ -1,2 +1,3 @@
 language: c++
+compiler: clang
 script: "make linux-dep test"
