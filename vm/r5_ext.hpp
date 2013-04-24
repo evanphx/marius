@@ -1,3 +1,6 @@
+#ifndef EXT_HPP
+#define EXT_HPP
+
 #include "handle.hpp"
 #include "state.hpp"
 #include "string.hpp"
@@ -26,8 +29,19 @@ namespace r5 {
 
   namespace ext {
     String* string(State& S, const char* name, int sz);
+    String* string(State& S, void* ptr, int sz);
 
     Handle allocate_sized(State& S, Class* cls, unsigned bytes);
+
+    inline Handle wrap(State& S, int val) {
+      return handle(S, OOP::integer(val));
+    }
+
+    template <typename T>
+    inline T clamp(State&, T v, T m) {
+      if(v > m) return m;
+      return v;
+    }
 
     template <typename T>
       Handle allocate(State& S, Class* cls) {
@@ -52,3 +66,5 @@ namespace r5 {
       }
   }
 }
+
+#endif

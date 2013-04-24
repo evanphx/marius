@@ -273,7 +273,10 @@ again:
         return str_match();
 
       case '#':
-        while(next_c() != '\n') advance(1);
+        while(next_c() != '\n') {
+          if(!next_c()) break;
+          advance(1);
+        }
 
         column_ = 0;
         line_++;

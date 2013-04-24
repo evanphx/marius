@@ -1,15 +1,38 @@
 #include "ast.hpp"
 #include "cimple.hpp"
 
+#include <string>
+
 namespace r5 {
 namespace ast {
+
+  namespace {
+    bool equal(String* s, const char* b) {
+      return strcmp(s->c_str(), b) == 0;
+    }
+
+    std::string mod_name(std::string name) {
+      for(size_t pos = name.find('.');
+          pos != std::string::npos;
+          pos = name.find('.', pos)) {
+        name.replace(pos, 1, "_");
+      }
+
+      return name;
+    }
+  }
+
   CimpleState::CimpleState(r5::State& S, const char* name, const char* path)
     : S(S)
+    , path_base_(path)
     , module_name_(name)
-    , output_(path, std::ios::out | std::ios::trunc)
+    , output_((std::string(path) + "/" + std::string(module_name_) + ".cpp").c_str(), std::ios::out | std::ios::trunc)
+    , header_output_((std::string(path) + "/" + std::string(module_name_) + ".hpp").c_str(), std::ios::out | std::ios::trunc)
     , class_name_(0)
     , in_def_(0)
   {
+    check(output_);
+    check(header_output_);
     void_t_ = new CimpleType(CimpleType::eVoid);
     types_["Void"] = void_t_;
     unknown_t_ = new CimpleType(CimpleType::eUnknown);
@@ -18,7 +41,8 @@ namespace ast {
     types_["String"] = string_t_;
 
     puts("#include \"r5_ext.hpp\"");
-    puts("using namespace r5;");
+
+    cpp_module_ = mod_name(name);
   }
 
   CimpleType* CimpleState::get_type(const char* n) {
@@ -74,6 +98,34 @@ namespace ast {
     output_ << buf;
   }
 
+  void CimpleState::header_puts(const char* fmt, ...) {
+    va_list ap;
+
+    va_start(ap, fmt);
+
+    char buf[128];
+
+    vsnprintf(buf, 127, fmt, ap);
+
+    va_end(ap);
+
+    header_output_ << buf << std::endl;
+  }
+
+  void CimpleState::header_print(const char* fmt, ...) {
+    va_list ap;
+
+    va_start(ap, fmt);
+
+    char buf[128];
+
+    vsnprintf(buf, 127, fmt, ap);
+
+    va_end(ap);
+
+    header_output_ << buf;
+  }
+
   CimpleValue Seq::cimple(CimpleState& S) {
     parent_->cimple(S);
     S.puts(";");
@@ -105,21 +157,6 @@ namespace ast {
     return S.void_();
   }
 
-  CimpleValue Cast::cimple(CimpleState& S) {
-    check(0);
-    return S.void_();
-  }
-
-  CimpleValue Tuple::cimple(CimpleState& S) {
-    check(0);
-    return S.void_();
-  }
-
-  CimpleValue List::cimple(CimpleState& S) {
-    check(0);
-    return S.void_();
-  }
-
   static std::string name_type(ast::Node* n) {
     if(ast::Named* m = try_as<Named>(n)) {
       return m->name()->c_str();
@@ -142,6 +179,25 @@ namespace ast {
     }
   }
 
+  CimpleValue Cast::cimple(CimpleState& S) {
+    S.print("((");
+    S.print(name_type(type_).c_str());
+    S.print(")(");
+    value_->cimple(S);
+    S.print("))");
+    return S.void_();
+  }
+
+  CimpleValue Tuple::cimple(CimpleState& S) {
+    check(0);
+    return S.void_();
+  }
+
+  CimpleValue List::cimple(CimpleState& S) {
+    check(0);
+    return S.void_();
+  }
+
   CimpleValue Call::cimple(CimpleState& S) {
     if(self_less_p()) {
       if(strcmp(name_->c_str(), "let") == 0 && args_) {
@@ -155,9 +211,23 @@ namespace ast {
         if(ast::IvarRead* ivar = try_as<IvarRead>(var)) {
           S.add_ivar(ivar->name(), name_type(typ));
         } else if(ast::Named* lvar = try_as<Named>(var)) {
-          CimpleType* t = S.get_type(name_type(typ).c_str());
+          if(Call* ct = try_as<Call>(typ)) {
+            if(equal(ct->name(), "[]")) {
+              Named* op = as<Named>(ct->recv());
+              if(!strcmp(op->name()->c_str(), "Array")){
+                Nodes::iterator j = ct->args()->positional.begin();
+                const char* tname = as<Named>(*j)->name()->c_str();
+                ++j;
+                int sz = as<Number>(*j)->val();
 
-          S.add_local(lvar->name()->c_str(), CimpleValue(t));
+                S.puts("%s %s[%d];", tname, lvar->name()->c_str(), sz);
+              }
+            }
+          }
+
+          // CimpleType* t = S.get_type(name_type(typ).c_str());
+
+          // S.add_local(lvar->name()->c_str(), CimpleValue(t));
         } else {
           check(0);
         }
@@ -182,7 +252,7 @@ namespace ast {
     } else {
       if(Named* n = try_as<Named>(recv_)) {
         if(!strcmp(n->name()->c_str(), "ext")) {
-          S.print("ext::%s(S", name_->c_str());
+          S.print("r5::ext::%s(S", name_->c_str());
 
           if(args_) {
             for(Nodes::iterator i = args_->positional.begin();
@@ -232,6 +302,12 @@ namespace ast {
 
       if(spec_ == eAttr) {
         S.print("->%s", name_->c_str());
+      } else if(spec_ == eSetAttr) {
+        S.print("->%s = (", name_->c_str());
+        check(args_);
+        Nodes::iterator i = args_->positional.begin();
+        (*i)->cimple(S);
+        S.print(")");
       } else {
         S.print("->%s(", name_->c_str());
 
@@ -251,7 +327,7 @@ namespace ast {
   }
 
   CimpleValue Number::cimple(CimpleState& S) {
-    check(0);
+    S.print("%d", val_);
     return S.void_();
   }
 
@@ -275,19 +351,41 @@ namespace ast {
 
   CimpleValue Def::cimple(CimpleState& S) {
     if(!S.emitted_ivars_p()) {
-      S.puts("struct %sType {", S.class_name());
+      S.header_puts("#ifndef R5EXT_%s_HPP", S.class_name());
+      S.header_puts("#define R5EXT_%s_HPP", S.class_name());
+      S.header_puts("#include \"r5_ext.hpp\"");
+      S.header_puts("namespace %s {", S.cpp_module());
+      S.header_puts("struct %s {", S.class_name());
 
       for(IvarMap::iterator i = S.ivars().begin();
           i != S.ivars().end();
           ++i) {
-        S.puts("  %s %s;", i->second.c_str(), i->first->c_str());
+        S.header_puts("  %s %s;", i->second.c_str(), i->first->c_str());
       }
-      S.puts("};");
+      S.header_puts("};");
+      S.header_puts("}");
 
-      S.puts("Handle %s_allocate(State& S, Handle recv, Arguments& args) {",
+      S.header_puts("namespace r5 { namespace ext {");
+
+      S.header_puts("  template <> inline %s::%s* cast<%s::%s>(r5::Handle hndl) {",
+                    S.cpp_module(), S.class_name(),
+                    S.cpp_module(), S.class_name());
+
+      S.header_puts("    return unwrap<%s::%s>(hndl);",
+                    S.cpp_module(), S.class_name());
+      S.header_puts("  }");
+
+      S.header_puts("}}");
+      S.header_puts("#endif");
+
+      S.puts("#include \"%s.hpp\"", S.module_name());
+
+      S.puts("using namespace %s;", S.cpp_module());
+
+      S.puts("r5::Handle %s_allocate(r5::State& S, r5::Handle recv, r5::Arguments& args) {",
              S.class_name());
 
-      S.puts("  return ext::allocate<%sType>(S, recv->as_class());",
+      S.puts("  return r5::ext::allocate<%s>(S, recv->as_class());",
              S.class_name());
 
       S.puts("}");
@@ -295,10 +393,10 @@ namespace ast {
       S.set_emitted_ivars();
     }
 
-    S.puts("Handle %s_%s(State& S, Handle recv, Arguments& args) {",
+    S.puts("r5::Handle %s_%s(r5::State& S, r5::Handle recv, r5::Arguments& args) {",
            S.class_name(), name_->c_str());
 
-    S.puts("  %sType* self = ext::unwrap<%sType>(recv);",
+    S.puts("  %s* self = r5::ext::unwrap<%s>(recv);",
            S.class_name(), S.class_name());
 
     S.def_start();
@@ -318,8 +416,16 @@ namespace ast {
 
       std::string s = name_type(n);
 
-      S.puts("  auto %s = ext::cast<%s>(args[%d]);",
-             arg->name()->c_str(), s.c_str(), index++);
+      if(s == "int") {
+        S.puts("  int %s = args[%d]->int_value();",
+               arg->name()->c_str(), index++);
+      } else if(s == "String") {
+        S.puts("  r5::String* %s = args[%d]->as_string();",
+               arg->name()->c_str(), index++);
+      } else {
+        S.puts("  auto %s = r5::ext::cast<%s>(args[%d]);",
+               arg->name()->c_str(), s.c_str(), index++);
+      }
 
       CimpleType* t = S.get_type(s.c_str());
 
@@ -331,7 +437,7 @@ namespace ast {
     S.def_end();
 
     S.puts(";");
-    S.puts("  return handle(S, OOP::nil());");
+    S.puts("  return handle(S, r5::OOP::nil());");
     S.puts("}");
 
     S.add_method(name_, arity);
@@ -349,9 +455,9 @@ namespace ast {
     body_->cimple(S);
     S.class_end();
 
-    S.puts("void init_%s(State& S) {", name_->c_str());
-    S.puts("  Handle mod = S.new_module(\"%s\");", S.module_name());
-    S.puts("  Handle cls = S.new_class(mod, \"%s\");", name_->c_str());
+    S.puts("void init_%s(r5::State& S) {", name_->c_str());
+    S.puts("  r5::Handle mod = S.new_module(\"%s\");", S.module_name());
+    S.puts("  r5::Handle cls = S.new_class(mod, \"%s\");", name_->c_str());
 
     S.puts("  S.add_method(cls, \"allocate\", %s_allocate, 0);",
            name_->c_str());
@@ -369,7 +475,8 @@ namespace ast {
     }
 
     S.puts("}");
-    S.puts("ExtInitializer setup(init_%s);", name_->c_str());
+    S.puts("static r5::ExtInitializer setup(init_%s);", name_->c_str());
+
     return S.void_();
   }
 
@@ -416,7 +523,7 @@ namespace ast {
   }
 
   CimpleValue Nil::cimple(CimpleState& S) {
-    S.print("handle(S, OOP::nil())");
+    S.print("handle(S, r5::OOP::nil())");
     return S.void_();
   }
 
@@ -436,7 +543,13 @@ namespace ast {
   }
 
   CimpleValue Import::cimple(CimpleState& S) {
-    S.puts("#include <%s>", path_->c_str());
+    if(strstr(path_->c_str(), "c.") == path_->c_str()) {
+      S.puts("#include <%s>", path_->c_str() + 2);
+    } else {
+      S.puts("#include \"%s.hpp\"", path_->c_str());
+      std::string mod = mod_name(path_->c_str());
+      S.puts("using namespace %s;\n", mod.c_str());
+    }
     return S.void_();
   }
 
@@ -480,7 +593,7 @@ namespace ast {
   }
 
   CimpleValue LiteralString::cimple(CimpleState& S) {
-    S.print("handle(S, String::internalize(S, \"%s\"))", str_->c_str());
+    S.print("handle(S, r5::String::internalize(S, \"%s\"))", str_->c_str());
     return S.string();
   }
 

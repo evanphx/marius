@@ -1,0 +1,39 @@
+import c.stdlib.h
+
+class Buffer
+  let @ptr  : Ptr[uint8_t]
+  let @capacity : int
+  let @position  : int
+  let @limit : int
+
+  def initialize(size : int)
+    @ptr = malloc(size) : Ptr[uint8_t]
+    @capacity = size
+    @limit = size
+    @position = 0
+  end
+
+  def clear
+    @limit = @capacity
+    @position = 0
+  end
+
+  def flip
+    @limit = @position
+    @position = 0
+  end
+
+  def rewind
+    @position = 0
+  end
+
+  def string(size : int)
+    p = @ptr + @position
+
+    cs = ext.clamp(size, @limit - @position)
+
+    @position = @position + cs
+
+    return ext.string(p, cs)
+  end
+end

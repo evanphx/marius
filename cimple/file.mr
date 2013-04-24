@@ -1,0 +1,34 @@
+import c.fcntl.h
+
+import os.buffer
+
+class File
+  let @fd : int
+
+  def initialize(name : String)
+    @fd = open(name.c_str(), O_RDONLY)
+  end
+
+  def read
+    let buf : Array[char, 128]
+    r = read @fd, buf, 128
+
+    if r == 0
+      return nil
+    end
+
+    return ext.string(buf, r)
+  end
+
+  def fill(buf : Buffer)
+    l = buf.limit - buf.position
+    r = read @fd, buf.ptr, l
+    buf.position = buf.position + r
+
+    return ext.wrap(r)
+  end
+
+  def close
+    close @fd
+  end
+end

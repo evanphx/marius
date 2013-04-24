@@ -378,7 +378,8 @@ namespace r5 {
       enum Special {
         eNone,
         eSelfLess,
-        eAttr
+        eAttr,
+        eSetAttr
       };
 
     protected:
@@ -430,6 +431,10 @@ namespace r5 {
       Number(int v)
         : val_(v)
       {}
+
+      int val() {
+        return val_;
+      }
 
       PER_NODE(Number);
 

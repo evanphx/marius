@@ -100,7 +100,7 @@ namespace r5 {
         seq += 2;
         break;
       case MOVI32:
-        fp[seq[0]] = OOP::integer(*((int*)seq));
+        fp[seq[0]] = OOP::integer(*((int*)(&seq[1])));
         seq += 5;
         break;
       case MOVR:

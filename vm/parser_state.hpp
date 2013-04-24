@@ -159,6 +159,7 @@ namespace r5 {
 
     ast::Node* call(ast::Node* recv, String* id);
     ast::Node* call_attr(ast::Node* recv, String* id);
+    ast::Node* call_set_attr(ast::Node* recv, String* id, ast::Node* val);
     ast::Node* self_call(String* id);
     ast::Node* attr(ast::Node* recv, String* id);
 

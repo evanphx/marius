@@ -1,7 +1,7 @@
-SRC=$(sort $(wildcard vm/*.cpp vm/util/*.cpp))
+SRC=$(sort $(wildcard vm/*.cpp vm/util/*.cpp vm/builtin/*.cpp))
 OBJ=$(patsubst %.cpp,%.o,$(SRC))
 
-CXXFLAGS := -std=c++11 -ggdb -Wall -Ivm
+CXXFLAGS := -std=c++11 -ggdb -Wall -Ivm -Ivm/builtin
 
 LDFLAGS := -lprotobuf
 
@@ -28,7 +28,7 @@ vm/parser.cpp: vm/parser.c.inc
 vm/parser.o: vm/parser.c.inc
 
 marius: $(OBJ)
-	$(CC) $(CXXFLAGS) $(LDFLAGS) -o marius $(OBJ)
+	c++ $(CXXFLAGS) $(LDFLAGS) -o marius $(OBJ)
 
 rebuild_kernel: marius
 	for i in kernel/*; do ./marius -bc $$i; mv $${i%.mr}.mrc vm/kernel/; done
@@ -37,6 +37,11 @@ rebuild_kernel: marius
 rebuild_pb:
 	protoc -Ivm --cpp_out=vm vm/code.proto
 	mv vm/code.pb.cc vm/code.pb.cpp
+
+rebuild_builtin:
+	./marius -C cimple/buffer.mr os.buffer vm/builtin
+	./marius -C cimple/file.mr os.file vm/builtin
+	./marius -C cimple/dir.mr os.dir vm/builtin
 
 test: marius
 	./marius -c test/syntax.mr

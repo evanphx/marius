@@ -230,6 +230,8 @@ s2(A) ::= np_recv(B) NEQUAL np_arg(C).
 s2(A) ::= np_recv(B). { A.a = B.a; }
 s2(A) ::= NOT s2(B). { A.a = S->not_(B.a); }
 s2(A) ::= np_recv(B) AND np_arg(C). { A.a = S->and_(B.a, C.a); }
+s2(A) ::= np_recv(B) DOT(C) EQUAL s2(D).
+            { A.a = S->call_set_attr(B.a, C.s, D.a); }
 
 stmt(A) ::= s2(B). { A.a = B.a; }
 

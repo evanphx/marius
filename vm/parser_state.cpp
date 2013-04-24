@@ -97,6 +97,17 @@ namespace r5 {
     return new ast::Call(n, recv, 0, ast::Call::eAttr);
   }
 
+  ast::Node* ParserState::call_set_attr(ast::Node* recv, String* n,
+                                        ast::Node* val)
+  {
+    ast::Nodes nodes;
+    nodes.push_back(val);
+
+    ast::Arguments* args = new ast::Arguments(nodes, ArgMap());
+
+    return new ast::Call(n, recv, args, ast::Call::eSetAttr);
+  }
+
   ast::Node* ParserState::self_call(String* n) {
     return new ast::Call(n, self(), 0, ast::Call::eSelfLess);
   }

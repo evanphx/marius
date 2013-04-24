@@ -81,8 +81,11 @@ namespace ast {
 
   class CimpleState {
     r5::State& S;
+    const char* path_base_;
     const char* module_name_;
+    std::string cpp_module_;
     std::fstream output_;
+    std::fstream header_output_;
     String* class_name_;
     int in_def_;
     TypeMap types_;
@@ -101,10 +104,21 @@ namespace ast {
     void puts(const char* fmt, ...);
     void print(const char* fmt, ...);
 
+    void header_puts(const char* fmt, ...);
+    void header_print(const char* fmt, ...);
+
     CimpleType* get_type(const char* n);
+
+    const char* path_base() {
+      return path_base_;
+    }
 
     const char* module_name() {
       return module_name_;
+    }
+
+    const char* cpp_module() {
+      return cpp_module_.c_str();
     }
 
     void class_start(String* n) {

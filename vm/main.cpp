@@ -111,31 +111,21 @@ int main(int argc, char** argv) {
 
   if(S_ISREG(s.st_mode) || S_ISLNK(s.st_mode)) {
     if(write_cimple) {
-      const char* output = *opt++;
-
-      if(!output) {
-        printf("specify output file\n");
-        return 1;
-      }
-
       FILE* file = fopen(script, "r");
       r5::check(file);
 
       Compiler compiler(debug);
 
-      const char* name = *opt;
+      const char* name = *opt++;
 
       if(!name) {
-        name = strrchr(script, '/');
-        if(name) {
-          name++;
-        } else {
-          name = script;
-        }
-
-        char* pos = strrchr(name, '.');
-        *pos = 0;
+        printf("specify a package name\n");
+        return 1;
       }
+
+      const char* output = *opt;
+
+      if(!output) output = ".";
 
       if(!compiler.cimple(S, file, name, output)) return 1;
       return 0;

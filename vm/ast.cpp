@@ -326,9 +326,20 @@ namespace ast {
   }
 
   int Number::drive(State& S, int t) {
-    S.push(MOVI8);
-    S.push(t);
-    S.push(val_);
+    if(val_ < 128 && val_ > -127) {
+      S.push(MOVI8);
+      S.push(t);
+      S.push(val_);
+    } else {
+      S.push(MOVI32);
+      S.push(t);
+      uint32_t x = (uint32_t)val_;
+
+      S.push((x >> 0)  & 0xff);
+      S.push((x >> 8)  & 0xff);
+      S.push((x >> 16) & 0xff);
+      S.push((x >> 24) & 0xff);
+    }
 
     return t;
   }

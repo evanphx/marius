@@ -23,6 +23,10 @@ namespace r5 {
       return String::internalize(S, name, sz);
     }
 
+    String* string(State& S, void* name, int sz) {
+      return String::internalize(S, (const char*)name, sz);
+    }
+
     Handle allocate_sized(State& S, Class* cls, unsigned extra) {
       memory::Address addr = S.allocate(sizeof(User) + extra);
       User* u = new(addr) User(S, cls);
