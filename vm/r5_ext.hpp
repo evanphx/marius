@@ -30,6 +30,7 @@ namespace r5 {
   namespace ext {
     String* string(State& S, const char* name, int sz);
     String* string(State& S, void* ptr, int sz);
+    String* string(State& S, char* ptr);
 
     Handle allocate_sized(State& S, Class* cls, unsigned bytes);
 

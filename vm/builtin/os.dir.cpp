@@ -21,7 +21,7 @@ r5::Handle Dir_read(r5::State& S, r5::Handle recv, r5::Arguments& args) {
 return handle(S, handle(S, r5::OOP::nil()));
 }
 ;
-  return handle(S, r5::ext::string(S, (a)->d_name, (a)->d_namlen));
+  return handle(S, r5::ext::string(S, (a)->d_name));
 ;
   return handle(S, r5::OOP::nil());
 }

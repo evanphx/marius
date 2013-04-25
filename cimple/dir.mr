@@ -16,7 +16,7 @@ class Dir
       return nil
     end
 
-    return ext.string(a.d_name, a.d_namlen)
+    return ext.string(a.d_name)
   end
 
   def close
