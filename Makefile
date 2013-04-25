@@ -28,7 +28,7 @@ vm/parser.cpp: vm/parser.c.inc
 vm/parser.o: vm/parser.c.inc
 
 marius: $(OBJ)
-	c++ $(CXXFLAGS) $(LDFLAGS) -o marius $(OBJ)
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o marius $(OBJ)
 
 rebuild_kernel: marius
 	for i in kernel/*; do ./marius -bc $$i; mv $${i%.mr}.mrc vm/kernel/; done
