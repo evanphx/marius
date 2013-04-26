@@ -68,7 +68,7 @@ void protobuf_AssignDesc_code_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(ArgMap));
   Code_descriptor_ = file->message_type(2);
-  static const int Code_offsets_[10] = {
+  static const int Code_offsets_[11] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Code, name_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Code, instructions_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Code, strings_),
@@ -79,6 +79,7 @@ void protobuf_AssignDesc_code_2eproto() {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Code, return_to_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Code, required_args_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Code, lines_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Code, file_),
   };
   Code_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -131,13 +132,14 @@ void protobuf_AddDesc_code_2eproto() {
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
     "\n\ncode.proto\022\tserialize\"&\n\010ArgEntry\022\013\n\003k"
     "ey\030\001 \002(\t\022\r\n\005value\030\002 \002(\005\".\n\006ArgMap\022$\n\007ent"
-    "ries\030\001 \003(\0132\023.serialize.ArgEntry\"\364\001\n\004Code"
+    "ries\030\001 \003(\0132\023.serialize.ArgEntry\"\202\002\n\004Code"
     "\022\014\n\004name\030\001 \002(\t\022\024\n\014instructions\030\002 \003(\005\022\017\n\007"
     "strings\030\003 \003(\t\022\036\n\005codes\030\004 \003(\0132\017.serialize"
     ".Code\022\037\n\004args\030\005 \001(\0132\021.serialize.ArgMap\022#"
     "\n\010keywords\030\006 \003(\0132\021.serialize.ArgMap\022\030\n\020c"
     "losed_over_vars\030\007 \002(\005\022\021\n\treturn_to\030\010 \001(\005"
-    "\022\025\n\rrequired_args\030\t \001(\005\022\r\n\005lines\030\n \003(\005", 358);
+    "\022\025\n\rrequired_args\030\t \001(\005\022\r\n\005lines\030\n \003(\005\022\014"
+    "\n\004file\030\013 \001(\t", 372);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "code.proto", &protobuf_RegisterTypes);
   ArgEntry::default_instance_ = new ArgEntry();
@@ -640,6 +642,7 @@ const int Code::kClosedOverVarsFieldNumber;
 const int Code::kReturnToFieldNumber;
 const int Code::kRequiredArgsFieldNumber;
 const int Code::kLinesFieldNumber;
+const int Code::kFileFieldNumber;
 #endif  // !_MSC_VER
 
 Code::Code()
@@ -664,6 +667,7 @@ void Code::SharedCtor() {
   closed_over_vars_ = 0;
   return_to_ = 0;
   required_args_ = 0;
+  file_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -674,6 +678,9 @@ Code::~Code() {
 void Code::SharedDtor() {
   if (name_ != &::google::protobuf::internal::kEmptyString) {
     delete name_;
+  }
+  if (file_ != &::google::protobuf::internal::kEmptyString) {
+    delete file_;
   }
   if (this != default_instance_) {
     delete args_;
@@ -715,6 +722,11 @@ void Code::Clear() {
   }
   if (_has_bits_[8 / 32] & (0xffu << (8 % 32))) {
     required_args_ = 0;
+    if (has_file()) {
+      if (file_ != &::google::protobuf::internal::kEmptyString) {
+        file_->clear();
+      }
+    }
   }
   instructions_.Clear();
   strings_.Clear();
@@ -897,6 +909,23 @@ bool Code::MergePartialFromCodedStream(
           goto handle_uninterpreted;
         }
         if (input->ExpectTag(80)) goto parse_lines;
+        if (input->ExpectTag(90)) goto parse_file;
+        break;
+      }
+      
+      // optional string file = 11;
+      case 11: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_file:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_file()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->file().data(), this->file().length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
         if (input->ExpectAtEnd()) return true;
         break;
       }
@@ -982,6 +1011,15 @@ void Code::SerializeWithCachedSizes(
       10, this->lines(i), output);
   }
   
+  // optional string file = 11;
+  if (has_file()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->file().data(), this->file().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      11, this->file(), output);
+  }
+  
   if (!unknown_fields().empty()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
@@ -1057,6 +1095,16 @@ void Code::SerializeWithCachedSizes(
       WriteInt32ToArray(10, this->lines(i), target);
   }
   
+  // optional string file = 11;
+  if (has_file()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->file().data(), this->file().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        11, this->file(), target);
+  }
+  
   if (!unknown_fields().empty()) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         unknown_fields(), target);
@@ -1103,6 +1151,13 @@ int Code::ByteSize() const {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::Int32Size(
           this->required_args());
+    }
+    
+    // optional string file = 11;
+    if (has_file()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->file());
     }
     
   }
@@ -1197,6 +1252,9 @@ void Code::MergeFrom(const Code& from) {
     if (from.has_required_args()) {
       set_required_args(from.required_args());
     }
+    if (from.has_file()) {
+      set_file(from.file());
+    }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
@@ -1240,6 +1298,7 @@ void Code::Swap(Code* other) {
     std::swap(return_to_, other->return_to_);
     std::swap(required_args_, other->required_args_);
     lines_.Swap(&other->lines_);
+    std::swap(file_, other->file_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);

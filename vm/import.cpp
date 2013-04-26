@@ -56,7 +56,7 @@ namespace r5 {
 
       Compiler compiler;
 
-      if(!compiler.compile(S, file)) {
+      if(!compiler.compile(S, path, file)) {
         return handle(S, OOP::make_unwind(
             Exception::create(S, "ImportError",
                               "Unable to compile '%s'", path->c_str())));
@@ -124,7 +124,7 @@ namespace r5 {
 
       Compiler compiler;
 
-      if(!compiler.compile(S, file)) {
+      if(!compiler.compile(S, String::internalize(S, path), file)) {
         return handle(S, OOP::make_unwind(
             Exception::create(S, "ImportError",
                               "Unable to compile '%s'", name->c_str())));

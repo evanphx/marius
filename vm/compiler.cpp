@@ -9,7 +9,7 @@
 #include <iostream>
 
 namespace r5 {
-  bool Compiler::compile(State& S, FILE* f) {
+  bool Compiler::compile(State& S, String* name, FILE* f) {
     Parser parser(S, f);
 
     if(!parser.parse(debug_)) return false;
@@ -38,13 +38,14 @@ namespace r5 {
 
     calculate_locals(S, top, globals, locals);
 
-    ast::State AS(S, locals);
+    ast::State AS(S, name, locals);
 
     top->drive(AS, top->locals().size());
 
     ArgMap args;
 
-    code_ = AS.to_code(String::internalize(S, "__main__"), args, 0, top->cov());
+    code_ = AS.to_code(String::internalize(S, "__main__"),
+                       name, args, 0, top->cov());
 
     if(debug_) code_->print();
 

@@ -6,6 +6,7 @@
 namespace r5 {
   class Code;
   class State;
+  class String;
 
   class Compiler {
     bool debug_;
@@ -21,7 +22,7 @@ namespace r5 {
       return code_;
     }
 
-    bool compile(State& S, FILE* f);
+    bool compile(State& S, String* name, FILE* f);
     bool cimple(State& S, FILE* f, const char* name, const char* path);
     void optimize(State& S);
   };

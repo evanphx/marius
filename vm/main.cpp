@@ -137,7 +137,7 @@ int main(int argc, char** argv) {
 
       Compiler compiler(debug);
 
-      if(!compiler.compile(S, file)) return 1;
+      if(!compiler.compile(S, String::internalize(S, script), file)) return 1;
 
       if(check) {
         printf("syntax ok\n");
@@ -189,11 +189,24 @@ int main(int argc, char** argv) {
     InvokeInfo* i = exc->backtrace();
     if(i) {
       while(i) {
-        std::cout << "    "
-                  << i->method()->scope()->c_str() << "#"
-                  << i->method()->name(S)->c_str()
-                  << ":" << i->method()->code()->line(i->ip())
-                  << std::endl;
+        int line = i->method()->code()->line(i->ip());
+
+        if(line <= 0) {
+          std::cout << "    "
+                    << i->method()->scope()->c_str() << "#"
+                    << i->method()->name(S)->c_str() << " at "
+                    << i->method()->code()->file()->c_str()
+                    << "+" << i->ip()
+                    << std::endl;
+        } else {
+          std::cout << "    "
+                    << i->method()->scope()->c_str() << "#"
+                    << i->method()->name(S)->c_str() << " at "
+                    << i->method()->code()->file()->c_str()
+                    << ":" << line
+                    << std::endl;
+
+        }
 
         i = i->previous();
       }

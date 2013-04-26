@@ -71,6 +71,7 @@ namespace r5 {
 
   class Code : public GCAllocated {
     String* name_;
+    String* file_;
     Instruction* code_;
     int size_;
     STuple* strings_;
@@ -87,6 +88,7 @@ namespace r5 {
   public:
     Code(State& S,
          String* name,
+         String* file,
          Instruction* buf, int size,
          std::vector<String*> strings,
          std::vector<Code*> codes,
@@ -97,6 +99,10 @@ namespace r5 {
 
     String* name() {
       return name_;
+    }
+
+    String* file() {
+      return file_;
     }
 
     Instruction* code() {

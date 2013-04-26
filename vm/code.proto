@@ -20,4 +20,5 @@ message Code {
   optional int32 return_to = 8;
   optional int32 required_args = 9;
   repeated int32 lines = 10;
+  optional string file = 11;
 }

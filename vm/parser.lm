@@ -115,7 +115,7 @@ lit(A) ::= NIL.                      { A.a = S->ast_nil();  }
 lit(A) ::= TRUE.                     { A.a = S->ast_true();  }
 lit(A) ::= FALSE.                    { A.a = S->ast_false(); }
 lit(A) ::= SELF.                     { A.a = S->self(); }
-lit(A) ::= ID(B).                    { A.a = S->named(B.s); }
+lit(A) ::= ID(B).                    { A.a = S->named(B.s, B.line); }
 lit(A) ::= IVAR(B).                  { A.a = S->ivar_read(B.s); }
 lit(A) ::= LITSTR(B).                { A.a = S->lit_str(B.s); }
 

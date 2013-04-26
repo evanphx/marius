@@ -530,7 +530,8 @@ namespace r5 {
 
       Compiler compiler;
 
-      check(compiler.compile(S, file));
+      check(compiler.compile(S,
+             String::internalize(S, "kernel/enumerable.mr"), file));
 
       enum_code = compiler.code();
       fclose(file);

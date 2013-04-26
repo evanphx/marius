@@ -30,8 +30,12 @@ namespace ast {
     return new Arguments(nodes);
   }
 
-  Code* State::to_code(String* name, ArgMap& args, int req, int cov, bool ret) {
+  Code* State::to_code(String* name, String* file,
+                       ArgMap& args, int req, int cov, bool ret)
+  {
     size_t sz = buffer.size();
+    lines.push_back(sz);
+
     Instruction* seq = new(MS) Instruction[sz];
     MS.pin(seq);
 
@@ -39,7 +43,7 @@ namespace ast {
       seq[i] = buffer[i];
     }
 
-    return new(MS) Code(MS, name, seq, buffer.size(), strings, codes,
+    return new(MS) Code(MS, name, file, seq, buffer.size(), strings, codes,
                         args, req, keywords, lines, cov, ret);
   }
 
@@ -410,7 +414,7 @@ namespace ast {
     S.push(t+1);
     S.push(S.string(name_));
 
-    ast::State subS(S.MS, S.lm());
+    ast::State subS(S.MS, S.file(), S.lm());
 
     int first_reg = args_.size() + body_->locals().size();
 
@@ -456,7 +460,8 @@ namespace ast {
 
     S.push(LOADC);
     S.push(t+2);
-    S.push(S.code(subS.to_code(name_, args_, req, body_->cov(), true)));
+    S.push(S.code(subS.to_code(name_, S.file(),
+                               args_, req, body_->cov(), true)));
 
     S.push(CALL);
     S.push(t);
@@ -513,7 +518,7 @@ namespace ast {
 
     S.set_local(l, t);
 
-    ast::State subS(S.MS, S.lm());
+    ast::State subS(S.MS, S.file(), S.lm());
     int r = body_->drive(subS, body_->locals().size());
     subS.push(RET);
     subS.push(r);
@@ -523,7 +528,7 @@ namespace ast {
     S.push(LOADC);
     S.push(t+1);
     S.push(S.code(subS.to_code(String::internalize(S.MS, "__body__"),
-                               args, 0, body_->cov())));
+                               S.file(), args, 0, body_->cov())));
 
     S.push(CALL);
     S.push(t);
@@ -566,7 +571,7 @@ namespace ast {
 
     S.set_local(l, t);
 
-    ast::State subS(S.MS, S.lm());
+    ast::State subS(S.MS, S.file(), S.lm());
     int r = body_->drive(subS, body_->locals().size());
     subS.push(RET);
     subS.push(r);
@@ -576,7 +581,7 @@ namespace ast {
     S.push(LOADC);
     S.push(t+1);
     S.push(S.code(subS.to_code(String::internalize(S.MS, "__body__"),
-                               args, 0, body_->cov())));
+                               S.file(), args, 0, body_->cov())));
 
     S.push(CALL);
     S.push(t);
@@ -1048,7 +1053,7 @@ namespace ast {
   int Lambda::drive(State& S, int t) {
     S.pos(this);
 
-    ast::State subS(S.MS, S.lm(), true);
+    ast::State subS(S.MS, S.file(), S.lm(), true);
 
     int r = body_->drive(subS, body_->locals().size());
 
@@ -1060,7 +1065,7 @@ namespace ast {
     S.push(LOADC);
     S.push(t);
     S.push(S.code(subS.to_code(String::internalize(S.MS, "__lambda__"),
-                               args, 0, body_->cov())));
+                               S.file(), args, 0, body_->cov())));
 
     return t;
   }

@@ -82,6 +82,7 @@ namespace r5 {
 
   Code::Code(State& S,
        String* name,
+       String* file,
        Instruction* buf, int size,
        std::vector<String*> strings,
        std::vector<Code*> codes,
@@ -90,6 +91,7 @@ namespace r5 {
        std::vector<int> lines,
        int cov, bool ret)
     : name_(name)
+    , file_(file)
     , code_(buf)
     , size_(size)
     , strings_(new(S) STuple(S, strings))
@@ -104,7 +106,10 @@ namespace r5 {
 
   int Code::line(int ip) {
     for(int i = 0; i < lines_->size(); i += 2) {
-      if(lines_->at(i) >= ip) return lines_->at(i+1);
+      int s = lines_->at(i);
+      int e = lines_->at(i+2);
+
+      if(s <= ip && ip < e) return lines_->at(i+1);
     }
 
     return 0;
@@ -112,6 +117,7 @@ namespace r5 {
 
   void Code::fill(serialize::Code* c) {
     c->set_name(name_->c_str());
+    c->set_file(file_->c_str());
 
     for(int i = 0; i < size_; i++) {
       c->add_instructions(code_[i]);
@@ -228,6 +234,7 @@ namespace r5 {
 
   Code* Code::load(State& S, serialize::Code* ser) {
     String* name = String::internalize(S, ser->name().c_str());
+    String* file = String::internalize(S, ser->file().c_str());
 
     int size = ser->instructions_size();
 
@@ -281,7 +288,8 @@ namespace r5 {
       lines.push_back(ser->lines(i));
     }
 
-    return new(S) Code(S, name, insn, size, strings, codes,
+    return new(S) Code(S, name, file,
+                       insn, size, strings, codes,
                        args, ser->required_args(),
                        keywords, lines,
                        ser->closed_over_vars(),

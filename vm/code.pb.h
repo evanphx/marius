@@ -377,6 +377,17 @@ class Code : public ::google::protobuf::Message {
   inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
       mutable_lines();
   
+  // optional string file = 11;
+  inline bool has_file() const;
+  inline void clear_file();
+  static const int kFileFieldNumber = 11;
+  inline const ::std::string& file() const;
+  inline void set_file(const ::std::string& value);
+  inline void set_file(const char* value);
+  inline void set_file(const char* value, size_t size);
+  inline ::std::string* mutable_file();
+  inline ::std::string* release_file();
+  
   // @@protoc_insertion_point(class_scope:serialize.Code)
  private:
   inline void set_has_name();
@@ -389,6 +400,8 @@ class Code : public ::google::protobuf::Message {
   inline void clear_has_return_to();
   inline void set_has_required_args();
   inline void clear_has_required_args();
+  inline void set_has_file();
+  inline void clear_has_file();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
@@ -401,10 +414,11 @@ class Code : public ::google::protobuf::Message {
   ::google::protobuf::int32 closed_over_vars_;
   ::google::protobuf::int32 return_to_;
   ::google::protobuf::RepeatedField< ::google::protobuf::int32 > lines_;
+  ::std::string* file_;
   ::google::protobuf::int32 required_args_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(10 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(11 + 31) / 32];
   
   friend void  protobuf_AddDesc_code_2eproto();
   friend void protobuf_AssignDesc_code_2eproto();
@@ -828,6 +842,64 @@ Code::lines() const {
 inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
 Code::mutable_lines() {
   return &lines_;
+}
+
+// optional string file = 11;
+inline bool Code::has_file() const {
+  return (_has_bits_[0] & 0x00000400u) != 0;
+}
+inline void Code::set_has_file() {
+  _has_bits_[0] |= 0x00000400u;
+}
+inline void Code::clear_has_file() {
+  _has_bits_[0] &= ~0x00000400u;
+}
+inline void Code::clear_file() {
+  if (file_ != &::google::protobuf::internal::kEmptyString) {
+    file_->clear();
+  }
+  clear_has_file();
+}
+inline const ::std::string& Code::file() const {
+  return *file_;
+}
+inline void Code::set_file(const ::std::string& value) {
+  set_has_file();
+  if (file_ == &::google::protobuf::internal::kEmptyString) {
+    file_ = new ::std::string;
+  }
+  file_->assign(value);
+}
+inline void Code::set_file(const char* value) {
+  set_has_file();
+  if (file_ == &::google::protobuf::internal::kEmptyString) {
+    file_ = new ::std::string;
+  }
+  file_->assign(value);
+}
+inline void Code::set_file(const char* value, size_t size) {
+  set_has_file();
+  if (file_ == &::google::protobuf::internal::kEmptyString) {
+    file_ = new ::std::string;
+  }
+  file_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* Code::mutable_file() {
+  set_has_file();
+  if (file_ == &::google::protobuf::internal::kEmptyString) {
+    file_ = new ::std::string;
+  }
+  return file_;
+}
+inline ::std::string* Code::release_file() {
+  clear_has_file();
+  if (file_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = file_;
+    file_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
 }
 
 

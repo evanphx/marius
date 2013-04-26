@@ -198,7 +198,7 @@ namespace r5 {
     ast::Node* lit_str(String* s);
 
     // AST
-    ast::Node* named(String* s);
+    ast::Node* named(String* s, int line);
     ast::Node* number(int a);
     ast::Call* ast_call(String* name, ast::Node* r, ast::Nodes args);
     ast::Call* ast_binop(const char* s, ast::Node* a, ast::Node* b);

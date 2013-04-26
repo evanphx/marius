@@ -1503,7 +1503,7 @@ static void yy_reduce(
         break;
       case 52: /* lit ::= ID */
 #line 118 "vm/parser.lm"
-{ yygotominor.yy56.a = S->named(yymsp[0].minor.yy0.s); }
+{ yygotominor.yy56.a = S->named(yymsp[0].minor.yy0.s, yymsp[0].minor.yy0.line); }
 #line 1508 "vm/parser.c.inc"
         break;
       case 53: /* lit ::= IVAR */

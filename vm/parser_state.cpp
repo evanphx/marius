@@ -19,7 +19,7 @@ namespace r5 {
     ast::Argument* a = new ast::Argument(String::internalize(S, "self"), -1);
 
     if(!super) {
-      super = named(String::internalize(S, "Object"));
+      super = named(String::internalize(S, "Object"), parser_.line());
     }
 
     ast::Node* n = pos(new ast::Class(name, super,
@@ -141,8 +141,8 @@ namespace r5 {
     return pos(new ast::LoadAttr(r, n));
   }
 
-  ast::Node* ParserState::named(String* s) {
-    return pos(new ast::Named(s));
+  ast::Node* ParserState::named(String* s, int line) {
+    return pos(new ast::Named(s), line);
   }
 
   void ParserState::start_class() {

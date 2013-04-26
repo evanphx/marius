@@ -40,14 +40,16 @@ namespace r5 {
       LocalMap& lm_;
 
       bool lambda_;
+      String* file_;
 
     public:
       r5::State& MS;
 
-      State(r5::State& ms, LocalMap& lm, bool lamb=false)
+      State(r5::State& ms, String* f, LocalMap& lm, bool lamb=false)
         : cur_line_(0)
         , lm_(lm)
         , lambda_(lamb)
+        , file_(f)
         , MS(ms)
       {}
 
@@ -57,6 +59,10 @@ namespace r5 {
 
       bool lambda_p() {
         return lambda_;
+      }
+
+      String* file() {
+        return file_;
       }
 
       void push(Instruction op) {
@@ -104,7 +110,8 @@ namespace r5 {
       void set_local(Local* l, int t);
       void get_local(Local* l, int t);
 
-      Code* to_code(String* name, ArgMap& args, int req, int cov, bool ret=false);
+      Code* to_code(String* name, String* file, 
+                    ArgMap& args, int req, int cov, bool ret=false);
 
       // Helpers
 
