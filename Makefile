@@ -31,7 +31,7 @@ marius: $(OBJ)
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o marius $(OBJ)
 
 rebuild_kernel: marius
-	for i in kernel/*; do ./marius -bc $$i; mv $${i%.mr}.mrc vm/kernel/; done
+	for i in kernel/*.mr; do ./marius -bc $$i; mv $${i%.mr}.mrc vm/kernel/; done
 	$(MAKE) marius
 
 rebuild_pb:
@@ -42,6 +42,7 @@ rebuild_builtin:
 	./marius -C cimple/buffer.mr os.buffer vm/builtin
 	./marius -C cimple/file.mr os.file vm/builtin
 	./marius -C cimple/dir.mr os.dir vm/builtin
+	./marius -C cimple/stat.mr os.stat vm/builtin
 
 test: marius
 	./marius -c test/syntax.mr
@@ -88,7 +89,7 @@ test: marius
 	test `./marius -p test/opt_arg.mr` = 7
 
 spec: test
-	./marius -Ilib -I. test spec/string_test spec/dictionary_test spec/trait_test spec/enumerable_test
+	./marius -Ilib -I. test spec
 
 .PHONY: test spec
 

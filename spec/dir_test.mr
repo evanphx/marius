@@ -1,0 +1,15 @@
+import test
+
+class DirTest < test::TestCase
+  def test_each
+    d = Dir.new "."
+    f = nil
+    d.each { |s|
+      if s == "spec"
+        f = true
+      end
+    }
+
+    assert_equal true, f
+  end
+end

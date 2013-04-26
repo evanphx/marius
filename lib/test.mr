@@ -1,3 +1,6 @@
+import os.stat
+import os.dir
+
 class TestCase
   def assert_equal(a,b)
     if a != b
@@ -47,14 +50,30 @@ end
 
 class Runner
   def run(path)
-    a = Importer.current.import(path)
+    s = stat::Stat.new path
+
+    if s.directory?
+      d = dir::Dir.new path
+
+      while x = d.read
+        fp = path + "/" + x
+        s2 = stat::Stat.new(fp)
+        if s2.file?
+          io.puts fp
+          run_file fp
+        end
+      end
+    else
+      run_file path
+    end
+  end
+
+  def run_file(path)
+    a = Importer.current.load(path)
     classes = a.values.detect { |t|
                t.kind_of?(Class) && t < TestCase
               }
 
-    classes.each { |c|
-      io.puts c.name
-      c.new.run
-    }
+    classes.each { |c| c.new.run }
   end
 end

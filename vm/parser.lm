@@ -247,7 +247,7 @@ lambda(A) ::= lambda_start lambda_args opt_fin delim_seq(B) RB. { A.a = S->lambd
 /* Conditions */
 
 cond(A) ::= s2(B). { A.a = B.a; }
-cond(A) ::= ID(B) EQUAL s2(C). { A.a = S->assign(B.s, C.a); }
+cond(A) ::= ID(B) EQUAL s2(C). { A.a = S->assign(B.s, C.a, B.line); }
 
 stmt(A) ::= IF cond(B) fin seq(C) fin END. { A.a = S->if_cond(B.a, C.a); }
 stmt(A) ::= IF cond(B) fin seq(C) fin ELSE fin seq(D) fin END.
@@ -272,7 +272,7 @@ stmt(A) ::= TRY fin seq(C) fin RESCUE ID(D) CAST s2(E) fin seq(F) fin END. {
               A.a = S->ast_try(C.a, D.s, E.a, F.a);
             }
 
-stmt(A) ::= ID(B) EQUAL s2(C). { A.a = S->assign(B.s, C.a); }
+stmt(A) ::= ID(B) EQUAL s2(C). { A.a = S->assign(B.s, C.a, B.line); }
 stmt(A) ::= ID(B) OP2_SET(D) s2(C). { A.a = S->assign_op(B.s, D.s, C.a); }
 stmt(A) ::= ID(B) OP1_SET(D) s2(C). { A.a = S->assign_op(B.s, D.s, C.a); }
 stmt(A) ::= ID(B) OP0_SET(D) s2(C). { A.a = S->assign_op(B.s, D.s, C.a); }

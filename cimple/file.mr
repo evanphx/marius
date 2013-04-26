@@ -1,4 +1,4 @@
-import c.fcntl.h
+import c.fcntl
 
 import os.buffer
 

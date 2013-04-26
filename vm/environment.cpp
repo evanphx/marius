@@ -508,7 +508,7 @@ namespace r5 {
     Dictionary::init(S, dict);
     List::init(S, list);
 
-    globals_ = new(S) Closure(12);
+    globals_ = new(S) Closure(13);
     globals_->set(0, o);
     globals_->set(1, io);
     globals_->set(2, c);
@@ -552,6 +552,21 @@ namespace r5 {
     tuple->uses_trait(S, enum_);
 
     init_builtin_extensions(S);
+
+    S.set_importer(new(S) User(S, lookup(S, "Importer").as_class()));
+
+    Code* dir_code = frozen_dir(S);
+
+    fp = S.vm().stack();
+    fp[0] = top_;
+
+    mtop = new(S) Method(String::internalize(S, "__init__"),
+                                 dir_code, S.env().globals());
+
+    Arguments args2(S, 1, fp + 1);
+    S.vm().run(S, mtop, args2);
+
+    globals_->set(12, lookup(S, "Dir"));
   }
 
   void Environment::import_args(State& S, char** args, int count) {
@@ -562,6 +577,11 @@ namespace r5 {
 
   Code* Environment::frozen_enumerable(State& S) {
 #include "kernel/enumerable.mrc"
+    return Code::load_raw(S, (unsigned char*)data, data_size);
+  }
+
+  Code* Environment::frozen_dir(State& S) {
+#include "kernel/dir.mrc"
     return Code::load_raw(S, (unsigned char*)data, data_size);
   }
 }

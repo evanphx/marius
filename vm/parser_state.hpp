@@ -129,6 +129,24 @@ namespace r5 {
       return context_->locals;
     }
 
+    template <typename T>
+    T pos(T n) {
+      n->line(parser_.line());
+      return n;
+    }
+
+    template <typename T>
+    T pos(T n, ast::Node* f) {
+      n->line(f->line());
+      return n;
+    }
+
+    template <typename T>
+    T pos(T n, int line) {
+      n->line(line);
+      return n;
+    }
+
     void start_def(String* s);
 
     int bin_op(const char* op, int a, int b);
@@ -200,7 +218,7 @@ namespace r5 {
 
     ast::Node* ast_try(ast::Node* b, ast::Node* h);
     ast::Node* ast_try(ast::Node* b, String* id, ast::Node* t, ast::Node* h);
-    ast::Node* assign(String* name, ast::Node* n);
+    ast::Node* assign(String* name, ast::Node* n, int line);
     ast::Node* ivar_assign(String* name, ast::Node* n);
     ast::Node* ivar_read(String* name);
 

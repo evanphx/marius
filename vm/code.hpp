@@ -80,6 +80,7 @@ namespace r5 {
     LTuple<STuple*>* keywords_;
     int closed_over_vars_;
     bool return_to_;
+    LTuple<int>* lines_;
 
     friend class GCImpl;
 
@@ -91,6 +92,7 @@ namespace r5 {
          std::vector<Code*> codes,
          ArgMap args, int required_args,
          std::vector<ArgMap> keywords,
+         std::vector<int> lines,
          int cov, bool ret=false);
 
     String* name() {
@@ -137,10 +139,16 @@ namespace r5 {
       return return_to_;
     }
 
+    LTuple<int>* lines() {
+      return lines_;
+    }
+
     void update(Instruction* i, int s) {
       code_ = i;
       size_ = s;
     }
+
+    int line(int ip);
 
     void print();
     void fill(serialize::Code* ser);

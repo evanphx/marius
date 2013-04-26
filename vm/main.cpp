@@ -97,8 +97,6 @@ int main(int argc, char** argv) {
 
   env.init_ontology(S);
 
-  S.set_importer(new(S) User(S, env.lookup(S, "Importer").as_class()));
-
   const char* script = *opt++;
   env.import_args(S, opt, fin - opt); 
 
@@ -194,7 +192,7 @@ int main(int argc, char** argv) {
         std::cout << "    "
                   << i->method()->scope()->c_str() << "#"
                   << i->method()->name(S)->c_str()
-                  << "+" << i->ip()
+                  << ":" << i->method()->code()->line(i->ip())
                   << std::endl;
 
         i = i->previous();

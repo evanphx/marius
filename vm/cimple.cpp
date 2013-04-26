@@ -393,8 +393,20 @@ namespace ast {
       S.set_emitted_ivars();
     }
 
+    char cpp_name[128];
+    cpp_name[0] = 0;
+    strncpy(cpp_name, name_->c_str(), sizeof(cpp_name));
+
+    size_t fin = name_->bytelen() - 1;
+
+    if(cpp_name[fin] == '?') {
+      cpp_name[fin+0] = '_';
+      cpp_name[fin+1] = 'p';
+      cpp_name[fin+2] = 0;
+    }
+
     S.puts("r5::Handle %s_%s(r5::State& S, r5::Handle recv, r5::Arguments& args) {",
-           S.class_name(), name_->c_str());
+           S.class_name(), cpp_name);
 
     S.puts("  %s* self = r5::ext::unwrap<%s>(recv);",
            S.class_name(), S.class_name());
@@ -467,10 +479,22 @@ namespace ast {
     for(Methods::iterator i = methods.begin();
         i != methods.end();
         ++i) {
+      char cpp_name[128];
+      cpp_name[0] = 0;
+      strncpy(cpp_name, i->name->c_str(), 127);
+
+      size_t fin = i->name->bytelen() - 1;
+
+      if(cpp_name[fin] == '?') {
+        cpp_name[fin+0] = '_';
+        cpp_name[fin+1] = 'p';
+        cpp_name[fin+2] = 0;
+      }
+
       S.puts("  S.add_method(cls, \"%s\", %s_%s, %d);",
              i->name->c_str(),
              name_->c_str(),
-             i->name->c_str(),
+             cpp_name,
              i->arity);
     }
 
@@ -544,7 +568,15 @@ namespace ast {
 
   CimpleValue Import::cimple(CimpleState& S) {
     if(strstr(path_->c_str(), "c.") == path_->c_str()) {
-      S.puts("#include <%s>", path_->c_str() + 2);
+      char buf[128];
+      buf[0] = 0;
+      strncat(buf, path_->c_str() + 2, 127);
+
+      while(char* pos = strchr(buf, '.')) {
+        *pos = '/';
+      }
+
+      S.puts("#include <%s.h>", buf);
     } else {
       S.puts("#include \"%s.hpp\"", path_->c_str());
       std::string mod = mod_name(path_->c_str());

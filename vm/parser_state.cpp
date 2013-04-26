@@ -6,11 +6,11 @@ namespace r5 {
   void ParserState::set_top(ast::Node* b) {
     ast::Argument* a = new ast::Argument(String::internalize(S, "self"), -1);
 
-    top_ = new ast::Scope(b, context_->local_names, a);
+    top_ = pos(new ast::Scope(b, context_->local_names, a));
   }
 
   ast::Node* ParserState::seq(ast::Node* l, ast::Node* r) {
-    return new ast::Seq(l, r);
+    return pos(new ast::Seq(l, r), l);
   }
 
   ast::Node* ParserState::ast_class(String* name, ast::Node* super,
@@ -22,8 +22,8 @@ namespace r5 {
       super = named(String::internalize(S, "Object"));
     }
 
-    ast::Node* n = new ast::Class(name, super,
-                     new ast::Scope(body, context_->local_names, a));
+    ast::Node* n = pos(new ast::Class(name, super,
+                         new ast::Scope(body, context_->local_names, a)));
 
     delete context_;
 
@@ -36,8 +36,8 @@ namespace r5 {
   ast::Node* ParserState::trait(String* name, ast::Node* body) {
     ast::Argument* a = new ast::Argument(String::internalize(S, "self"), -1);
 
-    ast::Node* n = new ast::Trait(name,
-                     new ast::Scope(body, context_->local_names, a));
+    ast::Node* n = pos(new ast::Trait(name,
+                         new ast::Scope(body, context_->local_names, a)));
 
     delete context_;
 
@@ -56,10 +56,10 @@ namespace r5 {
   ast::Node* ParserState::ast_def(String* name, ast::Node* b) {
     ast::Argument* a = new ast::Argument(String::internalize(S, "self"), -1);
 
-    ast::Node* n = new ast::Def(name, 
-                     new ast::Scope(b, context_->local_names,
-                        context_->args, context_->arg_objs, a),
-                     context_->args);
+    ast::Node* n = pos(new ast::Def(name, 
+                         new ast::Scope(b, context_->local_names,
+                            context_->args, context_->arg_objs, a),
+                         context_->args));
     delete context_;
 
     context_ = stack_.back();
@@ -90,11 +90,11 @@ namespace r5 {
   }
 
   ast::Node* ParserState::call(ast::Node* recv, String* n) {
-    return new ast::Call(n, recv);
+    return pos(new ast::Call(n, recv), recv);
   }
 
   ast::Node* ParserState::call_attr(ast::Node* recv, String* n) {
-    return new ast::Call(n, recv, 0, ast::Call::eAttr);
+    return pos(new ast::Call(n, recv, 0, ast::Call::eAttr), recv);
   }
 
   ast::Node* ParserState::call_set_attr(ast::Node* recv, String* n,
@@ -105,15 +105,15 @@ namespace r5 {
 
     ast::Arguments* args = new ast::Arguments(nodes, ArgMap());
 
-    return new ast::Call(n, recv, args, ast::Call::eSetAttr);
+    return pos(new ast::Call(n, recv, args, ast::Call::eSetAttr), recv);
   }
 
   ast::Node* ParserState::self_call(String* n) {
-    return new ast::Call(n, self(), 0, ast::Call::eSelfLess);
+    return pos(new ast::Call(n, self(), 0, ast::Call::eSelfLess));
   }
 
   ast::Node* ParserState::send_indirect(ast::Node* recv, ast::Node* n) {
-    return new ast::SendIndirect(n, recv);
+    return pos(new ast::SendIndirect(n, recv));
   }
 
   ast::Node* ParserState::send_indirect_args(ast::Node* recv, ast::Node* name) {
@@ -121,7 +121,7 @@ namespace r5 {
 
     ast::Arguments* args = new ast::Arguments(arg_info_.nodes, arg_info_.keywords);
 
-    n = new ast::SendIndirect(name, recv, args);
+    n = pos(new ast::SendIndirect(name, recv, args));
 
     arg_info_ = arg_infos_.back();
     arg_infos_.pop_back();
@@ -130,19 +130,19 @@ namespace r5 {
   }
 
   ast::Node* ParserState::dcolon(ast::Node* recv, String* n, String* a) {
-    return new ast::Call(n, recv, ast::Arguments::wrap(new ast::LiteralString(a)));
+    return pos(new ast::Call(n, recv, ast::Arguments::wrap(new ast::LiteralString(a))), recv);
   }
 
   ast::Node* ParserState::lit_str(String* n) {
-    return new ast::LiteralString(n);
+    return pos(new ast::LiteralString(n));
   }
 
   ast::Node* ParserState::attr(ast::Node* r, String* n) {
-    return new ast::LoadAttr(r, n);
+    return pos(new ast::LoadAttr(r, n));
   }
 
   ast::Node* ParserState::named(String* s) {
-    return new ast::Named(s);
+    return pos(new ast::Named(s));
   }
 
   void ParserState::start_class() {
@@ -158,23 +158,23 @@ namespace r5 {
   }
 
   ast::Call* ParserState::ast_call(String* name, ast::Node* r, ast::Nodes args) {
-    return new ast::Call(name, r, new ast::Arguments(args));
+    return pos(new ast::Call(name, r, new ast::Arguments(args)), r);
   }
 
   ast::Call* ParserState::ast_binop(const char* s, ast::Node* a, ast::Node* b) {
-    return new ast::Call(String::internalize(S, s), a, ast::Arguments::wrap(b));
+    return pos(new ast::Call(String::internalize(S, s), a, ast::Arguments::wrap(b)), a);
   }
 
   ast::Call* ParserState::ast_binop(String* op, ast::Node* a, ast::Node* b) {
-    return new ast::Call(op, a, ast::Arguments::wrap(b));
+    return pos(new ast::Call(op, a, ast::Arguments::wrap(b)), a);
   }
 
   ast::Node* ParserState::number(int a) {
-    return new ast::Number(a);
+    return pos(new ast::Number(a));
   }
 
   ast::Node* ParserState::ret(ast::Node* n) {
-    return new ast::Return(n);
+    return pos(new ast::Return(n));
   }
 
   void ParserState::start_cascade(ast::Node* recv) {
@@ -212,7 +212,7 @@ namespace r5 {
 
     ast::Arguments* args = new ast::Arguments(arg_info_.nodes, arg_info_.keywords);
 
-    n = new ast::Call(id, recv, args);
+    n = pos(new ast::Call(id, recv, args), recv);
 
     arg_info_ = arg_infos_.back();
     arg_infos_.pop_back();
@@ -227,7 +227,7 @@ namespace r5 {
 
     ast::Arguments* args = new ast::Arguments(arg_info_.nodes, arg_info_.keywords);
 
-    n = new ast::Call(id, self(), args, ast::Call::eSelfLess);
+    n = pos(new ast::Call(id, self(), args, ast::Call::eSelfLess));
 
     arg_info_ = arg_infos_.back();
     arg_infos_.pop_back();
@@ -246,7 +246,7 @@ namespace r5 {
 
     ast::Arguments* args = new ast::Arguments(arg_info_.nodes, arg_info_.keywords);
 
-    n = new ast::Tuple(args);
+    n = pos(new ast::Tuple(args));
 
     arg_info_ = arg_infos_.back();
     arg_infos_.pop_back();
@@ -261,7 +261,7 @@ namespace r5 {
 
     ast::Arguments* args = new ast::Arguments(arg_info_.nodes, arg_info_.keywords);
 
-    n = new ast::List(args);
+    n = pos(new ast::List(args));
 
     arg_info_ = arg_infos_.back();
     arg_infos_.pop_back();
@@ -275,7 +275,7 @@ namespace r5 {
     ast::Node* n = 0;
 
     ast::Arguments* args = new ast::Arguments(arg_info_.nodes, arg_info_.keywords);
-    n = new ast::Dictionary(args);
+    n = pos(new ast::Dictionary(args));
 
     arg_info_ = arg_infos_.back();
     arg_infos_.pop_back();
@@ -286,75 +286,75 @@ namespace r5 {
   }
 
   ast::Node* ParserState::if_cond(ast::Node* cond, ast::Node* body) {
-    return new ast::IfCond(cond, body);
+    return pos(new ast::IfCond(cond, body));
   }
 
   ast::Node* ParserState::if_else(ast::Node* cond, ast::Node* body,
                                   ast::Node* ebody)
   {
-    return new ast::IfCond(cond, body, ebody);
+    return pos(new ast::IfCond(cond, body, ebody));
   }
 
   ast::Node* ParserState::unless(ast::Node* cond, ast::Node* body) {
-    return new ast::Unless(cond, body);
+    return pos(new ast::Unless(cond, body));
   }
 
   ast::Node* ParserState::while_(ast::Node* cond, ast::Node* body) {
-    return new ast::While(cond, body);
+    return pos(new ast::While(cond, body));
   }
 
   ast::Node* ParserState::ast_nil() {
-    return new ast::Nil();
+    return pos(new ast::Nil());
   }
 
   ast::Node* ParserState::ast_true() {
-    return new ast::True();
+    return pos(new ast::True());
   }
 
   ast::Node* ParserState::ast_false() {
-    return new ast::False();
+    return pos(new ast::False());
   }
 
   ast::Node* ParserState::self() {
-    return new ast::Self();
+    return pos(new ast::Self());
   }
 
   ast::Node* ParserState::import(String* name) {
-    return new ast::Import(S, name);
+    return pos(new ast::Import(S, name));
   }
 
   ast::Node* ParserState::import(String* path, String* name) {
-    return new ast::Import(S, path, name);
+    return pos(new ast::Import(S, path, name));
   }
 
   ast::Node* ParserState::ast_try(ast::Node* b, ast::Node* h) {
-    return new ast::Try(b, h);
+    return pos(new ast::Try(b, h));
   }
 
   ast::Node* ParserState::ast_try(ast::Node* b, String* id, ast::Node* t,
                                   ast::Node* h)
   {
-    return new ast::Try(b, h, id, t);
+    return pos(new ast::Try(b, h, id, t));
   }
 
-  ast::Node* ParserState::assign(String* name, ast::Node* n) {
-    return new ast::Assign(name, n);
+  ast::Node* ParserState::assign(String* name, ast::Node* n, int line) {
+    return pos(new ast::Assign(name, n), line);
   }
 
   ast::Node* ParserState::ivar_assign(String* name, ast::Node* v) {
-    return new ast::IvarAssign(name, v);
+    return pos(new ast::IvarAssign(name, v), v);
   }
 
   ast::Node* ParserState::assign_op(String* name, String* op, ast::Node* n) {
-    return new ast::AssignOp(name, op, n);
+    return pos(new ast::AssignOp(name, op, n), n);
   }
 
   ast::Node* ParserState::ivar_assign_op(String* name, String* op, ast::Node* n) {
-    return new ast::IvarAssignOp(name, op, n);
+    return pos(new ast::IvarAssignOp(name, op, n));
   }
 
   ast::Node* ParserState::ivar_read(String* name) {
-    return new ast::IvarRead(name);
+    return pos(new ast::IvarRead(name));
   }
 
   void ParserState::start_lambda() {
@@ -367,7 +367,7 @@ namespace r5 {
     ast::Scope* sc = new ast::Scope(b, context_->local_names,
                         context_->args, context_->arg_objs, 0);
 
-    ast::Node* n = new ast::Lambda(sc);
+    ast::Node* n = pos(new ast::Lambda(sc));
 
     delete context_;
 
@@ -378,19 +378,19 @@ namespace r5 {
   }
 
   ast::Node* ParserState::cast(ast::Node* e, ast::Node* type) {
-    return new ast::Cast(e, type);
+    return pos(new ast::Cast(e, type));
   }
 
   ast::Node* ParserState::raise(ast::Node* v) {
-    return new ast::Raise(v);
+    return pos(new ast::Raise(v));
   }
 
   ast::Node* ParserState::not_(ast::Node* v) {
-    return new ast::Not(v);
+    return pos(new ast::Not(v));
   }
 
   ast::Node* ParserState::and_(ast::Node* a, ast::Node* b) {
-    return new ast::And(a, b);
+    return pos(new ast::And(a, b));
   }
 
   /*

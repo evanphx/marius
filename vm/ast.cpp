@@ -40,7 +40,7 @@ namespace ast {
     }
 
     return new(MS) Code(MS, name, seq, buffer.size(), strings, codes,
-                        args, req, keywords, cov, ret);
+                        args, req, keywords, lines, cov, ret);
   }
 
   void State::set_local(Local* l, int t) {
@@ -163,6 +163,8 @@ namespace ast {
     type_->drive(S, t);
     value_->drive(S, t+1);
 
+    S.pos(this);
+
     S.push(CALL);
     S.push(t);
     S.push(S.string(String::internalize(S.MS, "cast")));
@@ -193,6 +195,8 @@ namespace ast {
 
       count = args_->positional.size();
     }
+
+    S.pos(this);
 
     S.push(TUPLE);
     S.push(t);
@@ -228,6 +232,8 @@ namespace ast {
 
       count = args_->positional.size();
     }
+
+    S.pos(this);
 
     S.push(LIST);
     S.push(t);
@@ -272,6 +278,8 @@ namespace ast {
         kw = args_->keywords.size() > 0;
       }
 
+      S.pos(this);
+
       S.push(kw ? CALL_KW : CALL);
       S.push(t);
       S.push(S.string(String::internalize(S.MS, "call")));
@@ -297,6 +305,8 @@ namespace ast {
       count = args_->positional.size();
       kw = args_->keywords.size() > 0;
     }
+
+    S.pos(this);
 
     S.push(kw ? CALL_KW : CALL);
     S.push(t);
@@ -326,6 +336,8 @@ namespace ast {
   }
 
   int Number::drive(State& S, int t) {
+    S.pos(this);
+
     if(val_ < 128 && val_ > -127) {
       S.push(MOVI8);
       S.push(t);
@@ -349,6 +361,8 @@ namespace ast {
   }
 
   int Named::drive(State& S, int t) {
+    S.pos(this);
+
     Local* l = S.lm().get(this);
 
     if(l) {
@@ -387,6 +401,8 @@ namespace ast {
   }
 
   int Def::drive(State& S, int t) {
+    S.pos(this);
+
     S.push(SELF);
     S.push(t);
 
@@ -457,6 +473,8 @@ namespace ast {
   }
 
   int Trait::drive(State& S, int t) {
+    S.pos(this);
+
     int si = S.string(name_);
 
     Local* l = S.lm().get(this);
@@ -523,6 +541,8 @@ namespace ast {
   }
 
   int Class::drive(State& S, int t) {
+    S.pos(this);
+
     super_->drive(S, t);
 
     int si = S.string(name_);
@@ -575,6 +595,8 @@ namespace ast {
   }
 
   int Return::drive(State& S, int t) {
+    S.pos(this);
+
     val_->drive(S, t);
 
     if(S.lambda_p()) {
@@ -600,6 +622,8 @@ namespace ast {
         ++i) {
       (*i)->drive(S, t);
     }
+
+    S.pos(this);
 
     S.push(MOVR);
     S.push(t);
@@ -635,6 +659,8 @@ namespace ast {
   }
 
   int While::drive(State& S, int t) {
+    S.pos(this);
+
     int top = S.pos();
 
     cond_->drive(S, t);
@@ -662,6 +688,8 @@ namespace ast {
   }
 
   int IfCond::drive(State& S, int t) {
+    S.pos(this);
+
     recv_->drive(S, t);
     S.push(JMPIF);
     S.push(t);
@@ -699,6 +727,8 @@ namespace ast {
   }
 
   int Unless::drive(State& S, int t) {
+    S.pos(this);
+
     recv_->drive(S, t);
     S.push(JMPIT);
     S.push(t);
@@ -721,6 +751,8 @@ namespace ast {
   }
 
   int Nil::drive(State& S, int t) {
+    S.pos(this);
+
     S.push(MOVN);
     S.push(t);
 
@@ -732,6 +764,8 @@ namespace ast {
   }
 
   int True::drive(State& S, int t) {
+    S.pos(this);
+
     S.push(MOVT);
     S.push(t);
 
@@ -743,6 +777,8 @@ namespace ast {
   }
 
   int False::drive(State& S, int t) {
+    S.pos(this);
+
     S.push(MOVF);
     S.push(t);
 
@@ -754,6 +790,8 @@ namespace ast {
   }
 
   int Self::drive(State& S, int t) {
+    S.pos(this);
+
     Local* l = S.lm().get(this);
 
     assert(l);
@@ -768,6 +806,8 @@ namespace ast {
   }
 
   int Import::drive(State& S, int t) {
+    S.pos(this);
+
     Local* l = S.lm().get(this);
     assert(l);
 
@@ -799,6 +839,8 @@ namespace ast {
   }
 
   int Try::drive(State& S, int t) {
+    S.pos(this);
+
     S.push(REGE);
     S.push(t);
 
@@ -871,6 +913,8 @@ namespace ast {
   }
 
   int Assign::drive(State& S, int t) {
+    S.pos(this);
+
     value_->drive(S, t);
 
     Local* l = S.lm().get(this);
@@ -888,6 +932,8 @@ namespace ast {
   }
 
   int AssignOp::drive(State& S, int t) {
+    S.pos(this);
+
     Local* l = S.lm().get(this);
     assert(l);
 
@@ -912,6 +958,8 @@ namespace ast {
   }
 
   int LoadAttr::drive(State& S, int t) {
+    S.pos(this);
+
     recv_->drive(S, t);
     S.push(LATTR);
     S.push(t);
@@ -927,6 +975,8 @@ namespace ast {
   }
 
   int IvarAssign::drive(State& S, int t) {
+    S.pos(this);
+
     value_->drive(S, t);
     S.push(IVA);
     S.push(S.string(name_));
@@ -941,6 +991,8 @@ namespace ast {
   }
 
   int IvarAssignOp::drive(State& S, int t) {
+    S.pos(this);
+
     S.push(IVR);
     S.push(S.string(name_));
     S.push(t);
@@ -966,6 +1018,8 @@ namespace ast {
   }
 
   int IvarRead::drive(State& S, int t) {
+    S.pos(this);
+
     S.push(IVR);
     S.push(t);
     S.push(S.string(name_));
@@ -978,6 +1032,8 @@ namespace ast {
   }
 
   int LiteralString::drive(State& S, int t) {
+    S.pos(this);
+
     S.push(LOADS);
     S.push(t);
     S.push(S.string(str_));
@@ -990,6 +1046,8 @@ namespace ast {
   }
 
   int Lambda::drive(State& S, int t) {
+    S.pos(this);
+
     ast::State subS(S.MS, S.lm(), true);
 
     int r = body_->drive(subS, body_->locals().size());
@@ -1013,6 +1071,8 @@ namespace ast {
   }
 
   int Raise::drive(State& S, int t) {
+    S.pos(this);
+
     value_->drive(S, t);
     S.push(RAISE);
     S.push(t);
@@ -1026,6 +1086,8 @@ namespace ast {
   }
 
   int Not::drive(State& S, int t) {
+    S.pos(this);
+
     value_->drive(S, t);
     S.push(NOT);
     S.push(t);
@@ -1040,6 +1102,8 @@ namespace ast {
   }
 
   int And::drive(State& S, int t) {
+    S.pos(this);
+
     left_->drive(S, t);
     S.push(JMPIF);
     S.push(t);
@@ -1061,6 +1125,8 @@ namespace ast {
   }
 
   int Dictionary::drive(State& S, int t) {
+    S.pos(this);
+
     Local* l = S.lm().get(this);
     assert(l);
 

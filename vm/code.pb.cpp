@@ -68,7 +68,7 @@ void protobuf_AssignDesc_code_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(ArgMap));
   Code_descriptor_ = file->message_type(2);
-  static const int Code_offsets_[9] = {
+  static const int Code_offsets_[10] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Code, name_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Code, instructions_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Code, strings_),
@@ -78,6 +78,7 @@ void protobuf_AssignDesc_code_2eproto() {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Code, closed_over_vars_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Code, return_to_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Code, required_args_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Code, lines_),
   };
   Code_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -130,13 +131,13 @@ void protobuf_AddDesc_code_2eproto() {
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
     "\n\ncode.proto\022\tserialize\"&\n\010ArgEntry\022\013\n\003k"
     "ey\030\001 \002(\t\022\r\n\005value\030\002 \002(\005\".\n\006ArgMap\022$\n\007ent"
-    "ries\030\001 \003(\0132\023.serialize.ArgEntry\"\345\001\n\004Code"
+    "ries\030\001 \003(\0132\023.serialize.ArgEntry\"\364\001\n\004Code"
     "\022\014\n\004name\030\001 \002(\t\022\024\n\014instructions\030\002 \003(\005\022\017\n\007"
     "strings\030\003 \003(\t\022\036\n\005codes\030\004 \003(\0132\017.serialize"
     ".Code\022\037\n\004args\030\005 \001(\0132\021.serialize.ArgMap\022#"
     "\n\010keywords\030\006 \003(\0132\021.serialize.ArgMap\022\030\n\020c"
     "losed_over_vars\030\007 \002(\005\022\021\n\treturn_to\030\010 \001(\005"
-    "\022\025\n\rrequired_args\030\t \001(\005", 343);
+    "\022\025\n\rrequired_args\030\t \001(\005\022\r\n\005lines\030\n \003(\005", 358);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "code.proto", &protobuf_RegisterTypes);
   ArgEntry::default_instance_ = new ArgEntry();
@@ -638,6 +639,7 @@ const int Code::kKeywordsFieldNumber;
 const int Code::kClosedOverVarsFieldNumber;
 const int Code::kReturnToFieldNumber;
 const int Code::kRequiredArgsFieldNumber;
+const int Code::kLinesFieldNumber;
 #endif  // !_MSC_VER
 
 Code::Code()
@@ -718,6 +720,7 @@ void Code::Clear() {
   strings_.Clear();
   codes_.Clear();
   keywords_.Clear();
+  lines_.Clear();
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
 }
@@ -872,6 +875,28 @@ bool Code::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
+        if (input->ExpectTag(80)) goto parse_lines;
+        break;
+      }
+      
+      // repeated int32 lines = 10;
+      case 10: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_lines:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 1, 80, input, this->mutable_lines())));
+        } else if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag)
+                   == ::google::protobuf::internal::WireFormatLite::
+                      WIRETYPE_LENGTH_DELIMITED) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitiveNoInline<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, this->mutable_lines())));
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(80)) goto parse_lines;
         if (input->ExpectAtEnd()) return true;
         break;
       }
@@ -951,6 +976,12 @@ void Code::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteInt32(9, this->required_args(), output);
   }
   
+  // repeated int32 lines = 10;
+  for (int i = 0; i < this->lines_size(); i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(
+      10, this->lines(i), output);
+  }
+  
   if (!unknown_fields().empty()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
@@ -1018,6 +1049,12 @@ void Code::SerializeWithCachedSizes(
   // optional int32 required_args = 9;
   if (has_required_args()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(9, this->required_args(), target);
+  }
+  
+  // repeated int32 lines = 10;
+  for (int i = 0; i < this->lines_size(); i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteInt32ToArray(10, this->lines(i), target);
   }
   
   if (!unknown_fields().empty()) {
@@ -1102,6 +1139,16 @@ int Code::ByteSize() const {
         this->keywords(i));
   }
   
+  // repeated int32 lines = 10;
+  {
+    int data_size = 0;
+    for (int i = 0; i < this->lines_size(); i++) {
+      data_size += ::google::protobuf::internal::WireFormatLite::
+        Int32Size(this->lines(i));
+    }
+    total_size += 1 * this->lines_size() + data_size;
+  }
+  
   if (!unknown_fields().empty()) {
     total_size +=
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
@@ -1131,6 +1178,7 @@ void Code::MergeFrom(const Code& from) {
   strings_.MergeFrom(from.strings_);
   codes_.MergeFrom(from.codes_);
   keywords_.MergeFrom(from.keywords_);
+  lines_.MergeFrom(from.lines_);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     if (from.has_name()) {
       set_name(from.name());
@@ -1191,6 +1239,7 @@ void Code::Swap(Code* other) {
     std::swap(closed_over_vars_, other->closed_over_vars_);
     std::swap(return_to_, other->return_to_);
     std::swap(required_args_, other->required_args_);
+    lines_.Swap(&other->lines_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);

@@ -1707,7 +1707,7 @@ static void yy_reduce(
       case 134: /* cond ::= ID EQUAL s2 */
       case 146: /* stmt ::= ID EQUAL s2 */ yytestcase(yyruleno==146);
 #line 250 "vm/parser.lm"
-{ yygotominor.yy56.a = S->assign(yymsp[-2].minor.yy0.s, yymsp[0].minor.yy56.a); }
+{ yygotominor.yy56.a = S->assign(yymsp[-2].minor.yy0.s, yymsp[0].minor.yy56.a, yymsp[-2].minor.yy0.line); }
 #line 1712 "vm/parser.c.inc"
         break;
       case 135: /* stmt ::= IF cond fin seq fin END */

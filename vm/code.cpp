@@ -4,6 +4,7 @@
 #include "code.pb.h"
 
 #include <fstream>
+#include <iostream>
 
 namespace r5 {
   const char* InstructionNames[] = {
@@ -86,6 +87,7 @@ namespace r5 {
        std::vector<Code*> codes,
        ArgMap args, int required_args,
        std::vector<ArgMap> keywords,
+       std::vector<int> lines,
        int cov, bool ret)
     : name_(name)
     , code_(buf)
@@ -97,7 +99,16 @@ namespace r5 {
     , keywords_(keywords_to_ltuple(S, keywords))
     , closed_over_vars_(cov)
     , return_to_(ret)
+    , lines_(new(S) LTuple<int>(S, lines))
   {}
+
+  int Code::line(int ip) {
+    for(int i = 0; i < lines_->size(); i += 2) {
+      if(lines_->at(i) >= ip) return lines_->at(i+1);
+    }
+
+    return 0;
+  }
 
   void Code::fill(serialize::Code* c) {
     c->set_name(name_->c_str());
@@ -120,7 +131,13 @@ namespace r5 {
 
       for(unsigned i = 0; i < args_->size(); i++) {
         serialize::ArgEntry* cae = cam->add_entries();
-        cae->set_key(args_->at(i)->c_str());
+
+        if(args_->at(i)) {
+          cae->set_key(args_->at(i)->c_str());
+        } else {
+          cae->set_key("");
+        }
+
         cae->set_value(i);
       }
     }
@@ -140,6 +157,10 @@ namespace r5 {
     c->set_closed_over_vars(closed_over_vars_);
     c->set_return_to(return_to_);
     c->set_required_args(required_args_);
+
+    for(unsigned idx = 0; idx < lines_->size(); idx++) {
+      c->add_lines(lines_->at(idx));
+    }
   }
 
   const unsigned magic = 0xdecafbad;
@@ -254,9 +275,16 @@ namespace r5 {
       keywords.push_back(map);
     }
 
+    std::vector<int> lines;
+
+    for(int i = 0; i < ser->lines_size(); i++) {
+      lines.push_back(ser->lines(i));
+    }
+
     return new(S) Code(S, name, insn, size, strings, codes,
                        args, ser->required_args(),
-                       keywords, ser->closed_over_vars(),
+                       keywords, lines,
+                       ser->closed_over_vars(),
                        ser->return_to());
   }
 }

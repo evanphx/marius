@@ -1,5 +1,4 @@
-
-import c.dirent.h
+import c.dirent
 
 class Dir
 

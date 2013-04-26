@@ -1,0 +1,19 @@
+import c.sys.stat
+
+class Stat
+  let @info: Struct[stat]
+
+  def initialize(path : String)
+    stat path.c_str(), ext.ptr(@info)
+  end
+
+  def directory?
+    s = ext.ptr(@info).st_mode
+    return ext.to_bool(s & S_IFDIR)
+  end
+
+  def file?
+    s = ext.ptr(@info).st_mode
+    return ext.to_bool(s & S_IFREG)
+  end
+end

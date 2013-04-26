@@ -62,6 +62,10 @@ namespace r5 {
       , capa(cDefaultBufferSize)
     {}
 
+    ~ScratchBuffer() {
+      delete buf;
+    }
+
     bool empty_p() {
       return len == 0;
     }
@@ -71,6 +75,7 @@ namespace r5 {
         capa += cDefaultBufferSize;
         uint8_t* n = new uint8_t[capa];
         memcpy(n, buf, len-1);
+        delete buf;
         buf = n;
       }
 

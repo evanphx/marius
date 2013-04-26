@@ -1,0 +1,18 @@
+import os.dir
+
+class Dir
+  def initialize(path)
+    @os = dir::Dir.new path
+  end
+
+  def read
+    @os.read
+  end
+
+  def each(b)
+    while x = @os.read
+      b(x)
+    end
+  end
+end
+

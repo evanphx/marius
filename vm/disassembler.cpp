@@ -205,7 +205,17 @@ namespace r5 {
   void Disassembler::print(int indent) {
     Instruction* seq = code_->code();
 
+    int le = 0;
+
     for(int ip = 0; ip < code_->size();) {
+      if(le >= 0 && code_->lines()->at(le) == ip) {
+        for(int j = 0; j < indent; j++) printf(" ");
+        printf("       LINE %d\n", code_->lines()->at(le+1));
+        le += 2;
+
+        if(le >= code_->lines()->size()) le = -1;
+      }
+
       for(int j = 0; j < indent; j++) printf(" ");
 
       printf("[%02d] ", ip);
@@ -218,7 +228,7 @@ namespace r5 {
     for(int i = 0; i < code_->codes_size(); i++) {
       printf("\n");
       for(int j = 0; j < indent; j++) printf(" ");
-      printf("== CODE[%d] ==\n", i);
+      printf("== CODE[%d] %s ==\n", i, code_->code(i)->name()->c_str());
 
       Disassembler dis(code_->code(i));
       dis.print(indent);

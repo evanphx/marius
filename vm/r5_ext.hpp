@@ -45,6 +45,15 @@ namespace r5 {
     }
 
     template <typename T>
+      inline T* ptr(State&, T& o) {
+        return &o;
+      }
+
+    inline Handle to_bool(State& S, bool v) {
+      return handle(S, v ? OOP::true_() : OOP::false_());
+    }
+
+    template <typename T>
       Handle allocate(State& S, Class* cls) {
         return allocate_sized(S, cls, sizeof(T));
       }

@@ -13,11 +13,14 @@ namespace r5 {
     class Scope;
   }
 
-  union ParserToken {
-    long i;
-    String* s;
-    ast::Node* a;
-    const char* cs;
+  struct ParserToken {
+    union {
+      long i;
+      String* s;
+      ast::Node* a;
+      const char* cs;
+    };
+    int line;
   };
 
   class Parser {

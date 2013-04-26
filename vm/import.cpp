@@ -43,6 +43,43 @@ namespace r5 {
       return 0;
     }
 
+    Handle load(State& S, Handle recv, Arguments& args) {
+      String* path = args[0]->as_string();
+
+      FILE* file = fopen(path->c_str(), "r");
+
+      if(!file) {
+        return handle(S, OOP::make_unwind(
+            Exception::create(S, "ImportError",
+                              "Unable to open '%s'", path->c_str())));
+      }
+
+      Compiler compiler;
+
+      if(!compiler.compile(S, file)) {
+        return handle(S, OOP::make_unwind(
+            Exception::create(S, "ImportError",
+                              "Unable to compile '%s'", path->c_str())));
+      }
+
+      Module* m = new(S) Module(S,
+          S.env().lookup(S, "Module").as_class(), path);
+
+      OOP* fp = args.rest() + 1;
+      fp[0] = m;
+
+      Code* code = compiler.code();
+
+      Method* top = new(S) Method(path, code, S.env().globals());
+
+      Arguments out_args(S, 1, fp + 1);
+
+      OOP t = S.vm().run(S, top, out_args);
+      if(t.unwind_p()) return handle(S, t);
+
+      return handle(S, m);
+    }
+
     Handle import(State& S, Handle recv, Arguments& args) {
       String* name = args[0]->as_string();
 
@@ -121,6 +158,7 @@ namespace r5 {
   Class* init_import(State& S) {
     Class* x = S.env().new_class(S, "Importer");
     x->add_method(S, "import", import, 1);
+    x->add_method(S, "load", load, 1);
     x->add_class_method(S, "current", current, 0);
 
     S.env().new_class(S, "ImportError");

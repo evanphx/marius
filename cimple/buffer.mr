@@ -1,4 +1,4 @@
-import c.stdlib.h
+import c.stdlib
 
 class Buffer
   let @ptr  : Ptr[uint8_t]

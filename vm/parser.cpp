@@ -74,6 +74,7 @@ namespace r5 {
   }
 
   int Parser::next_token() {
+    value_.line = line_;
     value_.i = 0;
 
     if(import_name_) {

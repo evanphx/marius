@@ -5,8 +5,11 @@
 #include "class.hpp"
 #include "method.hpp"
 
+#include "util/own.hpp"
+
 #include <map>
 #include <string>
+#include <memory>
 
 namespace r5 {
 
@@ -116,6 +119,20 @@ namespace r5 {
       OOP val = s->equal(s2) ? OOP::true_() : OOP::false_();
       return handle(S, val);
     }
+
+    Handle plus_m(State& S, Handle recv, Arguments& args) {
+      String* s = recv->as_string();
+      String* s2 = args[0]->as_string();
+
+      int sz = s->bytelen() + s2->bytelen();
+
+      own<char*> buf(new char[sz]);
+
+      memcpy(buf, s->c_str(), s->bytelen());
+      memcpy(buf + s->bytelen(), s2->c_str(), s2->bytelen());
+
+      return handle(S, String::internalize(S, buf, sz));
+    }
   }
 
   void String::init(State& S) {
@@ -125,5 +142,6 @@ namespace r5 {
     str->add_method(S, "size", char_size, 0);
     str->add_method(S, "prefix?", prefix_p, 1);
     str->add_method(S, "==", equal_m, 1);
+    str->add_method(S, "+", plus_m, 1);
   }
 }

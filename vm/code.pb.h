@@ -365,6 +365,18 @@ class Code : public ::google::protobuf::Message {
   inline ::google::protobuf::int32 required_args() const;
   inline void set_required_args(::google::protobuf::int32 value);
   
+  // repeated int32 lines = 10;
+  inline int lines_size() const;
+  inline void clear_lines();
+  static const int kLinesFieldNumber = 10;
+  inline ::google::protobuf::int32 lines(int index) const;
+  inline void set_lines(int index, ::google::protobuf::int32 value);
+  inline void add_lines(::google::protobuf::int32 value);
+  inline const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
+      lines() const;
+  inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
+      mutable_lines();
+  
   // @@protoc_insertion_point(class_scope:serialize.Code)
  private:
   inline void set_has_name();
@@ -388,10 +400,11 @@ class Code : public ::google::protobuf::Message {
   ::google::protobuf::RepeatedPtrField< ::serialize::ArgMap > keywords_;
   ::google::protobuf::int32 closed_over_vars_;
   ::google::protobuf::int32 return_to_;
+  ::google::protobuf::RepeatedField< ::google::protobuf::int32 > lines_;
   ::google::protobuf::int32 required_args_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(9 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(10 + 31) / 32];
   
   friend void  protobuf_AddDesc_code_2eproto();
   friend void protobuf_AssignDesc_code_2eproto();
@@ -790,6 +803,31 @@ inline ::google::protobuf::int32 Code::required_args() const {
 inline void Code::set_required_args(::google::protobuf::int32 value) {
   set_has_required_args();
   required_args_ = value;
+}
+
+// repeated int32 lines = 10;
+inline int Code::lines_size() const {
+  return lines_.size();
+}
+inline void Code::clear_lines() {
+  lines_.Clear();
+}
+inline ::google::protobuf::int32 Code::lines(int index) const {
+  return lines_.Get(index);
+}
+inline void Code::set_lines(int index, ::google::protobuf::int32 value) {
+  lines_.Set(index, value);
+}
+inline void Code::add_lines(::google::protobuf::int32 value) {
+  lines_.Add(value);
+}
+inline const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
+Code::lines() const {
+  return lines_;
+}
+inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
+Code::mutable_lines() {
+  return &lines_;
 }
 
 

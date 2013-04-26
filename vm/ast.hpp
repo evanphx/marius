@@ -34,6 +34,8 @@ namespace r5 {
       std::vector<String*> strings;
       std::vector<Code*> codes;
       std::vector<ArgMap> keywords;
+      std::vector<int> lines;
+      int cur_line_;
 
       LocalMap& lm_;
 
@@ -43,7 +45,8 @@ namespace r5 {
       r5::State& MS;
 
       State(r5::State& ms, LocalMap& lm, bool lamb=false)
-        : lm_(lm)
+        : cur_line_(0)
+        , lm_(lm)
         , lambda_(lamb)
         , MS(ms)
       {}
@@ -111,6 +114,7 @@ namespace r5 {
         push(from);
       }
 
+      void pos(ast::Node* n);
     };
 
     class Visitor;
@@ -133,7 +137,23 @@ namespace r5 {
     };
 
     class Node {
+      int line_;
+
     public:
+      Node()
+        : line_(0)
+      {}
+
+      Node* line(int l) {
+        check(l < 1000);
+        line_ = l;
+        return this;
+      }
+
+      int line() {
+        return line_;
+      }
+
       virtual int drive(State& S, int t) = 0;
       virtual void accept(Visitor* V) = 0;
       virtual CimpleValue cimple(CimpleState& S) = 0;
@@ -998,6 +1018,26 @@ namespace r5 {
       virtual void visit(Trait* t) {}
     };
 
+    inline void State::pos(Node* n) {
+      int l = n->line();
+      if(l < 1) return;
+
+      if(lines.empty()) {
+        lines.push_back(pos());
+        lines.push_back(l);
+        // printf("ip: %d line: %d\n", pos(), n->line());
+      } else if(cur_line_ != l) {
+        if(lines[lines.size()-2] == pos()) {
+          lines[lines.size()-1] = l;
+          // printf("update ip: %d line: %d\n", pos(), n->line());
+        } else {
+          lines.push_back(pos());
+          lines.push_back(l);
+          // printf("ip: %d line: %d\n", pos(), n->line());
+        }
+        cur_line_ = l;
+      }
+    }
   }
 }
 
