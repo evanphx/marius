@@ -12,4 +12,43 @@ class DirTest < test::TestCase
 
     assert_equal true, f
   end
+
+  def test_read
+    d = Dir.new "."
+    assert_equal ".", d.read
+  end
+
+  def test_tell
+    d = Dir.new "."
+    d.read
+    t = d.tell
+
+    assert t.kind_of?(Integer)
+  end
+
+  def test_seek
+    d = Dir.new "."
+    s = d.tell
+    d.read
+    d.seek s
+
+    assert_equal d.tell, s
+  end
+
+  def test_pos
+    d = Dir.new "."
+    d.read
+    t = d.pos
+
+    assert t.kind_of?(Integer)
+  end
+
+  def test_pos_set
+    d = Dir.new "."
+    s = d.tell
+    d.read
+    d.pos = s
+
+    assert_equal d.tell, s
+  end
 end

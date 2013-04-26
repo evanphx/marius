@@ -31,6 +31,26 @@ r5::Handle Dir_close(r5::State& S, r5::Handle recv, r5::Arguments& args) {
   closedir(self->os);
   return handle(S, r5::OOP::nil());
 }
+;
+r5::Handle Dir_rewind(r5::State& S, r5::Handle recv, r5::Arguments& args) {
+  Dir* self = r5::ext::unwrap<Dir>(recv);
+  rewinddir(self->os);
+  return handle(S, r5::OOP::nil());
+}
+;
+r5::Handle Dir_tell(r5::State& S, r5::Handle recv, r5::Arguments& args) {
+  Dir* self = r5::ext::unwrap<Dir>(recv);
+  return handle(S, r5::ext::wrap(S, telldir(self->os)));
+;
+  return handle(S, r5::OOP::nil());
+}
+;
+r5::Handle Dir_seek(r5::State& S, r5::Handle recv, r5::Arguments& args) {
+  Dir* self = r5::ext::unwrap<Dir>(recv);
+  int pos = args[0]->int_value();
+  seekdir(self->os, pos);
+  return handle(S, r5::OOP::nil());
+}
 void init_Dir(r5::State& S) {
   r5::Handle mod = S.new_module("os.dir");
   r5::Handle cls = S.new_class(mod, "Dir");
@@ -38,5 +58,8 @@ void init_Dir(r5::State& S) {
   S.add_method(cls, "initialize", Dir_initialize, 1);
   S.add_method(cls, "read", Dir_read, 0);
   S.add_method(cls, "close", Dir_close, 0);
+  S.add_method(cls, "rewind", Dir_rewind, 0);
+  S.add_method(cls, "tell", Dir_tell, 0);
+  S.add_method(cls, "seek", Dir_seek, 1);
 }
 static r5::ExtInitializer setup(init_Dir);

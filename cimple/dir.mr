@@ -22,4 +22,16 @@ class Dir
     closedir @os
   end
 
+  def rewind
+    rewinddir @os
+  end
+
+  def tell
+    return ext.wrap(telldir(@os))
+  end
+
+  def seek(pos : int)
+    seekdir @os, pos
+  end
+
 end

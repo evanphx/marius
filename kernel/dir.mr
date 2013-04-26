@@ -9,6 +9,18 @@ class Dir
     @os.read
   end
 
+  def tell
+    @os.tell
+  end
+
+  alias_method %tell, %pos
+
+  def seek(pos)
+    @os.seek pos
+  end
+
+  alias_method %seek, %pos=
+
   def each(b)
     while x = @os.read
       b(x)

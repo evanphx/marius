@@ -314,7 +314,15 @@ namespace ast {
 
     S.push(kw ? CALL_KW : CALL);
     S.push(t);
-    S.push(S.string(name_));
+
+    if(spec_ == eSetAttr) {
+      std::string s(name_->c_str());
+      s += "=";
+      S.push(S.string(String::internalize(S.MS, s.c_str())));
+    } else {
+      S.push(S.string(name_));
+    }
+
     S.push(t);
     S.push(count);
 

@@ -530,17 +530,24 @@ again:
   }
 
   int Parser::sym_match() {
-    char* start = pos_;
+    ScratchBuffer buf;
 
-    if(!isalpha(next_c())) return -1;
+    uint8_t c = next_c();
 
-    advance(1);
+    while(c && isalpha(c)) {
+      buf.append(c);
+      advance(1);
+      c = next_c();
+    }
 
-    while(isalpha(next_c())) {
+    if(!c || buf.empty_p()) return -1;
+
+    if(c == '=' || c == '?' || c == '!') {
+      buf.append(c);
       advance(1);
     }
 
-    value_.s = String::internalize(S, start, pos_ - start);
+    value_.s = String::internalize(S, buf.copy_out());
     return TK_LITSTR;
   }
 

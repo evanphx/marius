@@ -107,6 +107,19 @@ namespace r5 {
     return handle(S, OOP::nil());
   }
 
+  static Handle alias_method(State& S, Handle recv, Arguments& args) {
+    String* from = args[0]->as_string();
+    String* to = args[1]->as_string();
+
+    Method* m = recv->as_class()->lookup(from);
+
+    check(m);
+
+    recv->as_class()->add_native_method(S, to->c_str(), m);
+
+    return handle(S, OOP::nil());
+  }
+
   static Handle uses_trait(State& S, Handle recv, Arguments& args) {
     Trait* trait = args[0]->as_trait();
 
@@ -408,6 +421,7 @@ namespace r5 {
     c->add_method(S, "run_body", run_class_body, 1);
 
     c->add_method(S, "add_method", add_method, 2);
+    c->add_method(S, "alias_method", alias_method, 2);
     c->add_method(S, "uses", uses_trait, 1);
     c->add_method(S, "allocate", alloc_instance, 0);
     c->add_method(S, "new", new_instance, -1);
