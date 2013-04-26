@@ -54,7 +54,7 @@ r5::Handle Dir_seek(r5::State& S, r5::Handle recv, r5::Arguments& args) {
 void init_Dir(r5::State& S) {
   r5::Handle mod = S.new_module("os.dir");
   r5::Handle cls = S.new_class(mod, "Dir");
-  S.add_method(cls, "allocate", Dir_allocate, 0);
+  cls->as_class()->add_class_method(S, "allocate", Dir_allocate, 0);
   S.add_method(cls, "initialize", Dir_initialize, 1);
   S.add_method(cls, "read", Dir_read, 0);
   S.add_method(cls, "close", Dir_close, 0);
