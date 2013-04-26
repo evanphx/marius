@@ -32,7 +32,7 @@ r5::Handle Stat_file_p(r5::State& S, r5::Handle recv, r5::Arguments& args) {
 void init_Stat(r5::State& S) {
   r5::Handle mod = S.new_module("os.stat");
   r5::Handle cls = S.new_class(mod, "Stat");
-  S.add_method(cls, "allocate", Stat_allocate, 0);
+  cls->as_class()->add_class_method(S, "allocate", Stat_allocate, 0);
   S.add_method(cls, "initialize", Stat_initialize, 1);
   S.add_method(cls, "directory?", Stat_directory_p, 0);
   S.add_method(cls, "file?", Stat_file_p, 0);

@@ -51,7 +51,7 @@ r5::Handle File_close(r5::State& S, r5::Handle recv, r5::Arguments& args) {
 void init_File(r5::State& S) {
   r5::Handle mod = S.new_module("os.file");
   r5::Handle cls = S.new_class(mod, "File");
-  S.add_method(cls, "allocate", File_allocate, 0);
+  cls->as_class()->add_class_method(S, "allocate", File_allocate, 0);
   S.add_method(cls, "initialize", File_initialize, 1);
   S.add_method(cls, "read", File_read, 0);
   S.add_method(cls, "fill", File_fill, 1);
