@@ -71,6 +71,10 @@ namespace r5 {
       gc_.pin(ptr);
     }
 
+    unsigned byte_size(void* ptr) {
+      return gc_.size(ptr);
+    }
+
     void check();
 
     Handle new_module(const char* name);

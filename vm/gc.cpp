@@ -585,6 +585,10 @@ namespace r5 {
     GCInfo::of(addr)->pin();
   }
 
+  unsigned GC::size(memory::Address addr) {
+    return GCInfo::of(addr)->bytes;
+  }
+
   void GC::collect(State& S) {
     if(cGCDebug) {
       std::cout << "[GC IMMIX bytes_since_last="
