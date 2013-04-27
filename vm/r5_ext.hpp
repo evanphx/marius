@@ -28,11 +28,29 @@ namespace r5 {
   };
 
   namespace ext {
+
+    extern unsigned TagBase;
+
+    template <typename T>
+    struct Tag {
+      static unsigned id() {
+        static unsigned i = 0;
+        static bool set = false;
+
+        if(!set) {
+          set = true;
+          i = ++TagBase;
+        }
+
+        return i;
+      }
+    };
+
     String* string(State& S, const char* name, int sz);
     String* string(State& S, void* ptr, int sz);
     String* string(State& S, char* ptr);
 
-    Handle allocate_sized(State& S, Class* cls, unsigned bytes);
+    Handle allocate_sized(State& S, Class* cls, unsigned bytes, unsigned tag);
 
     inline Handle wrap(State& S, int val) {
       return handle(S, OOP::integer(val));
@@ -55,13 +73,15 @@ namespace r5 {
 
     template <typename T>
       Handle allocate(State& S, Class* cls) {
-        return allocate_sized(S, cls, sizeof(T));
+        return allocate_sized(S, cls, sizeof(T), Tag<T>::id());
       }
 
     template <typename T>
       T* unwrap(Handle handle) {
         User* u = handle->as_user();
-        return (T*)(u + 1);
+        unsigned* tl = (unsigned*)(u + 1);
+        check(*tl == Tag<T>::id());
+        return (T*)(tl + 1);
       }
 
     template <typename C>

@@ -471,7 +471,7 @@ namespace ast {
     S.puts("  r5::Handle mod = S.new_module(\"%s\");", S.module_name());
     S.puts("  r5::Handle cls = S.new_class(mod, \"%s\");", name_->c_str());
 
-    S.puts("  S.add_method(cls, \"allocate\", %s_allocate, 0);",
+    S.puts("  S.add_class_method(cls, \"allocate\", %s_allocate, 0);",
            name_->c_str());
 
     Methods& methods = S.methods();

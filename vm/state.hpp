@@ -76,6 +76,7 @@ namespace r5 {
     Handle new_module(const char* name);
     Handle new_class(Handle mod, const char* name);
     void add_method(Handle mod, const char* name, SimpleFunc ptr, int arity);
+    void add_class_method(Handle mod, const char* name, SimpleFunc ptr, int arity);
   };
 }
 

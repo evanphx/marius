@@ -19,6 +19,8 @@ namespace r5 {
   }
 
   namespace ext {
+    unsigned TagBase = 0;
+
     String* string(State& S, const char* name, int sz) {
       return String::internalize(S, name, sz);
     }
@@ -31,9 +33,11 @@ namespace r5 {
       return String::internalize(S, name, strlen(name));
     }
 
-    Handle allocate_sized(State& S, Class* cls, unsigned extra) {
+    Handle allocate_sized(State& S, Class* cls, unsigned extra, unsigned tag) {
       memory::Address addr = S.allocate(sizeof(User) + extra);
       User* u = new(addr) User(S, cls);
+      unsigned* tl = (unsigned*)(u + 1);
+      *tl = tag;
       return handle(S, u);
     }
   }

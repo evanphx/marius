@@ -53,7 +53,7 @@ r5::Handle Buffer_string(r5::State& S, r5::Handle recv, r5::Arguments& args) {
 void init_Buffer(r5::State& S) {
   r5::Handle mod = S.new_module("os.buffer");
   r5::Handle cls = S.new_class(mod, "Buffer");
-  S.add_method(cls, "allocate", Buffer_allocate, 0);
+  S.add_class_method(cls, "allocate", Buffer_allocate, 0);
   S.add_method(cls, "initialize", Buffer_initialize, 1);
   S.add_method(cls, "clear", Buffer_clear, 0);
   S.add_method(cls, "flip", Buffer_flip, 0);

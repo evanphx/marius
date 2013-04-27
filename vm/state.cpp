@@ -50,7 +50,15 @@ namespace r5 {
     return handle(*this, cls);
   }
 
-  void State::add_method(Handle cls, const char* name, SimpleFunc ptr, int arity){
+  void State::add_method(Handle cls, const char* name, SimpleFunc ptr,
+                         int arity)
+  {
     cls->as_class()->add_method(*this, name, ptr, arity);
+  }
+
+  void State::add_class_method(Handle cls, const char* name, SimpleFunc ptr,
+                               int arity)
+  {
+    cls->as_class()->add_class_method(*this, name, ptr, arity);
   }
 }
