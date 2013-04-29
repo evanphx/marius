@@ -33,6 +33,7 @@ namespace r5 {
     globals[String::internalize(S, "Exception")] = 10;
     globals[String::internalize(S, "List")] = 11;
     globals[String::internalize(S, "Dir")] = 12;
+    globals[String::internalize(S, "Moment")] = 13;
 
     LocalMap locals;
 

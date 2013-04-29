@@ -1,0 +1,22 @@
+import c.sys.time
+
+class Moment
+  let @tv : Struct[timeval]
+
+  def initialize
+    gettimeofday ext.ptr(@tv), NULL
+  end
+
+  def format(fmt : String)
+    let buf : Array[char, 256]
+    let now : Struct[tm]
+
+    ptr = ext.ptr(now)
+
+    localtime_r ext.ptr(ext.ptr(@tv).tv_sec), ptr
+
+    sz = strftime buf, 256, fmt.c_str(), ptr
+
+    return ext.string(buf, sz)
+  end
+end

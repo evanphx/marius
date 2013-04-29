@@ -68,6 +68,9 @@ namespace r5 {
     Code* frozen_dir(State& S);
 
     void init_builtin_extensions(State& S);
+
+  private:
+    void run_top_code(State& S, Code* c);
   };
 }
 

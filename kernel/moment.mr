@@ -1,0 +1,11 @@
+import os.time
+
+class Moment
+  def initialize
+    @os = time::Moment.new
+  end
+
+  def to_s
+    @os.format "%Y-%m-%d %H:%M:%S %z"
+  end
+end

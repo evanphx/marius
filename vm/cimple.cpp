@@ -221,6 +221,13 @@ namespace ast {
                 int sz = as<Number>(*j)->val();
 
                 S.puts("%s %s[%d];", tname, lvar->name()->c_str(), sz);
+              } else if(!strcmp(op->name()->c_str(), "Struct")) {
+                Nodes::iterator j = ct->args()->positional.begin();
+                const char* tname = as<Named>(*j)->name()->c_str();
+
+                S.puts("struct %s %s;", tname, lvar->name()->c_str()); 
+              } else {
+                check(0);
               }
             }
           }
@@ -576,7 +583,7 @@ namespace ast {
         *pos = '/';
       }
 
-      S.puts("#include <%s.h>", buf);
+      S.puts("#include \"%s.h\"", buf);
     } else {
       S.puts("#include \"%s.hpp\"", path_->c_str());
       std::string mod = mod_name(path_->c_str());

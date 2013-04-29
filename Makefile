@@ -43,6 +43,7 @@ rebuild_builtin:
 	./marius -C cimple/file.mr os.file vm/builtin
 	./marius -C cimple/dir.mr os.dir vm/builtin
 	./marius -C cimple/stat.mr os.stat vm/builtin
+	./marius -C cimple/moment.mr os.time vm/builtin
 
 test: marius
 	./marius -c test/syntax.mr

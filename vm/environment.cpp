@@ -522,7 +522,7 @@ namespace r5 {
     Dictionary::init(S, dict);
     List::init(S, list);
 
-    globals_ = new(S) Closure(13);
+    globals_ = new(S) Closure(14);
     globals_->set(0, o);
     globals_->set(1, io);
     globals_->set(2, c);
@@ -553,15 +553,7 @@ namespace r5 {
       enum_code = frozen_enumerable(S);
     }
 
-    OOP* fp = S.vm().stack();
-    fp[0] = top_;
-
-    Method* mtop = new(S) Method(String::internalize(S, "__init__"),
-                                 enum_code, S.env().globals());
-
-    Arguments args(S, 1, fp + 1);
-    S.vm().run(S, mtop, args);
-
+    run_top_code(S, enum_code);
     Trait* enum_ = lookup(S, "Enumerable").as_trait();
 
     tuple->uses_trait(S, enum_);
@@ -570,18 +562,26 @@ namespace r5 {
 
     S.set_importer(new(S) User(S, lookup(S, "Importer").as_class()));
 
-    Code* dir_code = frozen_dir(S);
+    run_top_code(S, frozen_dir(S));
 
-    fp = S.vm().stack();
-    fp[0] = top_;
-
-    mtop = new(S) Method(String::internalize(S, "__init__"),
-                                 dir_code, S.env().globals());
-
-    Arguments args2(S, 1, fp + 1);
-    S.vm().run(S, mtop, args2);
+    {
+#include "kernel/moment.mrc"
+      run_top_code(S, Code::load_raw(S, (unsigned char*)data, data_size));
+    }
 
     globals_->set(12, lookup(S, "Dir"));
+    globals_->set(13, lookup(S, "Moment"));
+  }
+
+  void Environment::run_top_code(State& S, Code* code) {
+    OOP* fp = S.vm().stack();
+    fp[0] = top_;
+
+    Method* mtop = new(S) Method(String::internalize(S, "__init__"),
+                                 code, S.env().globals());
+
+    Arguments args(S, 1, fp + 1);
+    S.vm().run(S, mtop, args);
   }
 
   void Environment::import_args(State& S, char** args, int count) {
