@@ -50,42 +50,10 @@ namespace r5 {
     top_->set_attribute(S, name, val);
   }
 
-  static Handle trait_new(State& S, Handle recv, Arguments& args) {
-    String* name = args[0]->as_string();
-    HTuple tup = args[1];
-
-    return handle(S, OOP(new(S) Trait(S, name, *tup)));
-  }
-
-  static Handle trait_add_method(State& S, Handle recv, Arguments& args) {
-    String* name = args[0]->as_string();
-
-    Method* m = args[1]->as_method();
-
-    recv->as_trait()->add_native_method(S, name, m);
-
-    return handle(S, OOP::nil());
-  }
-
   static Handle run_code(State& S, Handle recv, Arguments& args) {
     Method* m = recv->as_method();
 
     Arguments out_args = args.shift();
-
-    return handle(S, S.vm().run(S, m, out_args));
-  }
-
-  static Handle run_trait_body(State& S, Handle recv, Arguments& args) {
-    Trait* trt = recv->as_trait();
-    Method* m =  args[0]->as_method();
-
-    std::string n = m->scope()->c_str();
-
-    m = new(S) Method(
-                  String::internalize(S, n + "." + trt->name()->c_str()),
-                  m->code(), m->closure());
-
-    Arguments out_args = args.setup(recv);
 
     return handle(S, S.vm().run(S, m, out_args));
   }
@@ -232,15 +200,10 @@ namespace r5 {
     bind(S, mn, m);
     bind(S, String::internalize(S, "Module"), mod);
 
-    Class* trait = new_class(S, "Trait");
-    new_class(S, "TraitError");
-
     Class::init(S, c);
     Object::init(S, o);
 
-    trait->add_method(S, "run_body", run_trait_body, 1);
-    trait->add_method(S, "add_method", trait_add_method, 2);
-    trait->add_class_method(S, "new", trait_new, 2);
+    Class* trait = Trait::init(S, this);
 
     Class* i = Integer::init(S, this);
 

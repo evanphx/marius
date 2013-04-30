@@ -24,6 +24,8 @@ namespace r5 {
       , sends_(tup)
     {}
 
+    static Class* init(State& S, Environment* env);
+
     String* name() {
       return name_;
     }
