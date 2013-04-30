@@ -1,0 +1,7 @@
+class Blah
+  def self.foo
+    7
+  end
+end
+
+Blah.foo
