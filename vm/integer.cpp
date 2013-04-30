@@ -27,6 +27,13 @@ namespace r5 {
       return handle(S, OOP::integer(val));
     }
 
+    Handle int_minus(State& S, Handle recv, Arguments& args) {
+      if(args.count() == 0) return handle(S, OOP::nil());
+
+      int val = recv->int_value() - args[0]->int_value();
+      return handle(S, OOP::integer(val));
+    }
+
     Handle int_to_s(State& S, Handle recv, Arguments& args) {
       char buf[128];
 
@@ -54,6 +61,7 @@ namespace r5 {
     Class* i = env->new_class(S, "Integer");
     i->add_class_method(S, "cast", int_cast, 1);
     i->add_method(S, "+", int_plus, 1);
+    i->add_method(S, "-", int_minus, 1);
     i->add_method(S, "to_s", int_to_s, 0);
     i->add_method(S, "==", int_equal, 1);
     i->add_method(S, "<", int_lt, 1);

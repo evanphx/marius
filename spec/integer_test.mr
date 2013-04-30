@@ -1,0 +1,26 @@
+import test
+
+class IntegerTest < test::TestCase
+  def test_plus
+    assert_equal 7, 3 + 4
+  end
+
+  def test_minus
+    assert_equal 4, 7 - 3
+  end
+
+  def test_equal
+    assert 1 == 1
+    refute 1 == 0
+  end
+
+  def test_lt
+    assert 1 < 2
+    refute 3 < 2
+  end
+
+  def test_gt
+    assert 2 > 1
+    refute 1 > 3
+  end
+end
