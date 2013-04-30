@@ -15,6 +15,7 @@
 #include "exception.hpp"
 #include "compiler.hpp"
 #include "arguments.hpp"
+#include "integer.hpp"
 
 #include <iostream>
 #include <stdio.h>
@@ -46,47 +47,6 @@ namespace r5 {
 
   void Environment::bind(State& S, String* name, OOP val) {
     top_->set_attribute(S, name, val);
-  }
-
-  static Handle int_cast(State& S, Handle recv, Arguments& args) {
-    Handle obj = args[0];
-
-    if(obj->type() == OOP::eInteger) return obj;
-
-    Handle ret = args.setup(obj).apply(String::internalize(S, "to_s"));
-
-    check(ret->type() == OOP::eInteger);
-
-    return ret;
-  }
-
-  static Handle int_plus(State& S, Handle recv, Arguments& args) {
-    if(args.count() == 0) return handle(S, OOP::nil());
-
-    int val = recv->int_value() + args[0]->int_value();
-    return handle(S, OOP::integer(val));
-  }
-
-  static Handle int_to_s(State& S, Handle recv, Arguments& args) {
-    char buf[128];
-
-    snprintf(buf, sizeof(buf), "%d", recv->int_value());
-    return handle(S, String::internalize(S, buf));
-  }
-
-  static Handle int_equal(State& S, Handle recv, Arguments& args) {
-    bool q = recv->int_value() == args[0]->int_value();
-    return handle(S, q ? OOP::true_() : OOP::false_());
-  }
-
-  static Handle int_lt(State& S, Handle recv, Arguments& args) {
-    bool q = recv->int_value() < args[0]->int_value();
-    return handle(S, q ? OOP::true_() : OOP::false_());
-  }
-
-  static Handle int_gt(State& S, Handle recv, Arguments& args) {
-    bool q = recv->int_value() > args[0]->int_value();
-    return handle(S, q ? OOP::true_() : OOP::false_());
   }
 
   static Handle trait_new(State& S, Handle recv, Arguments& args) {
@@ -458,13 +418,7 @@ namespace r5 {
     o->add_method(S, "initialize", init_instance, -1);
     o->add_method(S, "methods", object_methods, 0);
 
-    Class* i = new_class(S, "Integer");
-    i->add_class_method(S, "cast", int_cast, 1);
-    i->add_method(S, "+", int_plus, 1);
-    i->add_method(S, "to_s", int_to_s, 0);
-    i->add_method(S, "==", int_equal, 1);
-    i->add_method(S, "<", int_lt, 1);
-    i->add_method(S, ">", int_gt, 1);
+    Class* i = Integer::init(S, this);
 
     Class* n = new_class(S, "NilClass");
 
