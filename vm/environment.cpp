@@ -84,6 +84,11 @@ namespace r5 {
     return handle(S, q ? OOP::true_() : OOP::false_());
   }
 
+  static Handle int_gt(State& S, Handle recv, Arguments& args) {
+    bool q = recv->int_value() > args[0]->int_value();
+    return handle(S, q ? OOP::true_() : OOP::false_());
+  }
+
   static Handle trait_new(State& S, Handle recv, Arguments& args) {
     String* name = args[0]->as_string();
     HTuple tup = args[1];
@@ -459,6 +464,7 @@ namespace r5 {
     i->add_method(S, "to_s", int_to_s, 0);
     i->add_method(S, "==", int_equal, 1);
     i->add_method(S, "<", int_lt, 1);
+    i->add_method(S, ">", int_gt, 1);
 
     Class* n = new_class(S, "NilClass");
 

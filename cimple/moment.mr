@@ -7,6 +7,14 @@ class Moment
     gettimeofday ext.ptr(@tv), NULL
   end
 
+  def tv_sec
+    return ext.wrap(ext.ptr(@tv).tv_sec)
+  end
+
+  def tv_usec
+    return ext.wrap(ext.ptr(@tv).tv_usec)
+  end
+
   def format(fmt : String)
     let buf : Array[char, 256]
     let now : Struct[tm]

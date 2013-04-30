@@ -1,0 +1,8 @@
+import test
+
+class MomentTest < test::TestCase
+  def test_seconds
+    m = Moment.now
+    assert m.seconds > 0
+  end
+end

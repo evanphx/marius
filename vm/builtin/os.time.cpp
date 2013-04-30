@@ -13,6 +13,20 @@ r5::Handle Moment_initialize(r5::State& S, r5::Handle recv, r5::Arguments& args)
   return handle(S, r5::OOP::nil());
 }
 ;
+r5::Handle Moment_tv_sec(r5::State& S, r5::Handle recv, r5::Arguments& args) {
+  Moment* self = r5::ext::unwrap<Moment>(recv);
+  return handle(S, r5::ext::wrap(S, (r5::ext::ptr(S, self->tv))->tv_sec));
+;
+  return handle(S, r5::OOP::nil());
+}
+;
+r5::Handle Moment_tv_usec(r5::State& S, r5::Handle recv, r5::Arguments& args) {
+  Moment* self = r5::ext::unwrap<Moment>(recv);
+  return handle(S, r5::ext::wrap(S, (r5::ext::ptr(S, self->tv))->tv_usec));
+;
+  return handle(S, r5::OOP::nil());
+}
+;
 r5::Handle Moment_format(r5::State& S, r5::Handle recv, r5::Arguments& args) {
   Moment* self = r5::ext::unwrap<Moment>(recv);
   r5::String* fmt = args[0]->as_string();
@@ -32,6 +46,8 @@ void init_Moment(r5::State& S) {
   r5::Handle cls = S.new_class(mod, "Moment");
   S.add_class_method(cls, "allocate", Moment_allocate, 0);
   S.add_method(cls, "initialize", Moment_initialize, 0);
+  S.add_method(cls, "tv_sec", Moment_tv_sec, 0);
+  S.add_method(cls, "tv_usec", Moment_tv_usec, 0);
   S.add_method(cls, "format", Moment_format, 1);
 }
 static r5::ExtInitializer setup(init_Moment);
