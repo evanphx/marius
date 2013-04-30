@@ -69,6 +69,11 @@ namespace r5 {
     klass()->add_method(S, name, func, arity);
   }
 
+  void Class::add_native_class_method(State& S, const char* name, Method* meth)
+  {
+    klass()->add_native_method(S, name, meth);
+  }
+
   bool Class::instance_method_p(String* name) {
     return lookup(name) != 0;
   }

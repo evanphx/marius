@@ -24,11 +24,11 @@
 #define TK_LP                             24
 #define TK_RP                             25
 #define TK_SQUARE                         26
-#define TK_NUM                            27
-#define TK_NIL                            28
-#define TK_TRUE                           29
-#define TK_FALSE                          30
-#define TK_SELF                           31
+#define TK_SELF                           27
+#define TK_NUM                            28
+#define TK_NIL                            29
+#define TK_TRUE                           30
+#define TK_FALSE                          31
 #define TK_IVAR                           32
 #define TK_LITSTR                         33
 #define TK_RSB                            34

@@ -418,8 +418,16 @@ namespace ast {
     S.push(SELF);
     S.push(t);
 
+    int next = t + 1;
+
+    if(scope_) {
+      S.push(LOADS);
+      S.push(next++);
+      S.push(S.string(scope_));
+    }
+
     S.push(LOADS);
-    S.push(t+1);
+    S.push(next++);
     S.push(S.string(name_));
 
     ast::State subS(S.MS, S.file(), S.lm());
@@ -467,15 +475,19 @@ namespace ast {
     subS.push(r);
 
     S.push(LOADC);
-    S.push(t+2);
+    S.push(next++);
     S.push(S.code(subS.to_code(name_, S.file(),
                                args_, req, body_->cov(), true)));
 
     S.push(CALL);
     S.push(t);
-    S.push(S.string(String::internalize(S.MS, "add_method")));
+    if(!scope_) {
+      S.push(S.string(String::internalize(S.MS, "add_method")));
+    } else {
+      S.push(S.string(String::internalize(S.MS, "add_scope_method")));
+    }
     S.push(t);
-    S.push(2);
+    S.push(scope_ ? 3 : 2);
 
     return t;
   }

@@ -3,6 +3,10 @@
 
 namespace r5 {
 
+  String* ParserState::string(const char* s) {
+    return String::internalize(S, s);
+  }
+
   void ParserState::set_top(ast::Node* b) {
     ast::Argument* a = new ast::Argument(String::internalize(S, "self"), -1);
 
@@ -56,7 +60,24 @@ namespace r5 {
   ast::Node* ParserState::ast_def(String* name, ast::Node* b) {
     ast::Argument* a = new ast::Argument(String::internalize(S, "self"), -1);
 
-    ast::Node* n = pos(new ast::Def(name, 
+    ast::Node* n = pos(new ast::Def(0, name, 
+                         new ast::Scope(b, context_->local_names,
+                            context_->args, context_->arg_objs, a),
+                         context_->args));
+    delete context_;
+
+    context_ = stack_.back();
+    stack_.pop_back();
+
+    return n;
+  }
+
+  ast::Node* ParserState::ast_def_spec(String* scope, String* name,
+                                       ast::Node* b)
+  {
+    ast::Argument* a = new ast::Argument(String::internalize(S, "self"), -1);
+
+    ast::Node* n = pos(new ast::Def(scope, name, 
                          new ast::Scope(b, context_->local_names,
                             context_->args, context_->arg_objs, a),
                          context_->args));

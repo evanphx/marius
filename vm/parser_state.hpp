@@ -16,7 +16,6 @@ namespace r5 {
   class ParserState {
     struct Context {
       std::vector<Instruction> buffer;
-      std::vector<String*> strings;
       std::vector<Code*> codes;
       std::vector<ArgMap> keywords;
 
@@ -81,10 +80,6 @@ namespace r5 {
       return context_->buffer.size();
     }
 
-    std::vector<String*>* strings() {
-      return new std::vector<String*>(context_->strings);
-    }
-
     std::vector<Code*>* codes() {
       return new std::vector<Code*>(context_->codes);
     }
@@ -105,12 +100,6 @@ namespace r5 {
 
     void push(Instruction op) {
       context_->buffer.push_back(op);
-    }
-
-    int string(const char* str) {
-      int idx = context_->strings.size();
-      context_->strings.push_back(String::internalize(S, str));
-      return idx;
     }
 
     int line() {
@@ -155,6 +144,8 @@ namespace r5 {
     int times(int a, int b);
     int divide(int a, int b);
 
+    String* string(const char* s);
+
     ast::Node* ret(ast::Node* n);
 
     ast::Node* seq(ast::Node* parent, ast::Node* child);
@@ -171,6 +162,7 @@ namespace r5 {
     void def_opt_arg(String* s, ast::Node* val);
     void def_arg_cast(String* s, ast::Node* c);
     ast::Node* ast_def(String* name, ast::Node* b);
+    ast::Node* ast_def_spec(String* scope, String* name, ast::Node* b);
 
     ast::Node* send_indirect(ast::Node* recv, ast::Node* n);
     ast::Node* send_indirect_args(ast::Node* recv, ast::Node* n);

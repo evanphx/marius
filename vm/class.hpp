@@ -47,6 +47,7 @@ namespace r5 {
     void add_native_method(State& S, const char* name, Method* meth);
 
     void add_class_method(State& S, const char* name, SimpleFunc func, int arity);
+    void add_native_class_method(State& S, const char* name, Method* meth);
 
     bool instance_method_p(String* name);
 

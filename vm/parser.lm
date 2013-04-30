@@ -102,12 +102,22 @@ def_name(A) ::= OP1(B).    { A.s = B.s; }
 def_name(A) ::= OP2(B).    { A.s = B.s; }
 def_name(A) ::= SQUARE(B). { A.s = B.s; }
 
+def_scope(A) ::= ID(B). { A.s = B.s; }
+def_scope(A) ::= SELF.  { A.s = S->string("self"); }
 
 def(A) ::= def_start def_name(B) def_args fin def_body(C). {
               A.a = S->ast_def(B.s, C.a);
             }
 def(A) ::= def_start def_name(B) def_args fin END. {
               A.a = S->ast_def(B.s, S->ast_nil());
+            }
+
+def(A) ::= def_start def_scope(B) DOT(C) def_args fin def_body(D). {
+              A.a = S->ast_def_spec(B.s, C.s, D.a);
+            }
+
+def(A) ::= def_start def_scope(B) DOT(C) def_args fin END. {
+              A.a = S->ast_def_spec(B.s, C.s, S->ast_nil());
             }
 
 lit(A) ::= NUM(B).                   { A.a = S->number(B.i); }

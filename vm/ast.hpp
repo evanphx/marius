@@ -567,13 +567,15 @@ namespace r5 {
     };
 
     class Def : public Node {
+      String* scope_;
       String* name_;
       Scope* body_;
       ArgMap args_;
 
     public:
-      Def(String* name, Scope* body, ArgMap args)
-        : name_(name)
+      Def(String* scope, String* name, Scope* body, ArgMap args)
+        : scope_(scope)
+        , name_(name)
         , body_(body)
         , args_(args)
       {}
