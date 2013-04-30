@@ -60,75 +60,6 @@ namespace r5 {
     return handle(S, OOP::nil());
   }
 
-  static Handle tuple_find_all(State& S, Handle recv, Arguments& args) {
-    HTuple tup = recv;
-    Method* m = args[0]->as_method();
-
-    OOP* fp = args.rest() + 1;
-    fp[-1] = OOP(m);
-
-    std::vector<OOP> found;
-
-    for(size_t i = 0; i < tup->size(); i++) {
-      fp[0] = tup->get(i);
-
-      Arguments out_args(S, 1, fp);
-      OOP t = S.vm().run(S, m, out_args);
-
-      if(t.unwind_p()) {
-        return handle(S, t);
-      }
-
-      if(t.true_condition_p()) {
-        found.push_back(fp[0]);
-      }
-    }
-
-    HTuple out = handle(S, new(S) Tuple(S, found.size()));
-    for(size_t i = 0; i < found.size(); i++) {
-      out->set(i, found[i]);
-    }
-
-    return out;
-  }
-
-  static Handle tuple_each(State& S, Handle recv, Arguments& args) {
-    HTuple tup = recv;
-    Method* m = args[0]->as_method();
-
-    OOP* fp = args.rest() + 1;
-    fp[-1] = OOP(m);
-
-    for(size_t i = 0; i < tup->size(); i++) {
-      fp[0] = tup->get(i);
-      Arguments out_args(S, 1, fp);
-
-      OOP t = S.vm().run(S, m, out_args);
-      if(t.unwind_p()) return handle(S, t);
-    }
-
-    return recv;
-  }
-
-  static Handle tuple_equal(State& S, Handle recv, Arguments& args) {
-    HTuple tup = recv;
-    HTuple o = args[0];
-
-    if(tup->size() != o->size()) {
-      return handle(S, OOP::false_());
-    }
-
-    size_t tot = tup->size();
-
-    for(size_t i = 0; i < tot; i++) {
-      Arguments oa = args.setup(tup->get(i), o->get(i));
-      Handle ret = oa.apply(String::internalize(S, "=="));
-      if(!ret->true_condition_p()) return handle(S, OOP::false_());
-    }
-
-    return handle(S, OOP::true_());
-  }
-
   static Handle exc_message(State& S, Handle recv, Arguments& args) {
     Exception* exc = recv->exception();
 
@@ -206,10 +137,7 @@ namespace r5 {
     Class* f = new_class(S, "FalseClass");
     f->add_method(S, "to_s", false_to_s, 0);
 
-    Class* tuple = new_class(S, "Tuple");
-    tuple->add_method(S, "find_all", tuple_find_all, 1);
-    tuple->add_method(S, "each", tuple_each, 1);
-    tuple->add_method(S, "==", tuple_equal, 1);
+    Class* tuple = Tuple::init(S, this);
 
     Class* dict = new_class(S, "Dictionary");
     Class* list = new_class(S, "List");

@@ -12,6 +12,7 @@
 
 namespace r5 {
   class GCImpl;
+  class Environment;
 
   class Tuple : public GCAllocated {
     OOP* data_;
@@ -21,6 +22,8 @@ namespace r5 {
 
   public:
     Tuple(State& S, size_t size);
+
+    static Class* init(State& S, Environment* env);
 
     size_t size() {
       return size_;
