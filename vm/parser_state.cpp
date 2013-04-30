@@ -413,21 +413,4 @@ namespace r5 {
   ast::Node* ParserState::and_(ast::Node* a, ast::Node* b) {
     return pos(new ast::And(a, b));
   }
-
-  /*
-  int ParserState::start_cond(int c) {
-    push(GOTO_IF_FALSE);
-    push(c);
-
-    int l = buffer_.size();
-    push(0);
-
-    return l;
-  }
-
-  int ParserState::end_cond(int b, int l) {
-
-  }
-  */
-
 }

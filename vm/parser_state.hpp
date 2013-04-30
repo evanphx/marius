@@ -15,23 +15,10 @@ namespace r5 {
 
   class ParserState {
     struct Context {
-      std::vector<Instruction> buffer;
-      std::vector<Code*> codes;
-      std::vector<ArgMap> keywords;
-
       ArgMap args; 
       ArgMap local_names;
 
       ast::ArgumentList arg_objs;
-
-      int next_reg;
-
-      int locals;
-
-      Context()
-        : next_reg(0)
-        , locals(0)
-      {}
     };
 
     struct ArgInfo {
@@ -76,46 +63,12 @@ namespace r5 {
 
     void set_top(ast::Node* n);
 
-    int sequence_size() {
-      return context_->buffer.size();
-    }
-
-    std::vector<Code*>* codes() {
-      return new std::vector<Code*>(context_->codes);
-    }
-
-    void recycle(int a, int b) {
-      if(a == b - 1) {
-        context_->next_reg = a;
-      }
-    }
-
-    void recycle(int a) {
-      context_->next_reg = a;
-    }
-
-    int new_reg() {
-      return context_->next_reg++;
-    }
-
-    void push(Instruction op) {
-      context_->buffer.push_back(op);
-    }
-
     int line() {
       return parser_.line();
     }
 
     int column() {
       return parser_.column();
-    }
-
-    int new_local() {
-      return context_->locals++;
-    }
-
-    int locals() {
-      return context_->locals;
     }
 
     template <typename T>
