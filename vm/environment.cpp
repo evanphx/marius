@@ -16,6 +16,7 @@
 #include "compiler.hpp"
 #include "arguments.hpp"
 #include "integer.hpp"
+#include "object.hpp"
 
 #include <iostream>
 #include <stdio.h>
@@ -66,10 +67,6 @@ namespace r5 {
     return handle(S, OOP::nil());
   }
 
-  static Handle init_instance(State& S, Handle recv, Arguments& args) {
-    return recv;
-  }
-
   static Handle run_code(State& S, Handle recv, Arguments& args) {
     Method* m = recv->as_method();
 
@@ -107,10 +104,6 @@ namespace r5 {
   static Handle io_print(State& S, Handle recv, Arguments& args) {
     printf("%s", String::convert(S, args, args[0])->c_str());
     return handle(S, OOP::nil());
-  }
-
-  static Handle object_methods(State& S, Handle recv, Arguments& args) {
-    return handle(S, recv->klass()->methods(S));
   }
 
   static Handle tuple_find_all(State& S, Handle recv, Arguments& args) {
@@ -182,27 +175,6 @@ namespace r5 {
     return handle(S, OOP::true_());
   }
 
-  static Handle object_print(State& S, Handle recv, Arguments& args) {
-    (*recv).print();
-    return recv;
-  }
-
-  static Handle object_equal(State& S, Handle recv, Arguments& args) {
-    return handle(S, recv->equal(*args[0]) ? OOP::true_() : OOP::false_());
-  }
-
-  static Handle object_kind_of(State& S, Handle recv, Arguments& args) {
-    Class* chk = args[0]->as_class();
-    Class* cls = recv->klass();
-
-    while(cls) {
-      if(cls == chk) return handle(S, OOP::true_());
-      cls = cls->superclass();
-    }
-
-    return handle(S, OOP::false_());
-  }
-
   static Handle exc_message(State& S, Handle recv, Arguments& args) {
     Exception* exc = recv->exception();
 
@@ -223,14 +195,6 @@ namespace r5 {
 
   static Handle false_to_s(State& S, Handle recv, Arguments& args) {
     return handle(S, String::internalize(S, "false"));
-  }
-
-  static Handle object_to_s(State& S, Handle recv, Arguments& args) {
-    char buf[512];
-    buf[0] = 0;
-    sprintf(buf, "#<%s>", recv->klass()->name()->c_str());
-
-    return handle(S, String::internalize(S, buf));
   }
 
   Class* init_import(State& S);
@@ -272,18 +236,11 @@ namespace r5 {
     new_class(S, "TraitError");
 
     Class::init(S, c);
-
-    o->add_method(S, "print", object_print, 0);
-    o->add_method(S, "kind_of?", object_kind_of, 1);
-    o->add_method(S, "==", object_equal, 1);
-    o->add_method(S, "to_s", object_to_s, 0);
+    Object::init(S, o);
 
     trait->add_method(S, "run_body", run_trait_body, 1);
     trait->add_method(S, "add_method", trait_add_method, 2);
     trait->add_class_method(S, "new", trait_new, 2);
-
-    o->add_method(S, "initialize", init_instance, -1);
-    o->add_method(S, "methods", object_methods, 0);
 
     Class* i = Integer::init(S, this);
 
