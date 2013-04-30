@@ -50,20 +50,6 @@ namespace r5 {
     top_->set_attribute(S, name, val);
   }
 
-  static Handle run_code(State& S, Handle recv, Arguments& args) {
-    Method* m = recv->as_method();
-
-    Arguments out_args = args.shift();
-
-    return handle(S, S.vm().run(S, m, out_args));
-  }
-
-  static Handle method_call(State& S, Handle recv, Arguments& args) {
-    Method* m = recv->as_method();
-
-    return handle(S, S.vm().run(S, m, args));
-  }
-
   static Handle io_puts(State& S, Handle recv, Arguments& args) {
     puts(String::convert(S, args, args[0])->c_str());
     return handle(S, OOP::nil());
@@ -211,11 +197,8 @@ namespace r5 {
 
     Class* s = new_class(S, "String");
 
-    Class* mc = new_class(S, "Method");
     Class* d = new_class(S, "Code");
-    mc->add_method(S, "eval", run_code, -1);
-    mc->add_method(S, "call", method_call, -1);
-    mc->add_method(S, "|", method_call, -1);
+    Class* mc = Method::init(S, this);
 
     Class* t = new_class(S, "TrueClass");
     t->add_method(S, "to_s", true_to_s, 0);

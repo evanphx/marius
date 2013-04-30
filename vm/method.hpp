@@ -27,6 +27,8 @@ namespace r5 {
     Method(String* scope, SimpleFunc func, int arity, Closure* closure=0);
     Method(String* scope, Code* code, Closure* closure=0);
 
+    static Class* init(State& S, Environment* env);
+
     Code* code() {
       return code_;
     }

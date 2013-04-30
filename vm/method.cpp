@@ -4,6 +4,7 @@
 #include "closure.hpp"
 #include "exception.hpp"
 #include "arguments.hpp"
+#include "environment.hpp"
 
 namespace r5 {
   Method::Method(String* scope, SimpleFunc func, int arity, Closure* closure)
@@ -64,5 +65,31 @@ namespace r5 {
     }
 
     return OOP::nil();
+  }
+
+  namespace {
+    Handle run_code(State& S, Handle recv, Arguments& args) {
+      Method* m = recv->as_method();
+
+      Arguments out_args = args.shift();
+
+      return handle(S, S.vm().run(S, m, out_args));
+    }
+
+    Handle method_call(State& S, Handle recv, Arguments& args) {
+      Method* m = recv->as_method();
+
+      return handle(S, S.vm().run(S, m, args));
+    }
+  }
+
+  Class* Method::init(State& S, Environment* env) {
+    Class* mc = env->new_class(S, "Method");
+
+    mc->add_method(S, "eval", run_code, -1);
+    mc->add_method(S, "call", method_call, -1);
+    mc->add_method(S, "|", method_call, -1);
+
+    return mc;
   }
 }
