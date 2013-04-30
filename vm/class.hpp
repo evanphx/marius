@@ -42,6 +42,8 @@ namespace r5 {
 
     static String* metaclass_name(State& S, String* name);
 
+    static void init(State& S, Class* c);
+
     Method* lookup(String* name);
     void add_method(State& S, const char* name, SimpleFunc func, int arity);
     void add_native_method(State& S, const char* name, Method* meth);
