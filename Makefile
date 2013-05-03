@@ -90,7 +90,7 @@ vm-test: marius
 	test `./marius -p vm-test/opt_arg.mr` = 7
 
 test: vm-test
-	./marius -Ilib -I. test test
+	./marius -Ilib -I. test
 
 .PHONY: test spec
 

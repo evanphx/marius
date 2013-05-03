@@ -41,6 +41,11 @@ namespace r5 {
       return handle(S, OOP::integer(recv->as_list()->size()));
     }
 
+    Handle empty_p(State& S, Handle recv, Arguments& args) {
+      return handle(S,
+          recv->as_list()->size() == 0 ? OOP::true_() : OOP::false_());
+    }
+
     Handle append(State& S, Handle recv, Arguments& args) {
       recv->as_list()->push(S, *args[0]);
       return recv;
@@ -71,6 +76,7 @@ namespace r5 {
     list->add_method(S, "[]", aref, 1);
     list->add_method(S, "each", each, 1);
     list->add_method(S, "size", size_m, 0);
+    list->add_method(S, "empty?", empty_p, 0);
     list->add_method(S, "<<", append, 1);
     list->add_method(S, "==", equal, 1);
   }

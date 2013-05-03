@@ -2,4 +2,8 @@ import test
 
 r = test::Runner.new
 
-sys::args.each { |n| r.run n }
+if sys::args.empty?
+  r.run "test"
+else
+  sys::args.each { |n| r.run n }
+end
