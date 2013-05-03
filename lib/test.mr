@@ -1,5 +1,4 @@
 import os.stat
-import os.dir
 
 class TestCase
   def assert_equal(a,b)
@@ -50,10 +49,8 @@ end
 
 class Runner
   def run(path)
-    s = stat::Stat.new path
-
-    if s.directory?
-      d = dir::Dir.new path
+    if Dir.exists? path
+      d = Dir.new path
 
       while x = d.read
         fp = path + "/" + x

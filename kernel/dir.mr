@@ -1,8 +1,13 @@
 import os.dir
+import os.stat
 
 class Dir
   def initialize(path)
     @os = dir::Dir.new path
+  end
+
+  def self.exists?(path)
+    stat::Stat.new(path).directory?
   end
 
   def read
