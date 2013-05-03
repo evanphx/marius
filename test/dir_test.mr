@@ -5,7 +5,7 @@ class DirTest < test::TestCase
     d = Dir.new "."
     f = nil
     d.each { |s|
-      if s == "spec"
+      if s == "test"
         f = true
       end
     }

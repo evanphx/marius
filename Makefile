@@ -45,52 +45,52 @@ rebuild_builtin:
 	./marius -C cimple/stat.mr os.stat vm/builtin
 	./marius -C cimple/moment.mr os.time vm/builtin
 
-test: marius
-	./marius -c test/syntax.mr
-	test `./marius -p test/simp.mr` = 7
-	test `./marius -p test/arg.mr` = 7
-	test `./marius -p test/keyword.mr` = 7
-	test `./marius -p test/keyword_hybrid.mr` = 7
-	test `./marius test/module.mr` = 7
-	test `./marius -I test/import test/import.mr` = 7
-	test `./marius test/try.mr` = 7
-	test `./marius test/try_skip.mr` = 7
-	test `./marius test/local.mr` = 7
-	test `./marius test/local_def.mr` = 7
-	test `./marius test/ivar.mr` = 7
-	test `./marius -I test/import test/imported_class.mr` = 7
-	test `./marius test/symbol.mr` = 'blah'
-	test `./marius test/litstr.mr` = 'blah'
-	test `./marius -I test/import test/import2.mr` = 7
-	test `./marius -I test/import test/import3.mr` = 7
-	test `./marius -I test/import test/import4.mr` = 7
-	test `./marius test/lambda.mr` = 7
-	test `./marius test/lambda2.mr` = 7
-	test `./marius test/lambda_arg.mr` = 7
-	test `./marius test/arg_error.mr` = 7
-	test `./marius -p test/send.mr` = 7
-	test `./marius test/subclass.mr` = 7
-	test `./marius test/cast.mr` = 7
-	test `./marius -p test/no_self_call.mr` = 7
-	test `./marius -p test/keyword_no_recv.mr` = 7
-	test `./marius -p test/operator.mr` = 7
-	test `./marius -p test/operator2.mr` = 7
-	test `./marius -p test/assign_op.mr` = 7
-	test `./marius -p test/ivar_assign_op.mr` = 7
-	test `./marius -p test/dict.mr` = 7
-	test `./marius -p test/cast_arg.mr` = 7
-	test `./marius -p test/brackets.mr` = 7
-	test `./marius test/trait.mr` = 7
-	test `./marius -p test/if_else.mr` = 7
-	test `./marius test/try_specific.mr` = 7
-	test `./marius test/try_specific2.mr` = 7
+vm-test: marius
+	./marius -c vm-test/syntax.mr
+	test `./marius -p vm-test/simp.mr` = 7
+	test `./marius -p vm-test/arg.mr` = 7
+	test `./marius -p vm-test/keyword.mr` = 7
+	test `./marius -p vm-test/keyword_hybrid.mr` = 7
+	test `./marius vm-test/module.mr` = 7
+	test `./marius -I vm-test/import vm-test/import.mr` = 7
+	test `./marius vm-test/try.mr` = 7
+	test `./marius vm-test/try_skip.mr` = 7
+	test `./marius vm-test/local.mr` = 7
+	test `./marius vm-test/local_def.mr` = 7
+	test `./marius vm-test/ivar.mr` = 7
+	test `./marius -I vm-test/import vm-test/imported_class.mr` = 7
+	test `./marius vm-test/symbol.mr` = 'blah'
+	test `./marius vm-test/litstr.mr` = 'blah'
+	test `./marius -I vm-test/import vm-test/import2.mr` = 7
+	test `./marius -I vm-test/import vm-test/import3.mr` = 7
+	test `./marius -I vm-test/import vm-test/import4.mr` = 7
+	test `./marius vm-test/lambda.mr` = 7
+	test `./marius vm-test/lambda2.mr` = 7
+	test `./marius vm-test/lambda_arg.mr` = 7
+	test `./marius vm-test/arg_error.mr` = 7
+	test `./marius -p vm-test/send.mr` = 7
+	test `./marius vm-test/subclass.mr` = 7
+	test `./marius vm-test/cast.mr` = 7
+	test `./marius -p vm-test/no_self_call.mr` = 7
+	test `./marius -p vm-test/keyword_no_recv.mr` = 7
+	test `./marius -p vm-test/operator.mr` = 7
+	test `./marius -p vm-test/operator2.mr` = 7
+	test `./marius -p vm-test/assign_op.mr` = 7
+	test `./marius -p vm-test/ivar_assign_op.mr` = 7
+	test `./marius -p vm-test/dict.mr` = 7
+	test `./marius -p vm-test/cast_arg.mr` = 7
+	test `./marius -p vm-test/brackets.mr` = 7
+	test `./marius vm-test/trait.mr` = 7
+	test `./marius -p vm-test/if_else.mr` = 7
+	test `./marius vm-test/try_specific.mr` = 7
+	test `./marius vm-test/try_specific2.mr` = 7
 	(! ./marius scratch/bad_trait.mr) > /dev/null 2>&1
-	test `./marius test/long_return.mr` = 7
-	test `./marius test/markov_rule.mr` = 7
-	test `./marius -p test/opt_arg.mr` = 7
+	test `./marius vm-test/long_return.mr` = 7
+	test `./marius vm-test/markov_rule.mr` = 7
+	test `./marius -p vm-test/opt_arg.mr` = 7
 
-spec: test
-	./marius -Ilib -I. test spec
+test: vm-test
+	./marius -Ilib -I. test test
 
 .PHONY: test spec
 
