@@ -168,8 +168,8 @@ int main(int argc, char** argv) {
   } else {
     char buf[128];
     buf[0] = 0;
-    strcat(buf, "bin/");
     strcat(buf, script);
+    strcat(buf, ".command");
 
     OOP bin_path_o = String::internalize(S, buf);
 
