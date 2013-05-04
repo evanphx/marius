@@ -736,6 +736,34 @@ namespace r5 {
       void accept(Visitor* V);
     };
 
+    class ImportOne : public Node {
+      String* path_;
+      String* elem_;
+      String* name_;
+
+    public:
+      ImportOne(r5::State& S, String* n, String* e);
+      ImportOne(r5::State& S, String* p, String* n, String* e);
+
+      PER_NODE(ImportOne);
+
+      String* name() {
+        return name_;
+      }
+
+      String* element() {
+        return elem_;
+      }
+
+      String* path() {
+        return path_;
+      }
+
+      int drive(State& S, int t);
+      CimpleValue cimple(CimpleState& S);
+      void accept(Visitor* V);
+    };
+
     class Try : public Node {
       Node* body_;
       Node* handler_;
@@ -1005,6 +1033,7 @@ namespace r5 {
       virtual void visit(True* n) { };
       virtual void visit(False* n) { };
       virtual void visit(Import* n) { };
+      virtual void visit(ImportOne* n) { };
       virtual void visit(Try* n) { };
       virtual void visit(Assign* n) { };
       virtual void visit(AssignOp* n) { };

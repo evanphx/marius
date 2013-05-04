@@ -23,6 +23,18 @@ namespace ast {
     , name_(n)
   {}
 
+  ImportOne::ImportOne(r5::State& S, String* n, String* e)
+    : path_(n)
+    , elem_(e)
+    , name_(e)
+  {}
+
+  ImportOne::ImportOne(r5::State& S, String* p, String* e, String* n)
+    : path_(p)
+    , elem_(e)
+    , name_(n)
+  {}
+
   Arguments* Arguments::wrap(ast::Node* n) {
     ast::Nodes nodes;
     nodes.push_back(n);
@@ -860,6 +872,49 @@ namespace ast {
   }
 
   void Import::accept(Visitor* V) {
+    V->visit(this);
+  }
+
+  int ImportOne::drive(State& S, int t) {
+    S.pos(this);
+
+    Local* l = S.lm().get(this);
+    assert(l);
+
+    S.get_local(l->extra(), t);
+
+    S.push(CALL);
+    S.push(t);
+    S.push(S.string("current"));
+    S.push(t);
+    S.push(0);
+
+    S.push(LOADS);
+    S.push(t+1);
+    S.push(S.string(path_));
+
+    S.push(CALL);
+    S.push(t);
+    S.push(S.string("import"));
+    S.push(t);
+    S.push(1);
+
+    S.push(LOADS);
+    S.push(t+1);
+    S.push(S.string(elem_));
+
+    S.push(CALL);
+    S.push(t);
+    S.push(S.string("::"));
+    S.push(t);
+    S.push(1);
+
+    S.set_local(l, t);
+
+    return t;
+  }
+
+  void ImportOne::accept(Visitor* V) {
     V->visit(this);
   }
 

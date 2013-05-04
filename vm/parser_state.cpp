@@ -348,6 +348,14 @@ namespace r5 {
     return pos(new ast::Import(S, path, name));
   }
 
+  ast::Node* ParserState::import_one(String* name, String* elem) {
+    return pos(new ast::ImportOne(S, name, elem));
+  }
+
+  ast::Node* ParserState::import_one(String* path, String* elem, String* name) {
+    return pos(new ast::ImportOne(S, path, elem, name));
+  }
+
   ast::Node* ParserState::ast_try(ast::Node* b, ast::Node* h) {
     return pos(new ast::Try(b, h));
   }

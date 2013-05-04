@@ -592,6 +592,11 @@ namespace ast {
     return S.void_();
   }
 
+  CimpleValue ImportOne::cimple(CimpleState& S) {
+    check(0);
+    return S.void_();
+  }
+
   CimpleValue Try::cimple(CimpleState& S) {
     check(0);
     return S.void_();

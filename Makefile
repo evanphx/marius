@@ -59,6 +59,8 @@ vm-test: marius
 	test `./marius vm-test/local_def.mr` = 7
 	test `./marius vm-test/ivar.mr` = 7
 	test `./marius -I vm-test/import vm-test/imported_class.mr` = 7
+	test `./marius -I vm-test/import vm-test/from_import.mr` = 7
+	test `./marius -I vm-test/import vm-test/from_import_as.mr` = 7
 	test `./marius vm-test/symbol.mr` = 'blah'
 	test `./marius vm-test/litstr.mr` = 'blah'
 	test `./marius -I vm-test/import vm-test/import2.mr` = 7
@@ -92,6 +94,6 @@ vm-test: marius
 test: vm-test
 	./marius -Ilib -I. test
 
-.PHONY: test spec
+.PHONY: vm-test test
 
 -include depend

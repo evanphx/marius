@@ -161,6 +161,9 @@ namespace r5 {
     ast::Node* import(String* name);
     ast::Node* import(String* path, String* name);
 
+    ast::Node* import_one(String* name, String* elem);
+    ast::Node* import_one(String* path, String* elem, String* name);
+
     ast::Node* ast_try(ast::Node* b, ast::Node* h);
     ast::Node* ast_try(ast::Node* b, String* id, ast::Node* t, ast::Node* h);
     ast::Node* assign(String* name, ast::Node* n, int line);

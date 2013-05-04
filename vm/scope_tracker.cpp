@@ -42,6 +42,21 @@ namespace r5 {
       scope_->insert(LocalScope::value_type(imp->name(), lv));
     }
 
+    void visit(ImportOne* imp) {
+      int depth = stack_.size();
+
+      ArgMap::iterator i = globals_.find(String::internalize(S, "Importer"));
+
+      assert(i != globals_.end());
+      Local* l = new Local;
+      l->make_global(i->second, depth);
+
+      Local* lv = locals_.add(imp);
+      lv->set_extra(l);
+
+      scope_->insert(LocalScope::value_type(imp->name(), lv));
+    }
+
     void before_visit(ast::Trait* trait) {
       trait_stack_.push_back(trait);
     }

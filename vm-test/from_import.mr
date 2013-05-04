@@ -1,0 +1,4 @@
+import impcls::Blah
+
+Blah.new.print
+
