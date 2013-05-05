@@ -76,7 +76,7 @@ namespace r5 {
       return handle(S, S.vm().run(S, m, out_args));
     }
 
-    Handle method_call(State& S, Handle recv, Arguments& args) {
+    Handle method_apply(State& S, Handle recv, Arguments& args) {
       Method* m = recv->as_method();
 
       return handle(S, S.vm().run(S, m, args));
@@ -87,8 +87,8 @@ namespace r5 {
     Class* mc = env->new_class(S, "Method");
 
     mc->add_method(S, "eval", run_code, -1);
-    mc->add_method(S, "call", method_call, -1);
-    mc->add_method(S, "|", method_call, -1);
+    mc->add_method(S, "apply", method_apply, -1);
+    mc->add_method(S, "|", method_apply, -1);
 
     return mc;
   }

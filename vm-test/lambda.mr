@@ -4,4 +4,4 @@ class Blah
   end
 end
 
-Blah.new.b(7).call
+Blah.new.b(7).apply

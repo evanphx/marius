@@ -8,4 +8,4 @@ class Blah
   end
 end
 
-Blah.new.b(4).call
+Blah.new.b(4).apply

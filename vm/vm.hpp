@@ -55,7 +55,7 @@ namespace r5 {
     OOP load_attr(State& S, String* name, OOP recv, OOP* fp);
 
     String* as_string(OOP val);
-    void print_call_stack(State& S);
+    void print_apply_stack(State& S);
     InvokeInfo* invoke_info(State& S);
 
     friend class FrameTracker;

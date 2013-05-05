@@ -1,6 +1,6 @@
 class Blah
   def blah
-    { return 7 }.call
+    { return 7 }.apply
     return 0
   end
 end

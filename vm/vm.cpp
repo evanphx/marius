@@ -416,7 +416,7 @@ check_unwind:
     return val.as_string();
   }
 
-  void VM::print_call_stack(State& S) {
+  void VM::print_apply_stack(State& S) {
     int i = 0;
 
     StackFrame* sf = top_frame_;

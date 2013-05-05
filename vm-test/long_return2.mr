@@ -1,6 +1,6 @@
 class Blah
   def foo(b)
-    b.call
+    b.apply
   end
 
   def blah

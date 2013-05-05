@@ -279,7 +279,7 @@ namespace ast {
 
     Local* markov_local = 0;
 
-    // This implements the call half of the Markov rule
+    // This implements the apply half of the Markov rule
     if(self_less_p() && (markov_local = S.lm().get(this))) {
       S.get_local(markov_local, t);
 
@@ -298,7 +298,7 @@ namespace ast {
 
       S.push(kw ? SEND_KW : SEND);
       S.push(t);
-      S.push(S.string(String::internalize(S.MS, "call")));
+      S.push(S.string(String::internalize(S.MS, "apply")));
       S.push(t);
       S.push(count);
 
