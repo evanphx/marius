@@ -1,0 +1,12 @@
+class Blah
+  def initialize(x)
+    @x = x
+  end
+
+  def show
+    io.puts @x
+  end
+end
+
+b = Blah(7)
+b.show

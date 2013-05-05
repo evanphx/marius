@@ -262,6 +262,7 @@ namespace r5 {
     c->add_method(S, "uses", uses_trait_m, 1);
     c->add_method(S, "allocate", alloc_instance, 0);
     c->add_method(S, "new", new_instance, -1);
+    c->add_method(S, "apply", new_instance, -1);
 
     c->add_method(S, "<", class_subclass, 1);
     c->add_method(S, "===", class_tequal, 1);
