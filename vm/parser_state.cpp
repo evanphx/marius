@@ -110,15 +110,15 @@ namespace r5 {
     context_->arg_objs.push_back(new ast::Argument(name, c, num, 0));
   }
 
-  ast::Node* ParserState::call(ast::Node* recv, String* n) {
-    return pos(new ast::Call(n, recv), recv);
+  ast::Node* ParserState::send(ast::Node* recv, String* n) {
+    return pos(new ast::Send(n, recv), recv);
   }
 
-  ast::Node* ParserState::call_attr(ast::Node* recv, String* n) {
-    return pos(new ast::Call(n, recv, 0, ast::Call::eAttr), recv);
+  ast::Node* ParserState::send_attr(ast::Node* recv, String* n) {
+    return pos(new ast::Send(n, recv, 0, ast::Send::eAttr), recv);
   }
 
-  ast::Node* ParserState::call_set_attr(ast::Node* recv, String* n,
+  ast::Node* ParserState::send_set_attr(ast::Node* recv, String* n,
                                         ast::Node* val)
   {
     ast::Nodes nodes;
@@ -126,11 +126,11 @@ namespace r5 {
 
     ast::Arguments* args = new ast::Arguments(nodes, ArgMap());
 
-    return pos(new ast::Call(n, recv, args, ast::Call::eSetAttr), recv);
+    return pos(new ast::Send(n, recv, args, ast::Send::eSetAttr), recv);
   }
 
-  ast::Node* ParserState::self_call(String* n) {
-    return pos(new ast::Call(n, self(), 0, ast::Call::eSelfLess));
+  ast::Node* ParserState::self_send(String* n) {
+    return pos(new ast::Send(n, self(), 0, ast::Send::eSelfLess));
   }
 
   ast::Node* ParserState::send_indirect(ast::Node* recv, ast::Node* n) {
@@ -151,7 +151,7 @@ namespace r5 {
   }
 
   ast::Node* ParserState::dcolon(ast::Node* recv, String* n, String* a) {
-    return pos(new ast::Call(n, recv, ast::Arguments::wrap(new ast::LiteralString(a))), recv);
+    return pos(new ast::Send(n, recv, ast::Arguments::wrap(new ast::LiteralString(a))), recv);
   }
 
   ast::Node* ParserState::lit_str(String* n) {
@@ -178,16 +178,16 @@ namespace r5 {
     context_ = new Context();
   }
 
-  ast::Call* ParserState::ast_call(String* name, ast::Node* r, ast::Nodes args) {
-    return pos(new ast::Call(name, r, new ast::Arguments(args)), r);
+  ast::Send* ParserState::ast_send(String* name, ast::Node* r, ast::Nodes args) {
+    return pos(new ast::Send(name, r, new ast::Arguments(args)), r);
   }
 
-  ast::Call* ParserState::ast_binop(const char* s, ast::Node* a, ast::Node* b) {
-    return pos(new ast::Call(String::internalize(S, s), a, ast::Arguments::wrap(b)), a);
+  ast::Send* ParserState::ast_binop(const char* s, ast::Node* a, ast::Node* b) {
+    return pos(new ast::Send(String::internalize(S, s), a, ast::Arguments::wrap(b)), a);
   }
 
-  ast::Call* ParserState::ast_binop(String* op, ast::Node* a, ast::Node* b) {
-    return pos(new ast::Call(op, a, ast::Arguments::wrap(b)), a);
+  ast::Send* ParserState::ast_binop(String* op, ast::Node* a, ast::Node* b) {
+    return pos(new ast::Send(op, a, ast::Arguments::wrap(b)), a);
   }
 
   ast::Node* ParserState::number(int a) {
@@ -203,7 +203,7 @@ namespace r5 {
   }
 
   void ParserState::cascade(String* name) {
-    cascades_.back()->push_message(new ast::CascadeCall(name));
+    cascades_.back()->push_message(new ast::CascadeSend(name));
   }
 
   ast::Node* ParserState::end_cascade() {
@@ -228,12 +228,12 @@ namespace r5 {
     arg_info_.nodes.push_back(a);
   }
 
-  ast::Node* ParserState::call_args(ast::Node* recv, String* id) {
+  ast::Node* ParserState::send_args(ast::Node* recv, String* id) {
     ast::Node* n = 0;
 
     ast::Arguments* args = new ast::Arguments(arg_info_.nodes, arg_info_.keywords);
 
-    n = pos(new ast::Call(id, recv, args), recv);
+    n = pos(new ast::Send(id, recv, args), recv);
 
     arg_info_ = arg_infos_.back();
     arg_infos_.pop_back();
@@ -243,12 +243,12 @@ namespace r5 {
     return n;
   }
 
-  ast::Node* ParserState::self_call_args(String* id) {
+  ast::Node* ParserState::self_send_args(String* id) {
     ast::Node* n = 0;
 
     ast::Arguments* args = new ast::Arguments(arg_info_.nodes, arg_info_.keywords);
 
-    n = pos(new ast::Call(id, self(), args, ast::Call::eSelfLess));
+    n = pos(new ast::Send(id, self(), args, ast::Send::eSelfLess));
 
     arg_info_ = arg_infos_.back();
     arg_infos_.pop_back();
@@ -258,8 +258,8 @@ namespace r5 {
     return n;
   }
 
-  ast::Node* ParserState::call_args(ast::Node* recv, const char* id) {
-    return call_args(recv, String::internalize(S, id));
+  ast::Node* ParserState::send_args(ast::Node* recv, const char* id) {
+    return send_args(recv, String::internalize(S, id));
   }
 
   ast::Node* ParserState::tuple() {

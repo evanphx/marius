@@ -181,7 +181,7 @@ namespace ast {
 
     S.pos(this);
 
-    S.push(CALL);
+    S.push(SEND);
     S.push(t);
     S.push(S.string(String::internalize(S.MS, "cast")));
     S.push(t);
@@ -271,7 +271,7 @@ namespace ast {
     V->visit(this);
   }
 
-  int Call::drive(State& S, int t) {
+  int Send::drive(State& S, int t) {
     int j = t+1;
 
     int count = 0;
@@ -296,7 +296,7 @@ namespace ast {
 
       S.pos(this);
 
-      S.push(kw ? CALL_KW : CALL);
+      S.push(kw ? SEND_KW : SEND);
       S.push(t);
       S.push(S.string(String::internalize(S.MS, "call")));
       S.push(t);
@@ -324,7 +324,7 @@ namespace ast {
 
     S.pos(this);
 
-    S.push(kw ? CALL_KW : CALL);
+    S.push(kw ? SEND_KW : SEND);
     S.push(t);
 
     if(spec_ == eSetAttr) {
@@ -345,7 +345,7 @@ namespace ast {
     return t;
   }
 
-  void Call::accept(Visitor* V) {
+  void Send::accept(Visitor* V) {
     recv_->accept(V);
 
     if(args_) {
@@ -395,7 +395,7 @@ namespace ast {
       S.push(SELF);
       S.push(t);
 
-      S.push(CALL);
+      S.push(SEND);
       S.push(t);
       S.push(S.string(name_));
       S.push(t);
@@ -474,7 +474,7 @@ namespace ast {
         subS.push(first_reg+1);
         subS.push(arg->position());
 
-        subS.push(CALL);
+        subS.push(SEND);
         subS.push(arg->position());
         subS.push(subS.string(String::internalize(S.MS, "cast")));
         subS.push(first_reg);
@@ -491,7 +491,7 @@ namespace ast {
     S.push(S.code(subS.to_code(name_, S.file(),
                                args_, req, body_->cov(), true)));
 
-    S.push(CALL);
+    S.push(SEND);
     S.push(t);
     if(!scope_) {
       S.push(S.string(String::internalize(S.MS, "add_method")));
@@ -538,7 +538,7 @@ namespace ast {
     S.push(t+2);
     S.push(self_sends_.size());
 
-    S.push(CALL);
+    S.push(SEND);
     S.push(t);
     S.push(S.string(String::internalize(S.MS, "new")));
     S.push(t);
@@ -562,7 +562,7 @@ namespace ast {
     S.push(S.code(subS.to_code(String::internalize(S.MS, "__body__"),
                                S.file(), args, 0, body_->cov())));
 
-    S.push(CALL);
+    S.push(SEND);
     S.push(t);
     S.push(S.string(String::internalize(S.MS, "run_body")));
     S.push(t);
@@ -588,7 +588,7 @@ namespace ast {
     S.push(t+1);
     S.push(si);
 
-    S.push(CALL);
+    S.push(SEND);
     S.push(t);
     S.push(S.string(String::internalize(S.MS, "new_subclass")));
     S.push(t);
@@ -615,7 +615,7 @@ namespace ast {
     S.push(S.code(subS.to_code(String::internalize(S.MS, "__body__"),
                                S.file(), args, 0, body_->cov())));
 
-    S.push(CALL);
+    S.push(SEND);
     S.push(t);
     S.push(S.string(String::internalize(S.MS, "run_body")));
     S.push(t);
@@ -681,8 +681,8 @@ namespace ast {
     V->visit(this);
   }
 
-  int CascadeCall::drive(State& S, int t) {
-    S.push(CALL);
+  int CascadeSend::drive(State& S, int t) {
+    S.push(SEND);
     S.push(t+1);
     S.push(S.string(name_));
     S.push(t);
@@ -691,7 +691,7 @@ namespace ast {
     return t;
   }
 
-  void CascadeCall::accept(Visitor* V) {
+  void CascadeSend::accept(Visitor* V) {
     V->visit(this);
   }
 
@@ -850,7 +850,7 @@ namespace ast {
 
     S.get_local(l->extra(), t);
 
-    S.push(CALL);
+    S.push(SEND);
     S.push(t);
     S.push(S.string("current"));
     S.push(t);
@@ -860,7 +860,7 @@ namespace ast {
     S.push(t+1);
     S.push(S.string(path_));
 
-    S.push(CALL);
+    S.push(SEND);
     S.push(t);
     S.push(S.string("import"));
     S.push(t);
@@ -883,7 +883,7 @@ namespace ast {
 
     S.get_local(l->extra(), t);
 
-    S.push(CALL);
+    S.push(SEND);
     S.push(t);
     S.push(S.string("current"));
     S.push(t);
@@ -893,7 +893,7 @@ namespace ast {
     S.push(t+1);
     S.push(S.string(path_));
 
-    S.push(CALL);
+    S.push(SEND);
     S.push(t);
     S.push(S.string("import"));
     S.push(t);
@@ -903,7 +903,7 @@ namespace ast {
     S.push(t+1);
     S.push(S.string(elem_));
 
-    S.push(CALL);
+    S.push(SEND);
     S.push(t);
     S.push(S.string("::"));
     S.push(t);
@@ -944,7 +944,7 @@ namespace ast {
       S.push(t+2);
       S.push(t);
 
-      S.push(CALL);
+      S.push(SEND);
       S.push(t+1);
       S.push(S.string("==="));
       S.push(t+1);
@@ -1020,7 +1020,7 @@ namespace ast {
     S.get_local(l, t);
     value_->drive(S, t + 1);
 
-    S.push(CALL);
+    S.push(SEND);
     S.push(t);
     S.push(S.string(op_));
     S.push(t);
@@ -1079,7 +1079,7 @@ namespace ast {
 
     value_->drive(S, t + 1);
 
-    S.push(CALL);
+    S.push(SEND);
     S.push(t);
     S.push(S.string(op_));
     S.push(t);
@@ -1222,7 +1222,7 @@ namespace ast {
 
     int count = args_->positional.size();
 
-    S.push(CALL_KW);
+    S.push(SEND_KW);
     S.push(t);
     S.push(S.string(String::internalize(S.MS, "literal")));
     S.push(t);

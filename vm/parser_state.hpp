@@ -120,10 +120,10 @@ namespace r5 {
     ast::Node* send_indirect(ast::Node* recv, ast::Node* n);
     ast::Node* send_indirect_args(ast::Node* recv, ast::Node* n);
 
-    ast::Node* call(ast::Node* recv, String* id);
-    ast::Node* call_attr(ast::Node* recv, String* id);
-    ast::Node* call_set_attr(ast::Node* recv, String* id, ast::Node* val);
-    ast::Node* self_call(String* id);
+    ast::Node* send(ast::Node* recv, String* id);
+    ast::Node* send_attr(ast::Node* recv, String* id);
+    ast::Node* send_set_attr(ast::Node* recv, String* id, ast::Node* val);
+    ast::Node* self_send(String* id);
     ast::Node* attr(ast::Node* recv, String* id);
 
     void start_cascade(ast::Node* n);
@@ -133,11 +133,11 @@ namespace r5 {
     void start_arg_list();
     void add_arg(ast::Node* n);
     void add_kw_arg(String* id, ast::Node* n);
-    ast::Node* call_args(ast::Node* n, String* id);
-    ast::Node* call_args(ast::Node* n, const char* id);
-    ast::Node* call_kw_args(ast::Node* n, String* id);
+    ast::Node* send_args(ast::Node* n, String* id);
+    ast::Node* send_args(ast::Node* n, const char* id);
+    ast::Node* send_kw_args(ast::Node* n, String* id);
 
-    ast::Node* self_call_args(String* id);
+    ast::Node* self_send_args(String* id);
 
     ast::Node* dcolon(ast::Node* r, String* id, String* arg);
     ast::Node* lit_str(String* s);
@@ -145,9 +145,9 @@ namespace r5 {
     // AST
     ast::Node* named(String* s, int line);
     ast::Node* number(int a);
-    ast::Call* ast_call(String* name, ast::Node* r, ast::Nodes args);
-    ast::Call* ast_binop(const char* s, ast::Node* a, ast::Node* b);
-    ast::Call* ast_binop(String* op, ast::Node* a, ast::Node* b);
+    ast::Send* ast_send(String* name, ast::Node* r, ast::Nodes args);
+    ast::Send* ast_binop(const char* s, ast::Node* a, ast::Node* b);
+    ast::Send* ast_binop(String* op, ast::Node* a, ast::Node* b);
     ast::Node* if_cond(ast::Node* cond, ast::Node* body);
     ast::Node* if_else(ast::Node* cond, ast::Node* body, ast::Node* ebody);
     ast::Node* unless(ast::Node* cond, ast::Node* body);

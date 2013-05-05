@@ -160,13 +160,13 @@ np_arg(A) ::= np_arg(B) CAST np_arg(C).
                 { A.a = S->cast(B.a, C.a); }
 np_arg(A) ::= np_arg(B) NEQUAL np_arg(C).
                 { A.a = S->not_(S->ast_binop("==", B.a, C.a)); }
-np_arg(A) ::= np_arg(B) DOT(C). { A.a = S->call_attr(B.a, C.s); }
-np_arg(A) ::= np_arg(B) DOT(C) LP RP. { A.a = S->call(B.a, C.s); }
+np_arg(A) ::= np_arg(B) DOT(C). { A.a = S->send_attr(B.a, C.s); }
+np_arg(A) ::= np_arg(B) DOT(C) LP RP. { A.a = S->send(B.a, C.s); }
 np_arg(A) ::= np_arg(B) DOT(C) LP np_arg_list RP.
-                { A.a = S->call_args(B.a, C.s); }
-np_arg(A) ::= ID(B) LP RP. { A.a = S->self_call(B.s); }
+                { A.a = S->send_args(B.a, C.s); }
+np_arg(A) ::= ID(B) LP RP. { A.a = S->self_send(B.s); }
 np_arg(A) ::= ID(B) LP np_arg_list RP.
-                { A.a = S->self_call_args(B.s); }
+                { A.a = S->self_send_args(B.s); }
 np_arg(A) ::= np_arg(B) DCOLON(C) ID(D). { A.a = S->dcolon(B.a, C.s, D.s); }
 
 np_arg(A) ::= np_arg(B) DOT_DOLLAR lit(C).
@@ -178,7 +178,7 @@ np_arg(A) ::= np_arg(B) DOT_DOLLAR lit(C) LP np_arg_list RP.
 np_arg(A) ::= NOT np_arg(B). { A.a = S->not_(B.a); }
 np_arg(A) ::= lambda(B). { A.a = B.a; }
 np_arg(A) ::= np_arg(B) LSB np_arg_list RSB.
-               { A.a = S->call_args(B.a, "[]"); }
+               { A.a = S->send_args(B.a, "[]"); }
 
 np_arg(A) ::= TUPLE_START np_arg_list RP. { A.a = S->tuple(); }
 np_arg(A) ::= LIST np_arg_list RSB. { A.a = S->list(); }
@@ -200,11 +200,11 @@ np_arg_list ::= np_arg_list_start np_arg_list_elems np_opt_kw_arg_list.
 np_arg_list ::= np_arg_list_start np_kw_arg_list_elems.
 
 np_recv(A) ::= lit(B). { A.a = B.a; }
-np_recv(A) ::= ID(C) LP RP. { A.a = S->self_call(C.s); }
-np_recv(A) ::= ID(C) LP np_arg_list RP. { A.a = S->self_call_args(C.s); }
-np_recv(A) ::= np_recv(B) DOT(C). { A.a = S->call_attr(B.a, C.s); }
-np_recv(A) ::= np_recv(B) DOT(C) LP RP. { A.a = S->call(B.a, C.s); }
-np_recv(A) ::= np_recv(B) DOT(C) LP np_arg_list RP. { A.a = S->call_args(B.a, C.s); }
+np_recv(A) ::= ID(C) LP RP. { A.a = S->self_send(C.s); }
+np_recv(A) ::= ID(C) LP np_arg_list RP. { A.a = S->self_send_args(C.s); }
+np_recv(A) ::= np_recv(B) DOT(C). { A.a = S->send_attr(B.a, C.s); }
+np_recv(A) ::= np_recv(B) DOT(C) LP RP. { A.a = S->send(B.a, C.s); }
+np_recv(A) ::= np_recv(B) DOT(C) LP np_arg_list RP. { A.a = S->send_args(B.a, C.s); }
 np_recv(A) ::= np_recv(B) DCOLON(C) ID(D). { A.a = S->dcolon(B.a, C.s, D.s); }
 np_recv(A) ::= np_recv(B) DOT_DOLLAR lit(C).
                  { A.a = S->send_indirect(B.a, C.a); }
@@ -217,13 +217,13 @@ np_recv(A) ::= TUPLE_START np_arg_list RP. { A.a = S->tuple(); }
 np_recv(A) ::= LIST np_arg_list RSB. { A.a = S->list(); }
 np_recv(A) ::= DICT_START np_arg_list RB. { A.a = S->dict(); }
 np_recv(A) ::= np_recv(B) LSB np_arg_list RSB.
-               { A.a = S->call_args(B.a, "[]"); }
+               { A.a = S->send_args(B.a, "[]"); }
 np_recv(A) ::= LP s2(B) RP. { A.a = B.a; }
 
-s2(A) ::= np_recv(B) DOT(C) np_arg_list. { A.a = S->call_args(B.a, C.s); }
+s2(A) ::= np_recv(B) DOT(C) np_arg_list. { A.a = S->send_args(B.a, C.s); }
 s2(A) ::= np_recv(B) DOT_DOLLAR lit(C) np_arg_list.
             { A.a = S->send_indirect_args(B.a, C.a); }
-s2(A) ::= ID(C) np_arg_list. { A.a = S->self_call_args(C.s); }
+s2(A) ::= ID(C) np_arg_list. { A.a = S->self_send_args(C.s); }
 s2(A) ::= np_recv(B) CAST np_arg(C).   { A.a = S->cast(B.a, C.a); }
 s2(A) ::= np_recv(B) OP0(O) np_arg(C). { A.a = S->ast_binop(O.s, B.a, C.a); }
 s2(A) ::= np_recv(B) OP0(O) LP s2(C) RP. { A.a = S->ast_binop(O.s, B.a, C.a); }
@@ -241,7 +241,7 @@ s2(A) ::= np_recv(B). { A.a = B.a; }
 s2(A) ::= NOT s2(B). { A.a = S->not_(B.a); }
 s2(A) ::= np_recv(B) AND np_arg(C). { A.a = S->and_(B.a, C.a); }
 s2(A) ::= np_recv(B) DOT(C) EQUAL s2(D).
-            { A.a = S->call_set_attr(B.a, C.s, D.a); }
+            { A.a = S->send_set_attr(B.a, C.s, D.a); }
 
 stmt(A) ::= s2(B). { A.a = B.a; }
 

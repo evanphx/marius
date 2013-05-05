@@ -142,7 +142,7 @@ namespace r5 {
         seq_skip = 5;
         goto check_unwind;
 
-      case CALL:
+      case SEND:
         top_frame_->ip = (seq - start) - 1;
 
         t = run_method(S,
@@ -182,7 +182,7 @@ check_unwind:
         }
 
         break;
-      case CALL_KW:
+      case SEND_KW:
         top_frame_->ip = (seq - start) - 1;
 
         t = run_kw_method(S,

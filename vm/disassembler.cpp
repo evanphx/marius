@@ -77,7 +77,7 @@ namespace r5 {
       printf("\n");
       return 6;
 
-    case CALL:
+    case SEND:
       switch(seq[4]) {
       case 0:
         printf("R(%d) := R(%d).%s\n",
@@ -100,7 +100,7 @@ namespace r5 {
       }
       return 5;
 
-    case CALL_KW:
+    case SEND_KW:
       printf("R(%d) := R(%d).%s ",
               seq[1], seq[3],
               code_->string(seq[2])->c_str());

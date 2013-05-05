@@ -400,7 +400,7 @@ namespace r5 {
       void accept(Visitor* V);
     };
 
-    class Call : public Node {
+    class Send : public Node {
     public:
       enum Special {
         eNone,
@@ -417,14 +417,14 @@ namespace r5 {
       Special spec_;
 
     public:
-      Call(String* name, Node* recv, Arguments* args=0, Special s=eNone)
+      Send(String* name, Node* recv, Arguments* args=0, Special s=eNone)
         : name_(name)
         , recv_(recv)
         , args_(args)
         , spec_(s)
       {}
 
-      PER_NODE(Call);
+      PER_NODE(Send);
 
       Node* recv() {
         return recv_;
@@ -557,7 +557,7 @@ namespace r5 {
         return body_;
       }
 
-      void add_call(String* n) {
+      void add_send(String* n) {
         self_sends_.push_back(n);
       }
 
@@ -587,16 +587,16 @@ namespace r5 {
       void accept(Visitor* V);
     };
 
-    class CascadeCall : public Node {
+    class CascadeSend : public Node {
       String* name_;
 
     public:
 
-      CascadeCall(String* n)
+      CascadeSend(String* n)
         : name_(n)
       {}
 
-      PER_NODE(CascadeCall);
+      PER_NODE(CascadeSend);
 
       int drive(State& S, int t);
       CimpleValue cimple(CimpleState& S);
@@ -1019,14 +1019,14 @@ namespace r5 {
       virtual void visit(Seq* n) { };
       virtual void visit(Scope* n) { };
       virtual void visit(SendIndirect* i) { };
-      virtual void visit(Call* n) { };
+      virtual void visit(Send* n) { };
       virtual void visit(Number* n) { };
       virtual void visit(Named* n) { };
       virtual void visit(Def* n) { };
       virtual void visit(Class* n) { };
       virtual void visit(Return* n) { };
       virtual void visit(Cascade* n) { };
-      virtual void visit(CascadeCall* n) { };
+      virtual void visit(CascadeSend* n) { };
       virtual void visit(IfCond* n) { };
       virtual void visit(Unless* n) { };
       virtual void visit(Nil* n) { };

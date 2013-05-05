@@ -119,10 +119,10 @@ namespace r5 {
     case SENDI_KW:
       return 6;
 
-    case CALL:
+    case SEND:
       return 5;
 
-    case CALL_KW:
+    case SEND_KW:
       return 6;
 
     case IVA:

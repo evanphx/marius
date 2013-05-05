@@ -82,16 +82,16 @@ namespace r5 {
       return !trait_stack_.empty();
     }
 
-    void visit(ast::Call* call) {
+    void visit(ast::Send* send) {
       // This implements half of the the Markov rule
-      if(call->self_less_p()) {
-        if(find_scoped(call, call->name())) return;
+      if(send->self_less_p()) {
+        if(find_scoped(send, send->name())) return;
       }
 
       if(in_trait_p()) {
-        if(call->recv()->self_p()) {
+        if(send->recv()->self_p()) {
           ast::Trait* t = trait_stack_.back();
-          t->add_call(call->name());
+          t->add_send(send->name());
         }
       }
     }

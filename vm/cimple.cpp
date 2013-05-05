@@ -161,7 +161,7 @@ namespace ast {
     if(ast::Named* m = try_as<Named>(n)) {
       return m->name()->c_str();
     } else {
-      ast::Call* c = as<Call>(n);
+      ast::Send* c = as<Send>(n);
       check(!strcmp(c->name()->c_str(), "[]"));
       ast::Named* cn = as<Named>(c->recv());
 
@@ -198,7 +198,7 @@ namespace ast {
     return S.void_();
   }
 
-  CimpleValue Call::cimple(CimpleState& S) {
+  CimpleValue Send::cimple(CimpleState& S) {
     if(self_less_p()) {
       if(strcmp(name_->c_str(), "let") == 0 && args_) {
         Nodes::iterator i = args_->positional.begin();
@@ -211,7 +211,7 @@ namespace ast {
         if(ast::IvarRead* ivar = try_as<IvarRead>(var)) {
           S.add_ivar(ivar->name(), name_type(typ));
         } else if(ast::Named* lvar = try_as<Named>(var)) {
-          if(Call* ct = try_as<Call>(typ)) {
+          if(Send* ct = try_as<Send>(typ)) {
             if(equal(ct->name(), "[]")) {
               Named* op = as<Named>(ct->recv());
               if(!strcmp(op->name()->c_str(), "Array")){
@@ -528,7 +528,7 @@ namespace ast {
     return S.void_();
   }
 
-  CimpleValue CascadeCall::cimple(CimpleState& S) {
+  CimpleValue CascadeSend::cimple(CimpleState& S) {
     check(0);
     return S.void_();
   }
